@@ -23,8 +23,9 @@ namespace FoodDeliveryWebApp.Models
         public bool InStock { get; set; }
         [Required]
         [ForeignKey("Seller")]
-        public int AppUserId;
+        public string SellerId;
         public virtual AppUser? Seller { get; set; }
         public Category Category { get; set; }
+        public byte[] Image { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,4 +20,6 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
     }
+
+    public DbSet<Product> Products { get; set; }
 }
