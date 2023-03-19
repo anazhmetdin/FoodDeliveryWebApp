@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
+
 namespace FoodDeliveryWebApp
 {
     public class Program
@@ -5,6 +10,11 @@ namespace FoodDeliveryWebApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("FoodDeliveryWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'FoodDeliveryWebAppContextConnection' not found.");
+
+            builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
+
+            builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
