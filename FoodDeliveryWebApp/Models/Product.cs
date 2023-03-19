@@ -12,20 +12,27 @@ namespace FoodDeliveryWebApp.Models
     {
         [MaxLength(128)]
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
+        
         [MaxLength(512)]
         [Required]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
+
         [Required]
         [Range(0, 100000)]
         public decimal Price { get; set; }
+        
         [Required]
         public bool InStock { get; set; }
+
         [Required]
         [ForeignKey("Seller")]
-        public string SellerId;
+        public string SellerId { get; set; }  = string.Empty;
+        
         public virtual AppUser? Seller { get; set; }
+        
         public Category Category { get; set; }
-        public byte[] Image { get; set; }
+        
+        public byte[] Image { get; set; } = new byte[256];
     }
 }

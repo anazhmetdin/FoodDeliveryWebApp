@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Repositories;
 
 namespace FoodDeliveryWebApp
 {
@@ -18,6 +20,10 @@ namespace FoodDeliveryWebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            #region Register repository services
+            builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
+            #endregion
 
             var app = builder.Build();
 
