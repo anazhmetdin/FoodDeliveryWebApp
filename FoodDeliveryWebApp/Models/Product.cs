@@ -1,13 +1,10 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public enum Category
-    {
-        Fried_Chicken, Pizza, Sushi, Asian, Shawerma, Burger, Sea_Food, Oriental, Dessert, Street_Food, Fine_Cuisine, Italian
-    }
     public class Product: BaseModel
     {
         [MaxLength(128)]
@@ -25,14 +22,16 @@ namespace FoodDeliveryWebApp.Models
         [Required]
         public bool InStock { get; set; }
 
+        public Category Category { get; set; }
+
+        public byte[] Image { get; set; } = new byte[256];
+        
         [Required]
         [ForeignKey("Seller")]
         public string SellerId { get; set; }  = string.Empty;
         
         public virtual AppUser? Seller { get; set; }
-        
-        public Category Category { get; set; }
-        
-        public byte[] Image { get; set; } = new byte[256];
+
+        public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
     }
 }

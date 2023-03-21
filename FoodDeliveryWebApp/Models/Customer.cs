@@ -4,22 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Order:BaseModel
+    public class Customer
     {
-        public decimal TotalPrice { get; set;}
-        
-        [DataType(DataType.Date)]
-        public DateTime DeliveryDate { get; set;}
-        
-        [DataType(DataType.Date)]
-        public DateTime CheckOutDate { get; set;}
-
+        [Key]
         [ForeignKey("User")]
-        public string CustomerId { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
 
         public virtual AppUser User { get; set; } = new();
 
-        public virtual Review Review { get; set; } = new();
+        public virtual List<Address> Addresses { get; set; } = new();
 
         public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
     }
