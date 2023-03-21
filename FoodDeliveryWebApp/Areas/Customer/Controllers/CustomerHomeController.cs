@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Areas.Customer.Controllers
 {
-    public class HomeController : Controller
+    public class CustomerHomeController : Controller
     {
         private readonly ICustomerHomeRepo _customerHomeRepo;
 
-        public HomeController(ICustomerHomeRepo customerHomeRepo)
+        public CustomerHomeController(ICustomerHomeRepo customerHomeRepo)
         {
             _customerHomeRepo = customerHomeRepo;
         }
