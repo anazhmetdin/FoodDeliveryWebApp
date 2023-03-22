@@ -1,4 +1,4 @@
-namespace FoodDeliveryWebApp.Models
+namespace FoodDeliveryWebApp.ViewModels
 {
     public class ErrorViewModel
     {

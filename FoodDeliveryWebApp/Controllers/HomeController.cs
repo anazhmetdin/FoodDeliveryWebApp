@@ -1,4 +1,4 @@
-﻿using FoodDeliveryWebApp.Models;
+﻿using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -12,7 +12,7 @@ namespace FoodDeliveryWebApp.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
             return View();
