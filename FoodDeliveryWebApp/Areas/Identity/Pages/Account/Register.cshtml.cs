@@ -81,7 +81,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             [Required]
             public string Role { get; set; }
 
-            [Required]
+            //[Required]
             public string StoreName { get; set; } = "";
 
             [Required]
@@ -161,46 +161,61 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                     _ = await _roleManager.CreateAsync(new IdentityRole("Seller"));
 
                 var result1 = await _userManager.CreateAsync(user, Input.Password);
-                var result2 = await _userManager.AddToRoleAsync(user, Input.Role);
-
-                if (result1.Succeeded && result2.Succeeded)
+                
+                if (result1.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    var result2 = await _userManager.AddToRoleAsync(user, Input.Role);
 
-                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (result2.Succeeded)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        _logger.LogInformation("User created a new account with password.");
+                        var userId = await _userManager.GetUserIdAsync(user);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        var callbackUrl = Url.Page(
+                            "/Account/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                            protocol: Request.Scheme);
+
+                        //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            await _context.Sellers.AddAsync(new()
+                            {
+                                Id = userId,
+                                User = user,
+                                StoreName = Input.StoreName
+                            });
+
+                            _context.SaveChanges();
+
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        await _context.Sellers.AddAsync(new()
+                        foreach (var error in result2.Errors)
                         {
-                            Id = userId,
-                            User = user,
-                            StoreName = Input.StoreName
-                        });
-
-                        _context.SaveChanges();
-
-                        return LocalRedirect(returnUrl);
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
                     }
                 }
-                foreach (var error in result1.Errors.Concat(result2.Errors))
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result1.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
+                
             }
 
             // If we got this far, something failed, redisplay form
