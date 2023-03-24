@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class CustomerOrderProduct
+    public class CustomerOrderProduct: BaseModel
     {
         [ForeignKey("Customer")]
         public string CustomerId { get; set; } = string.Empty;

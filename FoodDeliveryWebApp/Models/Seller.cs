@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Seller
+    public class Seller: BaseModel
     {
         [Key]
         [ForeignKey("User")]
-        public string Id { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
 
         [Required]
         [StringLength(30)]
