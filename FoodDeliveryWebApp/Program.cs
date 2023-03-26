@@ -5,6 +5,7 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Data.SqlClient;
 
 namespace FoodDeliveryWebApp
 {
@@ -17,6 +18,10 @@ namespace FoodDeliveryWebApp
           
             #region Services
             builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
+
+            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
+
+            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
@@ -64,8 +69,9 @@ namespace FoodDeliveryWebApp
 
             #region Repository Services
             builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
+            builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             #endregion
-            
+
             builder.Services.AddRazorPages();
 
             builder.Services.AddControllersWithViews();
@@ -90,14 +96,16 @@ namespace FoodDeliveryWebApp
                 app.UseAuthentication();
                 app.UseAuthorization();
             }
-
-
-            app.MapRazorPages();
-            
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
+            app.MapRazorPages();
+            
+            //app.MapControllerRoute(
+            //    name: "defaultWithArea",
+            //    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+            //);
             
             app.MapControllerRoute(
                 name: "default",
