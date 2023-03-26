@@ -181,14 +181,6 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 
                         //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                        
-                        //// Get the signed-in user
-                        //var _user = await _userManager.FindByEmailAsync(Input.Email);
-
-                        //// Get the roles of the signed-in user
-                        //var roles = await _userManager.GetRolesAsync(_user);
-
-                        // Do something with the roles
 
                         //if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         //{
@@ -199,7 +191,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         await _context.Sellers.AddAsync(new()
                         {
-                            Id = userId,
+                            UserId = userId,
                             User = user,
                             StoreName = Input.StoreName
                         });
