@@ -51,7 +51,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync([Bind("Name,Description,Price,InStock,Image ,SellerId")] Product product , IFormFile form)
+        public async Task<ActionResult> Create([Bind("Name,Description,Price,InStock,Image ,SellerId")] Product product , IFormFile Image)
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
@@ -63,7 +63,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                     //product.SellerId = sellerId;
                     using (var stream = new MemoryStream())
                     {
-                        await form.CopyToAsync(stream);
+                        await Image.CopyToAsync(stream);
                         product.Image = stream.ToArray();
                     }
                     _sellerRepo.CreateProduct(product);
