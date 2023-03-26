@@ -2,6 +2,7 @@
 using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FoodDeliveryWebApp.Models.Categories;
 
 namespace FoodDeliveryWebApp.Models
 {
@@ -28,8 +29,10 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("Seller")]
         public string SellerId { get; set; }  = string.Empty;
         
-        public virtual AppUser? Seller { get; set; }
+        public virtual Seller? Seller { get; set; }
 
         public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }
