@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using FoodDeliveryWebApp.Data;
+using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 {
@@ -180,25 +181,37 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 
                         //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        
+                        //// Get the signed-in user
+                        //var _user = await _userManager.FindByEmailAsync(Input.Email);
 
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        //// Get the roles of the signed-in user
+                        //var roles = await _userManager.GetRolesAsync(_user);
+
+                        // Do something with the roles
+
+                        //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        //{
+                        //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        //}
+                        //else
+                        //{
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _context.Sellers.AddAsync(new()
                         {
-                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                            Id = userId,
+                            User = user,
+                            StoreName = Input.StoreName
+                        });
+
+                        _context.SaveChanges();
+
+                        if (Input.Role == "Seller")
+                        {
+                            return RedirectToAction("Index", "Products", new { area = "Seller" });
                         }
-                        else
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            await _context.Sellers.AddAsync(new()
-                            {
-                                Id = userId,
-                                User = user,
-                                StoreName = Input.StoreName
-                            });
-
-                            _context.SaveChanges();
-
                             return LocalRedirect(returnUrl);
-                        }
+                        //}
                     }
                     else
                     {

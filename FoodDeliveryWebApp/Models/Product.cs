@@ -22,8 +22,6 @@ namespace FoodDeliveryWebApp.Models
         [Required]
         public bool InStock { get; set; }
 
-        public Category Category { get; set; }
-
         public byte[] Image { get; set; } = new byte[256];
         
         [Required]
