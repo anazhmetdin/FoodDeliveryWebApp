@@ -1,6 +1,7 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -19,11 +20,15 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
     {
         private readonly ISellerRepo _sellerRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IModelRepo<Category> _categryRepo;
+        private readonly ModelRepo<Product> _productRepo;
 
-        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager)
+        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, IModelRepo<Category> categryRepo, ModelRepo<Product> productRepo)
         {
             _sellerRepo = sellerRepo;
             _userManager = userManager;
+            _categryRepo = categryRepo;
+            _productRepo = productRepo;
         }
 
         // GET: Seller/Products
@@ -34,7 +39,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             return View(_sellerRepo.GetSellerProducts(sellerId));
         }
 
-        // GET: SellerController/Details/5
+        // GET: Seller/Details/5
         public ActionResult Details(int id)
         {
             return View();
@@ -45,29 +50,24 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             return View();
         }
 
         // POST: SellerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Name,Description,Price,InStock,Image ,SellerId")] Product product , IFormFile Image)
+        public ActionResult Create([Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             try
             {
                 if (ModelState.IsValid)
                 {
-                    //ViewBag.CategoryList = new SelectList(Enum.GetValues(typeof(Category)));
-                    //product.SellerId = sellerId;
-                    using (var stream = new MemoryStream())
-                    {
-                        await Image.CopyToAsync(stream);
-                        product.Image = stream.ToArray();
-                    }
-                    _sellerRepo.CreateProduct(product);
-                    return RedirectToAction(nameof(Index));
+                    if (_productRepo.TryInsert(product, Image))
+                        return RedirectToAction(nameof(Index));
                 }
                 return View(product);
             }
@@ -77,25 +77,53 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             }
         }
 
-        // GET: SellerController/Edit/5
+        // GET: Seller/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var sellerId = _userManager.GetUserId(User);
+            ViewBag.sell = sellerId;
+
+            var Model = _productRepo.GetById(id);
+            if (Model == null || Model.SellerId != sellerId)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
+
+            return View(Model);
         }
 
         // POST: SellerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var sellerId = _userManager.GetUserId(User);
+                ViewBag.sell = sellerId;
+
+                var Model = _productRepo.GetById(id);
+                if (Model == null || Model.SellerId != sellerId)
+                {
+                    return NotFound();
+                }
+
+                product.Id = id;
+                ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
+
+                if (ModelState.IsValid)
+                {
+                    if (_productRepo.TryUpdate(product, Image))
+                        return RedirectToAction(nameof(Index));
+                }
             }
             catch
             {
-                return View();
             }
+            
+            return View(product);
         }
 
         // GET: SellerController/Delete/5

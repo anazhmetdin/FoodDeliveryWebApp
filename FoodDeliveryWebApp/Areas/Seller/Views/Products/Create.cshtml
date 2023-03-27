@@ -1,5 +1,4 @@
 ﻿@model FoodDeliveryWebApp.Models.Product
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Create";
 }
@@ -11,59 +10,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="InStock" /> @Html.DisplayNameFor(model => model.InStock)
-                </label>
-            </div>
-            @*<div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" class="form-control" asp-items="@ViewBag.CategoryList">
-                    <option></option>
-                </select>
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>*@
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                @if (Model !=null && Model.Image != null)
-                {
-                    <img id="productImg" alt="productImg" class="productImg" src="data:image/*;base64,@(Convert.ToBase64String(Model.Image))" />
-                }
-                else
-                {
-                    <img id="productImg" alt="productImg" class="productImg" src="~/images/products-icon.jpg" />
-                }
-                <div class="custom-file mt-2">
-                    <input type="file"
-                           accept="image/*"
-                           asp-for="Image"
-                           class="custom-file-input"
-                           onchange="document.getElementById('productImg').src = window.URL.createObjectURL(this.files[0])" />
-                    <label class="custom-file-label" asp-for="Image">Choose picture...</label>
-                <span asp-validation-for="Image" class="text-danger"></span>
-                </div>
-            </div>
-            @*<div class="form-group">
-                <label asp-for="SellerId" class="control-label"></label>
-                <select asp-for="SellerId" class ="form-control" asp-items="ViewBag.SellerId"></select>
-            </div>*@
-            <input asp-for="SellerId" type="hidden" value="@ViewBag.sell" />
+            <partial name="_ProductForm" model="@Model" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

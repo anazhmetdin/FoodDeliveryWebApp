@@ -30,6 +30,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // Add your customizations after calling base.OnModelCreating(builder);
 
         builder.Entity<Seller>().HasKey(s => s.UserId);
+        builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
         builder.Entity<Customer>().HasKey(s => s.UserId);
 
         builder.Entity<Product>(b =>
