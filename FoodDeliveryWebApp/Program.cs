@@ -6,6 +6,8 @@ using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
+using FoodDeliveryWebApp.Models.Categories;
+using FoodDeliveryWebApp.Models;
 
 namespace FoodDeliveryWebApp
 {
@@ -70,6 +72,8 @@ namespace FoodDeliveryWebApp
             #region Repository Services
             builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
+            builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
