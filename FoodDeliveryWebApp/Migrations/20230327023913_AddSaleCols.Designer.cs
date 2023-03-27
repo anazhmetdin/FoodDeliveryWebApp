@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    partial class FoodDeliveryWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230327023913_AddSaleCols")]
+    partial class AddSaleCols
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,9 +228,6 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PromoCodeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ReviewId")
                         .HasColumnType("int");
 
@@ -241,8 +241,6 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("PromoCodeId");
 
                     b.HasIndex("ReviewId");
 
@@ -312,13 +310,16 @@ namespace FoodDeliveryWebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                    b.Property<double>("Discount")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("MaxSale")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sale")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -587,10 +588,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FoodDeliveryWebApp.Models.PromoCode", "PromoCode")
-                        .WithMany()
-                        .HasForeignKey("PromoCodeId");
-
                     b.HasOne("FoodDeliveryWebApp.Models.Review", "Review")
                         .WithMany()
                         .HasForeignKey("ReviewId")
@@ -598,8 +595,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-
-                    b.Navigation("PromoCode");
 
                     b.Navigation("Review");
                 });
