@@ -1,8 +1,11 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Reflection.Emit;
 
 namespace FoodDeliveryWebApp.Data;
 
@@ -21,6 +24,15 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
+        // Customize the ASP.NET Identity model and override the defaults if needed.
+        // For example, you can rename the ASP.NET Identity table names and more.
+        // Add your customizations after calling base.OnModelCreating(builder);
+
+        builder.Entity<Seller>().HasKey(s => s.UserId);
+        builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
+        builder.Entity<Customer>().HasKey(s => s.UserId);
+
         builder.Entity<Product>(b =>
         {
             b.Property(p => p.Price).HasColumnType("money");
@@ -30,6 +42,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<Order>(b =>
         {
             b.Property(o => o.TotalPrice).HasColumnType("money");
+            
+            b.Property(o => o.Status)
+            .HasConversion(new EnumToStringConverter<OrderStatus>());
         });
 
         builder.Entity<CustomerOrderProduct>(b =>
@@ -52,11 +67,5 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
               .OnDelete(DeleteBehavior.Restrict);
         });
 
-        
-
-        base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
     }
 }

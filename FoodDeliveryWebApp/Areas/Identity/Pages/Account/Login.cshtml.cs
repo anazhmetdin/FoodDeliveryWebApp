@@ -22,11 +22,13 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<AppUser> _userManager;
 
-        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -116,6 +118,19 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Get the signed-in user
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                    // Get the roles of the signed-in user
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    // Do something with the roles
+                    if (roles.Contains("Seller"))
+                    {
+                        return RedirectToAction("Index", "Products", new { area = "Seller" });
+                    }
+                    
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

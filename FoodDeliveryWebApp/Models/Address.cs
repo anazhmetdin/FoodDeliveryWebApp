@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Address
+    public class Address: BaseModel
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         public string StreetName { get; set; } = string.Empty;
