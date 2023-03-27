@@ -1,4 +1,6 @@
-﻿namespace FoodDeliveryWebApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoodDeliveryWebApp.Models
 {
     public abstract class BaseModel
     {

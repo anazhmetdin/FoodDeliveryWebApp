@@ -4,18 +4,13 @@ using FoodDeliveryWebApp.Models;
 
 namespace FoodDeliveryWebApp.Repositories
 {
-    public class SellerRepo :ISellerRepo
+    public class SellerRepo : ModelRepo<Seller>, ISellerRepo
     {
-        private readonly FoodDeliveryWebAppContext _context;
-
-        public SellerRepo(FoodDeliveryWebAppContext context)
-        {
-            _context = context;
-        }
+        public SellerRepo(FoodDeliveryWebAppContext context): base(context) { }
 
         public ICollection<Product> GetSellerProducts(string sellerId)
         {
-            var products = _context.Products
+            var products = Context.Products
                 .Where(p => p.SellerId == sellerId)
                 .ToList();
 
@@ -24,9 +19,9 @@ namespace FoodDeliveryWebApp.Repositories
 
         public void CreateProduct(Product product)
         {
-            _context.Products.Add(product);
+            Context.Products.Add(product);
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
     }
 }
