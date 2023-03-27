@@ -2,7 +2,7 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
-    var role =  Request.Query["IsCustomer"][0] == "True" ? "Customer" : "Seller";
+    var role = Request.Query["IsCustomer"][0] == "True" ? "Customer" : "Seller";
     var isCust = role == "Customer";
 }
 
