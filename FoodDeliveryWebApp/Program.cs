@@ -2,9 +2,12 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Repositories;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Data.SqlClient;
+using FoodDeliveryWebApp.Models.Categories;
+using FoodDeliveryWebApp.Models;
 using Stripe;
+
 
 namespace FoodDeliveryWebApp
 {
@@ -20,6 +23,10 @@ namespace FoodDeliveryWebApp
             builder.Services
                 .AddDbContext<FoodDeliveryWebAppContext>(
                 options => options.UseSqlServer(connectionString));
+
+            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
+
+            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
@@ -67,6 +74,9 @@ namespace FoodDeliveryWebApp
 
             #region Repository Services
             builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
+            builder.Services.AddScoped<ISellerRepo, SellerRepo>();
+            builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
@@ -95,14 +105,18 @@ namespace FoodDeliveryWebApp
                 app.UseAuthorization();
             }
 
-
-            app.MapRazorPages();
-
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
 
+            app.MapRazorPages();
+            
+            //app.MapControllerRoute(
+            //    name: "defaultWithArea",
+            //    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+            //);
+            
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

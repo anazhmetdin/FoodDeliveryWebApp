@@ -2,7 +2,7 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
-    var role = Request.Query["IsCustomer"][0] == "true" ? "Customer" : "Seller";
+    var role = Request.Query["IsCustomer"][0] == "True" ? "Customer" : "Seller";
     var isCust = role == "Customer";
 }
 
@@ -13,7 +13,7 @@
         <form id="registerForm" asp-route-IsCustomer="@isCust" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
 
             <input hidden asp-for="Input.Role" class="form-control" aria-required="true" value="@role"/>
             
