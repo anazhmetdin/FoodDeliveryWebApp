@@ -2,27 +2,36 @@
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Repositories
 {
-    public class CustomerHomeRepo : ICustomerHomeRepo
+    public class CustomerRestaurantsRepo : ICustomerRestaurantsRepo
     {
         private readonly FoodDeliveryWebAppContext _context;
 
-        public CustomerHomeRepo(FoodDeliveryWebAppContext context)
+        public CustomerRestaurantsRepo(FoodDeliveryWebAppContext context)
         {
             _context = context;
         }
 
-        public ICollection<Product> GetSellerProducts(string sellerId)
+        public ICollection<ProductViewModel> GetSellerProducts(string sellerId)
         {
             if (string.IsNullOrWhiteSpace(sellerId))
             {
                 throw new ArgumentNullException(nameof(sellerId));
             }
 
-            return _context.Products.Where(p => p.SellerId == sellerId).ToList();
+            return _context.Products.Where(p => p.SellerId == sellerId && p.InStock)
+                .Select(p => new ProductViewModel()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Image = $"data:image/png;base64,{Convert.ToBase64String(p.Image)}"
+                }).ToList();
         }
 
         public ICollection<AppUser> GetSellers()

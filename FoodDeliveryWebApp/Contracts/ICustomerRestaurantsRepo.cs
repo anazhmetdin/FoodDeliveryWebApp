@@ -1,13 +1,14 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.ViewModels;
 
 namespace FoodDeliveryWebApp.Contracts
 {
-    public interface ICustomerHomeRepo
+    public interface ICustomerRestaurantsRepo
     {
         public ICollection<AppUser> GetSellers();
 
-        public ICollection<Product> GetSellerProducts(string sellerId);
+        public ICollection<ProductViewModel> GetSellerProducts(string sellerId);
 
         public ICollection<AppUser> GetSellersFiltered(Func<AppUser, bool> func);
     }
