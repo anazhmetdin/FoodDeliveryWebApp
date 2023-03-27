@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using FoodDeliveryWebApp.Data;
-using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 {
@@ -182,28 +181,32 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        //{
-                        //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                        //}
-                        //else
-                        //{
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        await _context.Sellers.AddAsync(new()
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
-                            UserId = userId,
-                            User = user,
-                            StoreName = Input.StoreName
-                        });
-
-                        _context.SaveChanges();
-
-                        if (Input.Role == "Seller")
-                        {
-                            return RedirectToAction("Index", "Products", new { area = "Seller" });
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                         }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            
+                            if(Input.Role == "Seller")
+                                await _context.Sellers.AddAsync(new()
+                                {
+                                    Id = userId,
+                                    User = user,
+                                    StoreName = Input.StoreName
+                                });
+                            else
+                                await _context.Customers.AddAsync(new()
+                                {
+                                    Id = userId,
+                                    User = user,
+                                });
+
+                            _context.SaveChanges();
+
                             return LocalRedirect(returnUrl);
-                        //}
+                        }
                     }
                     else
                     {
