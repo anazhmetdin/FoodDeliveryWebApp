@@ -1,13 +1,11 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
-using FoodDeliveryWebApp.Repositories;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Data.SqlClient;
+using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models.Categories;
-using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace FoodDeliveryWebApp
 {
@@ -16,10 +14,13 @@ namespace FoodDeliveryWebApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = builder.Configuration.GetConnectionString("FoodDeliveryWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'FoodDeliveryWebAppContextConnection' not found.");
-          
+            var connectionString = builder
+                .Configuration.GetConnectionString("FoodDeliveryWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'FoodDeliveryWebAppContextConnection' not found.");
+
             #region Services
-            builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
+            builder.Services
+                .AddDbContext<FoodDeliveryWebAppContext>(
+                options => options.UseSqlServer(connectionString));
 
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
@@ -27,9 +28,9 @@ namespace FoodDeliveryWebApp
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
-            
+
             builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders();
-            
+
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
             builder.Services.Configure<IdentityOptions>(options =>
@@ -63,9 +64,9 @@ namespace FoodDeliveryWebApp
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-            
+
             builder.Services.AddAuthentication();
-            
+
             builder.Services.AddAuthorization();
             #endregion
 
@@ -73,15 +74,16 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
-            builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
+            builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
 
             builder.Services.AddControllersWithViews();
             #endregion
-            
+
             var app = builder.Build();
+            StripeConfiguration.ApiKey = "sk_test_51Mq0DEDRs2d2XncX3l5gLODG0on2gtdtEiPEXSsyB2m2TUfGwZwlanLbn5ZBZGP3LJbOjDXlsx1f5j0eTcKbKKJI00mPVX4uAc";
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -100,17 +102,19 @@ namespace FoodDeliveryWebApp
                 app.UseAuthentication();
                 app.UseAuthorization();
             }
+
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
+
             app.MapRazorPages();
-            
+
             //app.MapControllerRoute(
             //    name: "defaultWithArea",
             //    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             //);
-            
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
