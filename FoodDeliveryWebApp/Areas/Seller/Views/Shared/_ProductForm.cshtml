@@ -30,20 +30,21 @@
 </div>
 <div class="form-group">
     <label asp-for="Image" class="control-label"></label>
-    @if (Model != null && Model.Image != null)
+    @if (Model.Image != null)
     {
         <partial name="_ImageArray" model="Model.Image"/>
     }
     else
     {
-        <img alt="productImg" class="productImg" src="~/images/products-icon.jpg" />
+        <img alt="product Img" class="productImg" src="~/images/products-icon.jpg" />
     }
     <div class="custom-file mt-2">
         <input type="file"
                 accept="image/*"
                 asp-for="Image"
+                value="@null"
                 class="custom-file-input"
-                onchange="document.getElementById('productImg').src = window.URL.createObjectURL(this.files[0])" />
+               onchange="document.querySelector('.productImg').src = window.URL.createObjectURL(this.files[0])" />
         <label class="custom-file-label" asp-for="Image">Choose picture...</label>
         <span asp-validation-for="Image" class="text-danger"></span>
     </div>

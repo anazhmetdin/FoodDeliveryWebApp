@@ -40,6 +40,17 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             return View(_sellerRepo.GetSellerProducts(sellerId));
         }
 
+        // POST: Seller/Products
+        [HttpPost]
+        public ActionResult Restocked(IFormCollection pairs)
+        {
+            if (pairs["selected"].Count > 0)
+            {
+                
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Seller/Details/5
         public ActionResult Details(int id)
         {
@@ -65,7 +76,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
+        public ActionResult Create([Bind("Name,Description,Price,InStock,SellerId,CategoryId")] Product product, IFormFile Image)
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
@@ -105,7 +116,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
+        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,CategoryId")] Product product, IFormFile? Image)
         {
             try
             {
@@ -120,6 +131,12 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
                 product.Id = id;
                 ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
+
+                if (Image == null)
+                {
+                    ModelState.Remove("Image");
+                    product.Image = Model.Image;
+                }
 
                 if (ModelState.IsValid)
                 {

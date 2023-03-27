@@ -8,9 +8,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form method="post">
+
+<div class="form-group">
+    <input type="submit" value="Restocked" asp-action="Restocked"
+           class="btn btn-primary"/>
+</div>
+
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.Label("")
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -38,6 +49,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.CheckBox("selected", new {value = item.Id})
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -68,3 +82,5 @@
 }
     </tbody>
 </table>
+
+</form>
