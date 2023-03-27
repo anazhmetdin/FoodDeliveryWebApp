@@ -16,6 +16,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
     [Authorize(Roles = "Seller")]
     [Area("Seller")]
+    [AutoValidateAntiforgeryToken]
     public class ProductsController : Controller
     {
         private readonly ISellerRepo _sellerRepo;
@@ -42,7 +43,14 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // GET: Seller/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var sellerId = _userManager.GetUserId(User);
+            ViewBag.sell = sellerId;
+            var Model = _productRepo.GetById(id);
+            
+            if (Model.SellerId != sellerId)
+                return NotFound();
+            
+            return View(Model);
         }
 
         // GET: SellerController/Create
@@ -129,7 +137,16 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // GET: SellerController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var sellerId = _userManager.GetUserId(User);
+            ViewBag.sell = sellerId;
+
+            var Model = _productRepo.GetById(id);
+            if (Model == null || Model.SellerId != sellerId)
+            {
+                return NotFound();
+            }
+
+            return View(Model);
         }
 
         // POST: SellerController/Delete/5
@@ -139,7 +156,19 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var sellerId = _userManager.GetUserId(User);
+                ViewBag.sell = sellerId;
+
+                var Model = _productRepo.GetById(id);
+                if (Model == null || Model.SellerId != sellerId)
+                {
+                    return NotFound();
+                }
+
+                if (_productRepo.TryDelete(id))
+                    return RedirectToAction(nameof(Index));
+
+                return View(Model);
             }
             catch
             {

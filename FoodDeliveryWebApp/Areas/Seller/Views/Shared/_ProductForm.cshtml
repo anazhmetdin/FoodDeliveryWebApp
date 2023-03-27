@@ -32,11 +32,11 @@
     <label asp-for="Image" class="control-label"></label>
     @if (Model != null && Model.Image != null)
     {
-        <img id="productImg" alt="productImg" class="productImg" src="data:image/*;base64,@(Convert.ToBase64String(Model.Image))" />
+        <partial name="_ImageArray" model="Model.Image"/>
     }
     else
     {
-        <img id="productImg" alt="productImg" class="productImg" src="~/images/products-icon.jpg" />
+        <img alt="productImg" class="productImg" src="~/images/products-icon.jpg" />
     }
     <div class="custom-file mt-2">
         <input type="file"
