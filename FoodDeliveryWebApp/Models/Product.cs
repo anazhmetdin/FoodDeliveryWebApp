@@ -34,5 +34,9 @@ namespace FoodDeliveryWebApp.Models
         public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
+
+        public bool HasSale { get; set; }
+        [Range(0,100)]
+        public int Sale { get; set; }
     }
 }

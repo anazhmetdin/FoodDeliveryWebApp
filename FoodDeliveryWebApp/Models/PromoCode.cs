@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models.Enums;
 
 namespace FoodDeliveryWebApp.Models
@@ -16,11 +17,11 @@ namespace FoodDeliveryWebApp.Models
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
-        [ForeignKey("Seller")]
-        public string SellerId { get; set; } = string.Empty;
+        public virtual ICollection<Category> AppliedTo { get; set; } = new List<Category>();
 
-        public virtual AppUser Seller { get; set; } = new();
-
-        public virtual ICollection<Product> AppliedTo { get; set; } = new List<Product>();
+        [Range(0, 100)]
+        public int Sale { get; set; }
+        [Range(0, 1000000)]
+        public int MaxSale { get; set; }
     }
 }
