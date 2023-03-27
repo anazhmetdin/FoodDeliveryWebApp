@@ -1,28 +1,29 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("FoodDeliveryWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'FoodDeliveryWebAppContextConnection' not found.");
-          
+
             #region Services
             builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
-            
+
             builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders();
-            
+
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
             builder.Services.Configure<IdentityOptions>(options =>
@@ -56,21 +57,21 @@ namespace FoodDeliveryWebApp
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-            
+
             builder.Services.AddAuthentication();
-            
+
             builder.Services.AddAuthorization();
             #endregion
 
             #region Repository Services
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             #endregion
-            
+
             builder.Services.AddRazorPages();
 
             builder.Services.AddControllersWithViews();
             #endregion
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -93,12 +94,12 @@ namespace FoodDeliveryWebApp
 
 
             app.MapRazorPages();
-            
+
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
-            
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
