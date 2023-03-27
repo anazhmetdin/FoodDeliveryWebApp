@@ -63,7 +63,7 @@ namespace FoodDeliveryWebApp
             #endregion
 
             #region Repository Services
-            builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
+            builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             #endregion
             
             builder.Services.AddRazorPages();

@@ -188,12 +188,20 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         else
                         {
                             await _signInManager.SignInAsync(user, isPersistent: false);
-                            await _context.Sellers.AddAsync(new()
-                            {
-                                Id = userId,
-                                User = user,
-                                StoreName = Input.StoreName
-                            });
+                            
+                            if(Input.Role == "Seller")
+                                await _context.Sellers.AddAsync(new()
+                                {
+                                    Id = userId,
+                                    User = user,
+                                    StoreName = Input.StoreName
+                                });
+                            else
+                                await _context.Customers.AddAsync(new()
+                                {
+                                    Id = userId,
+                                    User = user,
+                                });
 
                             _context.SaveChanges();
 
