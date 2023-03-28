@@ -10,7 +10,7 @@ namespace FoodDeliveryWebApp.Models
     {
         [Key]
         [ForeignKey("User")]
-        public new string UserId { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
 
         [Required]
         [StringLength(30)]
