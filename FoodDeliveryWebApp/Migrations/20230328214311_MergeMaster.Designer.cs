@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    partial class FoodDeliveryWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230328214311_MergeMaster")]
+    partial class MergeMaster
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,7 +250,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderProducts");
+                    b.ToTable("CustomerOrderProducts");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Payment", b =>
@@ -620,7 +623,7 @@ namespace FoodDeliveryWebApp.Migrations
                         .IsRequired();
 
                     b.HasOne("FoodDeliveryWebApp.Models.Product", "Product")
-                        .WithMany("OrderProducts")
+                        .WithMany("CustomerOrderProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -760,7 +763,7 @@ namespace FoodDeliveryWebApp.Migrations
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>
                 {
-                    b.Navigation("OrderProducts");
+                    b.Navigation("CustomerOrderProducts");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.PromoCode", b =>

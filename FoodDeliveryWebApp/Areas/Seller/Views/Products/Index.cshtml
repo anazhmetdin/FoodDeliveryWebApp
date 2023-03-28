@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<FoodDeliveryWebApp.Models.Product>
+@using Microsoft.AspNetCore.Http.Extensions;
 @{
     ViewData["Title"] = "Index";
 }
@@ -8,14 +9,50 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form method="get">
+    <select class="form-control" asp-items="@ViewBag.CategoryList" name="category">
+        <option disabled="disabled" selected="selected">Select Category</option>
+        <option value="0">All</option>
+    </select>
+    
+    <label for="hasSale">Sale</label>
+    <select class="form-control" asp-items="@ViewBag.hasSale" name="hasSale" id="hasSale">
+        <option disabled="disabled" selected="selected">Select value</option>
+    </select>
+
+    <input type="submit" value="Filter" asp-action="Index"
+           class="btn btn-primary" />
+</form>
+
+<a asp-action="Index">Reset Filters</a>
+
+<form method="post">
+
+    <div class="form-group">
+        <div>
+            <input type="range" min="0" max="100" value="0" name="sale"
+                   oninput="this.nextElementSibling.value = this.value"/>
+            <output>0</output>
+            <input type="submit" value="Apply Sale" asp-action="ApplySale"
+                   class="btn btn-primary" />
+
+            <input type="submit" value="Restocked" asp-action="Restock"
+                   class="btn btn-primary" />
+            <input type="submit" value="Out of Stock" asp-action="Destock"
+                   class="btn btn-primary" />
+        </div>
+    </div>
+    @Html.Hidden("returnUrl",Context.Request.GetEncodedPathAndQuery())
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <input id="all" type="checkbox" class="form-check-input"/>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
@@ -39,14 +76,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                <input type="checkbox" name="selected" value="@item.Id"
+                    class="form-check-input"/>
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
+                <partial name="_ProductPrice" model="item"/>
             <td>
                 @Html.DisplayFor(modelItem => item.InStock)
             </td>
@@ -68,3 +104,18 @@
 }
     </tbody>
 </table>
+
+</form>
+
+@section Scripts
+    {
+    <script>
+        document.getElementById("all").onchange = () => {
+            const ref = document.getElementById("all").checked;
+
+            document.querySelectorAll(".form-check-input").forEach((item)=>{
+                item.checked = ref;
+            })
+        }
+    </script>
+}

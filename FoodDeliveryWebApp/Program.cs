@@ -5,6 +5,8 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FoodDeliveryWebApp.Models.Categories;
+using FoodDeliveryWebApp.Models;
 
 namespace FoodDeliveryWebApp
 {
@@ -64,6 +66,9 @@ namespace FoodDeliveryWebApp
 
             #region Repository Services
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
+            builder.Services.AddScoped<ISellerRepo, SellerRepo>();
+            builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
@@ -94,10 +99,15 @@ namespace FoodDeliveryWebApp
 
             app.MapRazorPages();
 
+
+
+            app.MapRazorPages();
+
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
+
 
             app.MapControllerRoute(
                 name: "default",
