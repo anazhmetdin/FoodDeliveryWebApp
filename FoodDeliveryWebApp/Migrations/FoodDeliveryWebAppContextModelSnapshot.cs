@@ -202,6 +202,9 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<string>("PaymentId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("PromoCodeId")
                         .HasColumnType("int");
 

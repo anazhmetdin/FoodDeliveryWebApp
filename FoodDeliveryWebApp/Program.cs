@@ -99,10 +99,15 @@ namespace FoodDeliveryWebApp
 
             app.MapRazorPages();
 
+
+
+            app.MapRazorPages();
+
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
+
 
             app.MapControllerRoute(
                 name: "default",
