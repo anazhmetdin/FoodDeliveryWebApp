@@ -2,7 +2,7 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
-    var role = Request.Query["IsCustomer"][0] == "True" ? "Customer" : "Seller";
+    var role = Request.Query["IsCustomer"][0] == "true" ? "Customer" : "Seller";
     var isCust = role == "Customer";
 }
 
@@ -13,10 +13,10 @@
         <form id="registerForm" asp-route-IsCustomer="@isCust" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
-            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-            <input hidden asp-for="Input.Role" class="form-control" aria-required="true" value="@role"/>
-            
+            <input hidden asp-for="Input.Role" class="form-control" aria-required="true" value="@role" />
+
             @*TESTING ONLY*@
             <h1>@role</h1>
 
@@ -25,38 +25,38 @@
                 <label asp-for="Input.FirstName">First Name</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.LastName" class="form-control" autocomplete="name" aria-required="true" placeholder="Doe" />
                 <label asp-for="Input.LastName">Last Name</label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phone" aria-required="true" placeholder="0XX-XXXX-XXXX" />
                 <label asp-for="Input.PhoneNumber">Phone Number</label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="Input.Password">Password</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
-            @if(role == "Seller")
+            @if (role == "Seller")
             {
                 <div class="form-floating mb-3">
                     <input asp-for="Input.StoreName" class="form-control" aria-required="true" placeholder="store name" />
@@ -64,7 +64,7 @@
                     <span asp-validation-for="Input.StoreName" class="text-danger"></span>
                 </div>
             }
-           
+
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
@@ -77,8 +77,10 @@
                 {
                     <div>
                         <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                                article
+                                about setting up this ASP.NET application to support logging in via external services
+                            </a>.
                         </p>
                     </div>
                 }
