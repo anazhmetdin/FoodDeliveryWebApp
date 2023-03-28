@@ -1,4 +1,4 @@
-﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +12,8 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual AppUser User { get; set; } = new();
 
-        public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
+        public virtual List<Address> Addresses { get; set; } = new();
+
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

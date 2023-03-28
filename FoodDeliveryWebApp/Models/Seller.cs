@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Seller: BaseModel
+    public class Seller : BaseModel
     {
         [Key]
         [ForeignKey("User")]
@@ -21,7 +21,7 @@ namespace FoodDeliveryWebApp.Models
 
         [Required]
         public AppUser User { get; set; } = new();
-        public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
         public byte[] Logo { get; set; } = new byte[256];
     }
 }

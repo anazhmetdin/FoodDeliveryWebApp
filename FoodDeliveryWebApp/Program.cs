@@ -5,7 +5,6 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Data.SqlClient;
 using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models;
 
@@ -17,19 +16,15 @@ namespace FoodDeliveryWebApp
         {
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("FoodDeliveryWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'FoodDeliveryWebAppContextConnection' not found.");
-          
+
             #region Services
             builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
 
-            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
-
-            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
-
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
-            
+
             builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders();
-            
+
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
             builder.Services.Configure<IdentityOptions>(options =>
@@ -63,14 +58,14 @@ namespace FoodDeliveryWebApp
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-            
+
             builder.Services.AddAuthentication();
-            
+
             builder.Services.AddAuthorization();
             #endregion
 
             #region Repository Services
-            builder.Services.AddScoped<ICustomerHomeRepo, CustomerHomeRepo>();
+            builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
             builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
@@ -80,7 +75,7 @@ namespace FoodDeliveryWebApp
 
             builder.Services.AddControllersWithViews();
             #endregion
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -100,17 +95,15 @@ namespace FoodDeliveryWebApp
                 app.UseAuthentication();
                 app.UseAuthorization();
             }
+
+
+            app.MapRazorPages();
+
             app.MapControllerRoute(
                 name: "defaultWithArea",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             );
-            app.MapRazorPages();
-            
-            //app.MapControllerRoute(
-            //    name: "defaultWithArea",
-            //    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-            //);
-            
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -33,7 +33,7 @@ namespace FoodDeliveryWebApp.Models
         
         public virtual Seller? Seller { get; set; }
 
-        public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
+        public virtual ICollection<OrderProduct> CustomerOrderProducts { get; set; } = new List<OrderProduct>();
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
 

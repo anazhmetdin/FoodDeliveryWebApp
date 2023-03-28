@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using FoodDeliveryWebApp.Data;
-using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 {
@@ -89,7 +88,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Name can only contain alphabetic letters.")]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
-            
+
             [Required]
             [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Name can only contain alphabetic letters.")]
             [Display(Name = "Last Name")]
@@ -156,13 +155,13 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
 
-                if(!_roleManager.Roles.Any(r => r.Name == "Customer"))
+                if (!_roleManager.Roles.Any(r => r.Name == "Customer"))
                     _ = await _roleManager.CreateAsync(new IdentityRole("Customer"));
                 if (!_roleManager.Roles.Any(r => r.Name == "Seller"))
                     _ = await _roleManager.CreateAsync(new IdentityRole("Seller"));
 
                 var result1 = await _userManager.CreateAsync(user, Input.Password);
-                
+
                 if (result1.Succeeded)
                 {
                     var result2 = await _userManager.AddToRoleAsync(user, Input.Role);
@@ -176,34 +175,30 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                            values: new { area = "Identity", userId, code, returnUrl },
                             protocol: Request.Scheme);
 
                         //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        //{
-                        //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                        //}
-                        //else
-                        //{
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        await _context.Sellers.AddAsync(new()
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
-                            UserId = userId,
-                            User = user,
-                            StoreName = Input.StoreName
-                        });
-
-                        _context.SaveChanges();
-
-                        if (Input.Role == "Seller")
-                        {
-                            return RedirectToAction("Index", "Products", new { area = "Seller" });
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                         }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            await _context.Sellers.AddAsync(new()
+                            {
+                                UserId = user.Id,
+                                User = user,
+                                StoreName = Input.StoreName
+                            });
+
+                            _context.SaveChanges();
+
                             return LocalRedirect(returnUrl);
-                        //}
+                        }
                     }
                     else
                     {
@@ -220,7 +215,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-                
+
             }
 
             // If we got this far, something failed, redisplay form
