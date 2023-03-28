@@ -19,10 +19,18 @@
         <input type="submit" value="Filter" asp-action="Index"
                class="btn btn-primary" />
 
-        <input type="submit" value="Restocked" asp-action="Restock"
-               class="btn btn-primary" />
-        <input type="submit" value="Out of Stock" asp-action="Destock"
-               class="btn btn-primary" />
+        <div>
+            <input type="range" min="0" max="100" value="0" name="sale"
+                   oninput="this.nextElementSibling.value = this.value"/>
+            <output>0</output>
+            <input type="submit" value="Apply Sale" asp-action="ApplySale"
+                   class="btn btn-primary" />
+
+            <input type="submit" value="Restocked" asp-action="Restock"
+                   class="btn btn-primary" />
+            <input type="submit" value="Out of Stock" asp-action="Destock"
+                   class="btn btn-primary" />
+        </div>
     </div>
 
 <table class="table">
@@ -33,9 +41,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
@@ -65,12 +70,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
+                <partial name="_ProductPrice" model="item"/>
             <td>
                 @Html.DisplayFor(modelItem => item.InStock)
             </td>

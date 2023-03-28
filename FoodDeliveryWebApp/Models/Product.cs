@@ -3,6 +3,8 @@ using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FoodDeliveryWebApp.Models.Categories;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 namespace FoodDeliveryWebApp.Models
 {
@@ -35,8 +37,10 @@ namespace FoodDeliveryWebApp.Models
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public bool HasSale { get; set; }
-        [Range(0,100)]
-        public int Sale { get; set; }
+        public bool HasSale { get; set; } = false;
+        [Range(0, 100)]
+        public int Sale { get; set; } = 0;
+        [NotMapped]
+        public decimal SalePrice { get => Price * (100 - Sale) / 100; }
     }
 }

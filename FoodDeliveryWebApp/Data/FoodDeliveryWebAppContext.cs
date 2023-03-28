@@ -33,6 +33,8 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
         builder.Entity<Customer>().HasKey(s => s.UserId);
 
+        builder.Entity<Product>().HasIndex(s => s.HasSale);
+
         builder.Entity<Product>(b =>
         {
             b.Property(p => p.Price).HasColumnType("money");

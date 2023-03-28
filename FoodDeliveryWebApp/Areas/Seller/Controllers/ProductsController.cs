@@ -54,6 +54,17 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
         // POST: Seller/Products
         [HttpPost]
+        public ActionResult ApplySale(IFormCollection pairs)
+        {
+            var sellerId = _userManager.GetUserId(User);
+
+            _sellerRepo.ApplySale(pairs, sellerId);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Seller/Products
+        [HttpPost]
         public ActionResult Destock(IFormCollection pairs)
         {
             var sellerId = _userManager.GetUserId(User);
