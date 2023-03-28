@@ -19,8 +19,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
     [AutoValidateAntiforgeryToken]
     public class ProductsController : Controller
     {
-        private readonly ISellerRepo _sellerRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ISellerRepo _sellerRepo;
         private readonly IModelRepo<Category> _categryRepo;
         private readonly ModelRepo<Product> _productRepo;
 
@@ -35,6 +35,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // GET: Seller/Products
         public ActionResult Index()
         {
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             var sellerId = _userManager.GetUserId(User);
 
             return View(_sellerRepo.GetSellerProducts(sellerId));
@@ -42,12 +43,23 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
         // POST: Seller/Products
         [HttpPost]
-        public ActionResult Restocked(IFormCollection pairs)
+        public ActionResult Restock(IFormCollection pairs)
         {
-            if (pairs["selected"].Count > 0)
-            {
-                
-            }
+            var sellerId = _userManager.GetUserId(User);
+
+            _sellerRepo.Restock(pairs, sellerId, true);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Seller/Products
+        [HttpPost]
+        public ActionResult Destock(IFormCollection pairs)
+        {
+            var sellerId = _userManager.GetUserId(User);
+
+            _sellerRepo.Restock(pairs, sellerId, false);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -56,9 +68,10 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
-            var Model = _productRepo.GetById(id);
+
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
             
-            if (Model.SellerId != sellerId)
+            if (Model == null)
                 return NotFound();
             
             return View(Model);
@@ -102,13 +115,14 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
 
-            var Model = _productRepo.GetById(id);
-            if (Model == null || Model.SellerId != sellerId)
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+            if (Model == null)
             {
                 return NotFound();
             }
 
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(),
+                "Id", "Name", Model.CategoryId);
 
             return View(Model);
         }
@@ -123,8 +137,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 var sellerId = _userManager.GetUserId(User);
                 ViewBag.sell = sellerId;
 
-                var Model = _productRepo.GetById(id);
-                if (Model == null || Model.SellerId != sellerId)
+                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+                if (Model == null)
                 {
                     return NotFound();
                 }
@@ -157,8 +171,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
 
-            var Model = _productRepo.GetById(id);
-            if (Model == null || Model.SellerId != sellerId)
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+            if (Model == null)
             {
                 return NotFound();
             }
@@ -176,8 +190,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 var sellerId = _userManager.GetUserId(User);
                 ViewBag.sell = sellerId;
 
-                var Model = _productRepo.GetById(id);
-                if (Model == null || Model.SellerId != sellerId)
+                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+                if (Model == null)
                 {
                     return NotFound();
                 }

@@ -11,16 +11,25 @@
 
 <form method="post">
 
-<div class="form-group">
-    <input type="submit" value="Restocked" asp-action="Restocked"
-           class="btn btn-primary"/>
-</div>
+    <div class="form-group">
+
+        <select class="form-control" asp-items="@ViewBag.CategoryList">
+            <option disabled="disabled" selected="selected">Select Category</option>
+        </select>
+        <input type="submit" value="Filter" asp-action="Index"
+               class="btn btn-primary" />
+
+        <input type="submit" value="Restocked" asp-action="Restock"
+               class="btn btn-primary" />
+        <input type="submit" value="Out of Stock" asp-action="Destock"
+               class="btn btn-primary" />
+    </div>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.Label("")
+                <input id="all" type="checkbox" class="form-check-input"/>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -50,7 +59,8 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.CheckBox("selected", new {value = item.Id})
+                <input type="checkbox" name="selected" value="@item.Id"
+                    class="form-check-input"/>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -84,3 +94,16 @@
 </table>
 
 </form>
+
+@section Scripts
+{
+    <script>
+        document.getElementById("all").onchange = () => {
+            const ref = document.getElementById("all").checked;
+
+            document.querySelectorAll(".form-check-input").forEach((item)=>{
+                item.checked = ref;
+            })
+        }
+    </script>
+}
