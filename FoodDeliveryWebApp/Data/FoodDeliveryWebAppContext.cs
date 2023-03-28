@@ -19,8 +19,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Address> Addresses { get; set; }
     public DbSet<CustomerOrderProduct> CustomerOrderProducts { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
+    public DbSet<Payment> Payment { get; set; }
 
-    public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options){}
+    public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,7 +29,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
-
+        builder.Entity<Payment>().HasKey(p => p.Id);
         builder.Entity<Seller>().HasKey(s => s.UserId);
         builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
         builder.Entity<Customer>().HasKey(s => s.UserId);
@@ -42,7 +43,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<Order>(b =>
         {
             b.Property(o => o.TotalPrice).HasColumnType("money");
-            
+
             b.Property(o => o.Status)
             .HasConversion(new EnumToStringConverter<OrderStatus>());
         });
