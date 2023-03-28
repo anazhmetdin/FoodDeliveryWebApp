@@ -17,11 +17,10 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<CustomerOrderProduct> CustomerOrderProducts { get; set; }
+    public DbSet<OrderProduct> CustomerOrderProducts { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
-    public DbSet<Payment> Payment { get; set; }
 
-    public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options) { }
+    public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options){}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -29,8 +28,6 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
-        builder.Entity<Payment>().HasKey(p => p.Id);
-        builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
 
         builder.Entity<Product>(b =>
         {
@@ -41,14 +38,16 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<Order>(b =>
         {
             b.Property(o => o.TotalPrice).HasColumnType("money");
-
+            
             b.Property(o => o.Status)
             .HasConversion(new EnumToStringConverter<OrderStatus>());
         });
 
-        builder.Entity<CustomerOrderProduct>(b =>
+        builder.Entity<OrderProduct>(b =>
         {
-            b.HasKey(cop => new { cop.ProductId, cop.OrderId, cop.CustomerId });
+            b.HasKey(cop => new { cop.ProductId, cop.OrderId});
+
+            b.Property(o => o.UnitPrice).HasColumnType("money");
 
             b.HasOne(cop => cop.Product)
              .WithMany(o => o.CustomerOrderProducts)
@@ -56,14 +55,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
              .OnDelete(DeleteBehavior.Restrict);
 
             b.HasOne(cop => cop.Order)
-             .WithMany(o => o.CustomerOrderProducts)
+             .WithMany(o => o.OrderProducts)
              .HasForeignKey(cop => cop.OrderId)
              .OnDelete(DeleteBehavior.Restrict);
-
-            b.HasOne(cop => cop.Customer)
-              .WithMany(o => o.CustomerOrderProducts)
-              .HasForeignKey(cop => cop.CustomerId)
-              .OnDelete(DeleteBehavior.Restrict);
         });
 
     }

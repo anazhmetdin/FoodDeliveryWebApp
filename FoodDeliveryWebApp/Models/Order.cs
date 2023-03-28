@@ -18,7 +18,7 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual Review Review { get; set; } = new();
 
-        public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
