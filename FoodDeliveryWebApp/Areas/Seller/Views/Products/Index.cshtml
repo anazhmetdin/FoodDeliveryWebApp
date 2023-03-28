@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<FoodDeliveryWebApp.Models.Product>
+@using Microsoft.AspNetCore.Http.Extensions;
 @{
     ViewData["Title"] = "Index";
 }
@@ -9,16 +10,26 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+<form method="get">
+    <select class="form-control" asp-items="@ViewBag.CategoryList" name="category">
+        <option disabled="disabled" selected="selected">Select Category</option>
+        <option value="0">All</option>
+    </select>
+    
+    <label for="hasSale">Sale</label>
+    <select class="form-control" asp-items="@ViewBag.hasSale" name="hasSale" id="hasSale">
+        <option disabled="disabled" selected="selected">Select value</option>
+    </select>
+
+    <input type="submit" value="Filter" asp-action="Index"
+           class="btn btn-primary" />
+</form>
+
+<a asp-action="Index">Reset Filters</a>
+
 <form method="post">
 
     <div class="form-group">
-
-        <select class="form-control" asp-items="@ViewBag.CategoryList">
-            <option disabled="disabled" selected="selected">Select Category</option>
-        </select>
-        <input type="submit" value="Filter" asp-action="Index"
-               class="btn btn-primary" />
-
         <div>
             <input type="range" min="0" max="100" value="0" name="sale"
                    oninput="this.nextElementSibling.value = this.value"/>
@@ -32,6 +43,7 @@
                    class="btn btn-primary" />
         </div>
     </div>
+    @Html.Hidden("returnUrl",Context.Request.GetEncodedPathAndQuery())
 
 <table class="table">
     <thead>
@@ -96,7 +108,7 @@
 </form>
 
 @section Scripts
-{
+    {
     <script>
         document.getElementById("all").onchange = () => {
             const ref = document.getElementById("all").checked;

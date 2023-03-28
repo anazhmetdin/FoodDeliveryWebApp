@@ -33,45 +33,56 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         }
 
         // GET: Seller/Products
-        public ActionResult Index()
+        public ActionResult Index(int? category, string? hasSale)
         {
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
+            ViewBag.hasSale = new SelectList(new List<string>() { "All", "Yes", "No" }, hasSale);
+            
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", category);
             var sellerId = _userManager.GetUserId(User);
 
-            return View(_sellerRepo.GetSellerProducts(sellerId));
+            bool sale = hasSale?.ToLower() == "yes";
+            hasSale = hasSale?.ToLower() == "all" ? null : hasSale;
+
+            category = category == 0 ? null : category;
+
+            var products = _sellerRepo.GetSellerProducts(sellerId)
+                .Where(s => (s.CategoryId == category || category == null) 
+                    && (s.HasSale == sale || hasSale == null) ).ToList();
+            
+            return View(products);
         }
 
         // POST: Seller/Products
         [HttpPost]
-        public ActionResult Restock(IFormCollection pairs)
+        public ActionResult Restock(IFormCollection pairs, string? returnUrl)
         {
             var sellerId = _userManager.GetUserId(User);
 
             _sellerRepo.Restock(pairs, sellerId, true);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToIndex(returnUrl);
         }
 
         // POST: Seller/Products
         [HttpPost]
-        public ActionResult ApplySale(IFormCollection pairs)
+        public ActionResult ApplySale(IFormCollection pairs, string? returnUrl)
         {
             var sellerId = _userManager.GetUserId(User);
 
             _sellerRepo.ApplySale(pairs, sellerId);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToIndex(returnUrl);
         }
 
         // POST: Seller/Products
         [HttpPost]
-        public ActionResult Destock(IFormCollection pairs)
+        public ActionResult Destock(IFormCollection pairs, string? returnUrl)
         {
             var sellerId = _userManager.GetUserId(User);
 
             _sellerRepo.Restock(pairs, sellerId, false);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToIndex(returnUrl);
         }
 
         // GET: Seller/Details/5
@@ -216,6 +227,13 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             {
                 return View();
             }
+        }
+        ActionResult RedirectToIndex(string? returnUrl)
+        {
+            if (returnUrl != null)
+                return Redirect(returnUrl);
+            else
+                return RedirectToAction(nameof(Index));
         }
     }
 }

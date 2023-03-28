@@ -54,8 +54,8 @@ namespace FoodDeliveryWebApp.Repositories
                 return false;
             }
         }
-        public virtual bool TryInsert(Product t, IFormFile Image) { return false; }
-        public virtual bool TryUpdate(Product t, IFormFile Image) { return false; }
+        public virtual bool TryInsert(Product t, IFormFile? Image) { return false; }
+        public virtual bool TryUpdate(Product t, IFormFile? Image) { return false; }
 
         public virtual bool TryUpdate(T t)
         {

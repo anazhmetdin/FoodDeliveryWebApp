@@ -16,7 +16,7 @@ namespace FoodDeliveryWebApp.Repositories
             return TryInsert(t);
         }
 
-        private void CopyImage(Product t, IFormFile? Image)
+        private static void CopyImage(Product t, IFormFile? Image)
         {
             if (Image == null) { return; }
 
