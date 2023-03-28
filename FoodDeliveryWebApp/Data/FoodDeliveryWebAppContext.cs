@@ -17,7 +17,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<OrderProduct> CustomerOrderProducts { get; set; }
+    public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
 
     public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options){}
@@ -56,7 +56,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.Property(o => o.UnitPrice).HasColumnType("money");
 
             b.HasOne(cop => cop.Product)
-             .WithMany(o => o.CustomerOrderProducts)
+             .WithMany(o => o.OrderProducts)
              .HasForeignKey(cop => cop.ProductId)
              .OnDelete(DeleteBehavior.Restrict);
 
