@@ -1,4 +1,4 @@
-﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;

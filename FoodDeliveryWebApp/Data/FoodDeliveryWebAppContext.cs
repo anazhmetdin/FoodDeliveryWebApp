@@ -1,4 +1,4 @@
-﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity;

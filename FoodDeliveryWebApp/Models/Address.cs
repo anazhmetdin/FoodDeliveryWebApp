@@ -26,5 +26,8 @@ namespace FoodDeliveryWebApp.Models
         public string UserId { get; set; } = string.Empty;
 
         public virtual AppUser User { get; set; } = new();
+
+        [NotMapped]
+        public string FullAddress { get => $"{Region}, {City}, {StreetName}, {BuildingNumber}"; }
     }
 }
