@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
@@ -9,5 +10,11 @@ namespace FoodDeliveryWebApp.Models
 
         [MaxLength(100)]
         public string UserReview { get; set; } = string.Empty;
+        [ForeignKey("Customer")]
+        public string CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
+        [ForeignKey("Seller")]
+        public string SellerId { get; set; }
+        public virtual Seller Seller { get; set; }
     }
 }

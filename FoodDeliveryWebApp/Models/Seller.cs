@@ -23,5 +23,6 @@ namespace FoodDeliveryWebApp.Models
         public virtual AppUser User { get; set; } = new();
 
         public virtual ICollection<SellerCategories> SellerCategories { get; set; } = new List<SellerCategories>();
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }

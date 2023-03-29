@@ -37,14 +37,16 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
             b.HasMany(s => s.SellerCategories)
            .WithOne(op => op.Seller)
-           .HasForeignKey(op => op.SellerId);
+           .HasForeignKey(op => op.SellerId)
+           .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<Category>(b =>
         {
             b.HasMany(s => s.SellerCategories)
            .WithOne(op => op.Category)
-           .HasForeignKey(op => op.CategoryId);
+           .HasForeignKey(op => op.CategoryId)
+           .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<Product>(b =>
@@ -62,12 +64,21 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasMany(o => o.OrderProducts)
             .WithOne(op => op.Order)
-            .HasForeignKey(op => op.OrderId);
+            .HasForeignKey(op => op.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             b.Property(o => o.TotalPrice).HasColumnType("money");
 
             b.Property(o => o.Status)
             .HasConversion(new EnumToStringConverter<OrderStatus>());
+        });
+
+        builder.Entity<Review>(b =>
+        {
+            b.HasOne(o => o.Seller)
+            .WithMany(op => op.Reviews)
+            .HasForeignKey(op => op.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<OrderProduct>(b =>
