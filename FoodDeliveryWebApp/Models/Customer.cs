@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Customer: BaseModel
+    public class Customer
     {
         [Key]
         [ForeignKey("User")]
-        public string UserId { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
 
         public virtual AppUser User { get; set; } = new();
 

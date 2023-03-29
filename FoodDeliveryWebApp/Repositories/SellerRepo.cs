@@ -2,6 +2,7 @@
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
 namespace FoodDeliveryWebApp.Repositories
@@ -42,6 +43,17 @@ namespace FoodDeliveryWebApp.Repositories
 
             Context.SaveChanges();
         }
+
+
+        public ICollection<Category> GetSellerCategories(string sellerId)
+        {
+            var seller = Context.Sellers.Where( s => s.Id == sellerId)
+                .Include(s => s.SellerCategories)
+                .ThenInclude(op => op.Category).FirstOrDefault();
+            return seller.SellerCategories.Select(s => s.Category).ToList();
+        }
+
+
 
         public void Restock(IFormCollection pairs, string? sellerId, bool stock)
         {

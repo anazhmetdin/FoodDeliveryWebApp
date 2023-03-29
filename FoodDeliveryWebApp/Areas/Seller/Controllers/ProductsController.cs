@@ -1,7 +1,6 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
@@ -24,11 +24,10 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         private readonly IModelRepo<Category> _categryRepo;
         private readonly ModelRepo<Product> _productRepo;
 
-        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, IModelRepo<Category> categryRepo, ModelRepo<Product> productRepo)
+        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, ModelRepo<Product> productRepo)
         {
             _sellerRepo = sellerRepo;
             _userManager = userManager;
-            _categryRepo = categryRepo;
             _productRepo = productRepo;
         }
 
@@ -104,7 +103,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             return View();
         }
 
@@ -115,7 +113,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             try
             {
                 if (ModelState.IsValid)
@@ -143,9 +140,10 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 return NotFound();
             }
 
+
             ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(),
                 "Id", "Name", Model.CategoryId);
-
+                
             return View(Model);
         }
 
@@ -166,7 +164,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 }
 
                 product.Id = id;
-                ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
 
                 if (Image == null)
                 {

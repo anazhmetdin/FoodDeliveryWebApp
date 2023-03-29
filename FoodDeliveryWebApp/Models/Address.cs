@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Address: BaseModel
+    public class Address
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required]
         public string StreetName { get; set; } = string.Empty;
 

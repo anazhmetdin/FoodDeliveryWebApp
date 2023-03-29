@@ -183,6 +183,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
+
                             return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                         }
                         else
@@ -190,7 +191,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                             await _signInManager.SignInAsync(user, isPersistent: false);
                             await _context.Sellers.AddAsync(new()
                             {
-                                UserId = user.Id,
+                                Id = user.Id,
                                 User = user,
                                 StoreName = Input.StoreName
                             });
