@@ -16,12 +16,8 @@ namespace FoodDeliveryWebApp.Models
         public DateTime EndDate { get; set; }
 
         public decimal MaximumDiscount { get; set; }
-     
-        [ForeignKey("Seller")]
-        public string SellerId { get; set; } = string.Empty;
-
-        public virtual AppUser Seller { get; set; } = new();
 
         public virtual ICollection<Category> AppliedTo { get; set; } = new List<Category>();
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

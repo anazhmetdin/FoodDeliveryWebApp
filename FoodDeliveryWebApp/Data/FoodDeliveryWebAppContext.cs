@@ -18,7 +18,6 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
-    public DbSet<SellerCategories> SellerCategories { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
 
@@ -35,16 +34,19 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasIndex(s => s.StoreName).IsUnique();
 
-            b.HasMany(s => s.SellerCategories)
-           .WithOne(op => op.Seller)
-           .HasForeignKey(op => op.SellerId);
+            b.HasMany(s => s.Categories)
+           .WithMany(op => op.Sellers);
         });
 
         builder.Entity<Category>(b =>
         {
-            b.HasMany(s => s.SellerCategories)
+            b.HasMany(s => s.Sellers)
+           .WithMany(op => op.Categories);
+
+            b.HasMany(s => s.Products)
            .WithOne(op => op.Category)
-           .HasForeignKey(op => op.CategoryId);
+           .HasForeignKey(p => p.CategoryId)
+           .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<Product>(b =>
@@ -62,7 +64,8 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasMany(o => o.OrderProducts)
             .WithOne(op => op.Order)
-            .HasForeignKey(op => op.OrderId);
+            .HasForeignKey(op => op.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             b.Property(o => o.TotalPrice).HasColumnType("money");
 
@@ -70,14 +73,17 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .HasConversion(new EnumToStringConverter<OrderStatus>());
         });
 
+        builder.Entity<Review>(b =>
+        {
+            b.HasOne(o => o.Seller)
+            .WithMany(op => op.Reviews)
+            .HasForeignKey(op => op.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
+        });
+
         builder.Entity<OrderProduct>(b =>
         {
             b.HasKey(o => new { o.ProductId, o.OrderId });
-        });
-        
-        builder.Entity<SellerCategories>(b =>
-        {
-            b.HasKey(o => new { o.CategoryId, o.SellerId });
         });
     
         builder.Entity<PromoCode>(b =>

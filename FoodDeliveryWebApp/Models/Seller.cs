@@ -1,4 +1,5 @@
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,6 +23,9 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual AppUser User { get; set; } = new();
 
-        public virtual ICollection<SellerCategories> SellerCategories { get; set; } = new List<SellerCategories>();
+        public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        public SellerStatus Status { get; set; } = SellerStatus.UnderReview;
     }
 }

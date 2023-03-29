@@ -48,9 +48,9 @@ namespace FoodDeliveryWebApp.Repositories
         public ICollection<Category> GetSellerCategories(string sellerId)
         {
             var seller = Context.Sellers.Where( s => s.Id == sellerId)
-                .Include(s => s.SellerCategories)
-                .ThenInclude(op => op.Category).FirstOrDefault();
-            return seller.SellerCategories.Select(s => s.Category).ToList();
+                .Include(s => s.Categories)
+                .FirstOrDefault();
+            return seller.Categories.ToList();
         }
 
 

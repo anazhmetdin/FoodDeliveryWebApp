@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    partial class FoodDeliveryWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230329161949_LinkReview")]
+    partial class LinkReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace FoodDeliveryWebApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CategorySeller", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SellersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CategoriesId", "SellersId");
-
-                    b.HasIndex("SellersId");
-
-                    b.ToTable("CategorySeller", (string)null);
-                });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Areas.Identity.Data.AppUser", b =>
                 {
@@ -142,7 +130,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Category", b =>
@@ -164,7 +152,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("PromoCodeId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Customer", b =>
@@ -174,7 +162,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Order", b =>
@@ -211,7 +199,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("PromoCodeId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.OrderProduct", b =>
@@ -226,7 +214,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderProducts", (string)null);
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>
@@ -276,7 +264,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.PromoCode", b =>
@@ -301,7 +289,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PromoCodes", (string)null);
+                    b.ToTable("PromoCodes");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Review", b =>
@@ -339,7 +327,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Seller", b =>
@@ -351,9 +339,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<string>("StoreName")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -364,7 +349,22 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("StoreName")
                         .IsUnique();
 
-                    b.ToTable("Sellers", (string)null);
+                    b.ToTable("Sellers");
+                });
+
+            modelBuilder.Entity("FoodDeliveryWebApp.Models.SellerCategories", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SellerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CategoryId", "SellerId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("SellerCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -500,21 +500,6 @@ namespace FoodDeliveryWebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CategorySeller", b =>
-                {
-                    b.HasOne("FoodDeliveryWebApp.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FoodDeliveryWebApp.Models.Seller", null)
-                        .WithMany()
-                        .HasForeignKey("SellersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Address", b =>
                 {
                     b.HasOne("FoodDeliveryWebApp.Areas.Identity.Data.AppUser", "User")
@@ -583,9 +568,9 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>
                 {
                     b.HasOne("FoodDeliveryWebApp.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FoodDeliveryWebApp.Models.Seller", "Seller")
@@ -631,6 +616,25 @@ namespace FoodDeliveryWebApp.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FoodDeliveryWebApp.Models.SellerCategories", b =>
+                {
+                    b.HasOne("FoodDeliveryWebApp.Models.Category", "Category")
+                        .WithMany("SellerCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FoodDeliveryWebApp.Models.Seller", "Seller")
+                        .WithMany("SellerCategories")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -691,7 +695,7 @@ namespace FoodDeliveryWebApp.Migrations
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Category", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("SellerCategories");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Customer", b =>
@@ -719,6 +723,8 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Seller", b =>
                 {
                     b.Navigation("Reviews");
+
+                    b.Navigation("SellerCategories");
                 });
 #pragma warning restore 612, 618
         }
