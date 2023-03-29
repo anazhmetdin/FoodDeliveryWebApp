@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FoodDeliveryWebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Final : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,17 +53,19 @@ namespace FoodDeliveryWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "PromoCodes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Rate = table.Column<int>(type: "int", nullable: false),
-                    UserReview = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaximumDiscount = table.Column<decimal>(type: "money", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_PromoCodes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,35 +215,13 @@ namespace FoodDeliveryWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PromoCodes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MaximumDiscount = table.Column<decimal>(type: "money", nullable: false),
-                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PromoCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PromoCodes_AspNetUsers_SellerId",
-                        column: x => x.SellerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Sellers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StoreName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,37 +254,53 @@ namespace FoodDeliveryWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Reviews",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TotalPrice = table.Column<decimal>(type: "money", nullable: false),
-                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rate = table.Column<int>(type: "int", nullable: false),
+                    UserReview = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ReviewId = table.Column<int>(type: "int", nullable: false),
-                    PromoCodeId = table.Column<int>(type: "int", nullable: true)
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId",
+                        name: "FK_Reviews_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_PromoCodes_PromoCodeId",
-                        column: x => x.PromoCodeId,
-                        principalTable: "PromoCodes",
-                        principalColumn: "Id");
+                        name: "FK_Reviews_Sellers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "Sellers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategorySeller",
+                columns: table => new
+                {
+                    CategoriesId = table.Column<int>(type: "int", nullable: false),
+                    SellersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategorySeller", x => new { x.CategoriesId, x.SellersId });
                     table.ForeignKey(
-                        name: "FK_Orders_Reviews_ReviewId",
-                        column: x => x.ReviewId,
-                        principalTable: "Reviews",
+                        name: "FK_CategorySeller_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategorySeller_Sellers_SellersId",
+                        column: x => x.SellersId,
+                        principalTable: "Sellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -333,7 +329,7 @@ namespace FoodDeliveryWebApp.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Products_Sellers_SellerId",
                         column: x => x.SellerId,
@@ -343,27 +339,46 @@ namespace FoodDeliveryWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SellerCategories",
+                name: "Orders",
                 columns: table => new
                 {
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TotalPrice = table.Column<decimal>(type: "money", nullable: false),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReviewId = table.Column<int>(type: "int", nullable: false),
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PromoCodeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SellerCategories", x => new { x.CategoryId, x.SellerId });
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SellerCategories_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        name: "FK_Orders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SellerCategories_Sellers_SellerId",
+                        name: "FK_Orders_PromoCodes_PromoCodeId",
+                        column: x => x.PromoCodeId,
+                        principalTable: "PromoCodes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Orders_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Sellers_SellerId",
                         column: x => x.SellerId,
                         principalTable: "Sellers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -381,7 +396,7 @@ namespace FoodDeliveryWebApp.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrderProducts_Products_ProductId",
                         column: x => x.ProductId,
@@ -440,6 +455,11 @@ namespace FoodDeliveryWebApp.Migrations
                 column: "PromoCodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategorySeller_SellersId",
+                table: "CategorySeller",
+                column: "SellersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderProducts_OrderId",
                 table: "OrderProducts",
                 column: "OrderId");
@@ -460,6 +480,11 @@ namespace FoodDeliveryWebApp.Migrations
                 column: "ReviewId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_SellerId",
+                table: "Orders",
+                column: "SellerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
@@ -470,13 +495,13 @@ namespace FoodDeliveryWebApp.Migrations
                 column: "SellerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PromoCodes_SellerId",
-                table: "PromoCodes",
-                column: "SellerId");
+                name: "IX_Reviews_CustomerId",
+                table: "Reviews",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SellerCategories_SellerId",
-                table: "SellerCategories",
+                name: "IX_Reviews_SellerId",
+                table: "Reviews",
                 column: "SellerId");
 
             migrationBuilder.CreateIndex(
@@ -508,10 +533,10 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "OrderProducts");
+                name: "CategorySeller");
 
             migrationBuilder.DropTable(
-                name: "SellerCategories");
+                name: "OrderProducts");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -523,13 +548,13 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
                 name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Sellers");
