@@ -67,6 +67,11 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .HasForeignKey(op => op.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
+            b.HasOne(o => o.Seller)
+            .WithMany(op => op.Orders)
+            .HasForeignKey(op => op.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             b.Property(o => o.TotalPrice).HasColumnType("money");
 
             b.Property(o => o.Status)

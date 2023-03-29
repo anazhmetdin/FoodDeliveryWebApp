@@ -21,8 +21,9 @@ namespace FoodDeliveryWebApp.Models
         public virtual Customer Customer { get; set; } = new();
 
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-        [NotMapped]
-        public virtual ICollection<Seller> Sellers { get => OrderProducts.GroupBy(op => op.Product.Seller??new()).Select(g => g.Key).ToList(); }
+        [ForeignKey("seller")]
+        public string SellerId { get; set; }
+        public virtual Seller Seller { get; set; }
 
         [ForeignKey("PromoCode")]
         public int? PromoCodeId { get; set; }
