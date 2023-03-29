@@ -26,6 +26,9 @@ namespace FoodDeliveryWebApp.Models
         [Range(0, 100)]
         public int Sale { get; set; } = 0;
 
+        public bool HasSale { get; set; }
+
+
         [Required]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
