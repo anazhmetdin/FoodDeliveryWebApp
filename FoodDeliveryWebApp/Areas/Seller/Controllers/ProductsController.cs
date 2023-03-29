@@ -24,11 +24,12 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         private readonly IModelRepo<Category> _categryRepo;
         private readonly ModelRepo<Product> _productRepo;
 
-        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, ModelRepo<Product> productRepo)
+        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, ModelRepo<Product> productRepo, IModelRepo<Category> categryRepo)
         {
             _sellerRepo = sellerRepo;
             _userManager = userManager;
             _productRepo = productRepo;
+            _categryRepo = categryRepo;
         }
 
         // GET: Seller/Products
@@ -103,21 +104,23 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
             return View();
         }
 
         // POST: SellerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,Description,Price,InStock,SellerId,CategoryId")] Product product, IFormFile Image)
+        public ActionResult Create([Bind("Name,Description,Price,InStock,Sale,SellerId,CategoryId")] Product product, IFormFile Image)
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", product.CategoryId);
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (_productRepo.TryInsert(product, Image))
+                    if (product.SellerId == sellerId && _productRepo.TryInsert(product, Image))
                         return RedirectToAction(nameof(Index));
                 }
                 return View(product);
@@ -150,7 +153,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,CategoryId")] Product product, IFormFile? Image)
+        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,Sale,CategoryId")] Product product, IFormFile? Image)
         {
             try
             {
