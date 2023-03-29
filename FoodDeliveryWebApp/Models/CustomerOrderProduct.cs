@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class CustomerOrderProduct: BaseModel
+    public class CustomerOrderProduct
     {
         [ForeignKey("Customer")]
         public string CustomerId { get; set; } = string.Empty;
