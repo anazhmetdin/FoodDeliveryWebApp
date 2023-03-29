@@ -25,6 +25,7 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
         public SellerStatus Status { get; set; } = SellerStatus.UnderReview;
     }
