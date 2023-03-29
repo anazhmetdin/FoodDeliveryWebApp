@@ -20,7 +20,15 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual Customer Customer { get; set; } = new();
 
+        [ForeignKey("Review")]
+        public int ReviewId { get; set; }
+       
         public virtual Review Review { get; set; } = new();
+
+        [ForeignKey("Seller")]
+        public string SellerId { get; set; } = string.Empty;
+        
+        public virtual Seller Seller { get; set; } = new();
 
         [ForeignKey("PromoCode")]
         public int? PromoCodeId { get; set; }

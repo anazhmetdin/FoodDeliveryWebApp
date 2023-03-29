@@ -35,6 +35,10 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasIndex(s => s.StoreName).IsUnique();
 
+            b.HasMany(s => s.Orders)
+           .WithOne(op => op.Seller)
+           .HasForeignKey(op => op.SellerId);
+
             b.HasMany(s => s.SellerCategories)
            .WithOne(op => op.Seller)
            .HasForeignKey(op => op.SellerId);
@@ -63,6 +67,11 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.HasMany(o => o.OrderProducts)
             .WithOne(op => op.Order)
             .HasForeignKey(op => op.OrderId);
+
+            b.HasOne(o => o.Seller)
+            .WithMany(op => op.Orders)
+            .HasForeignKey(op => op.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             b.Property(o => o.TotalPrice).HasColumnType("money");
 
