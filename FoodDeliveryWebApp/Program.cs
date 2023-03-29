@@ -6,7 +6,6 @@ using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Stripe;
-using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models;
 
 
@@ -69,8 +68,8 @@ namespace FoodDeliveryWebApp
             #region Repository Services
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
-            builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
-            builder.Services.AddScoped<ModelRepo<Product>, ProductRepo>();
+            //builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();

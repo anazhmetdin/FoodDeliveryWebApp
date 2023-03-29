@@ -321,6 +321,7 @@ namespace FoodDeliveryWebApp.Migrations
                     InStock = table.Column<bool>(type: "bit", nullable: false),
                     Image = table.Column<byte[]>(type: "image", nullable: false),
                     Sale = table.Column<int>(type: "int", nullable: false),
+                    HasSale = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
