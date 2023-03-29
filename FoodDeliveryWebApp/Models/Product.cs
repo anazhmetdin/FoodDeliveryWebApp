@@ -42,5 +42,8 @@ namespace FoodDeliveryWebApp.Models
         public virtual Seller? Seller { get; set; }
 
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
+        [NotMapped]
+        public decimal SalePrice { get => Price * (100 - Sale) / 100; }
     }
 }
