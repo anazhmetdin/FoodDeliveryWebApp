@@ -1,9 +1,10 @@
-﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FoodDeliveryWebApp.Repositories
 {
@@ -34,31 +35,72 @@ namespace FoodDeliveryWebApp.Repositories
                 }).ToList();
         }
 
-        public ICollection<AppUser> GetSellers()
+        public ICollection<SellerViewModel> GetSellers()
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
 
             var sellers = from usr in _context.Users
                           join uRole in _context.UserRoles
                           on usr.Id equals uRole.UserId
+                          join seller in _context.Sellers
+                          on usr.Id equals seller.Id
                           where uRole.RoleId == roleId
-                          select usr.Id;
+                          select new 
+                          { 
+                              usr.Id,
+                              seller.Logo,
+                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
+                              seller.StoreName 
+                          };
 
-            List<AppUser> users = new();
-            foreach (var id in sellers)
+            List<SellerViewModel> restaurants = new();
+
+            foreach (var seller in sellers)
             {
-                var res = _context.Users.Find(id);
-                if (res != null) users.Add(res);
+                restaurants.Add(new()
+                {
+                    Id = seller.Id,
+                    Categories = string.Join(", ", seller.Categories),
+                    StoreName = seller.StoreName,
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}"
+                });
             }
 
-            return users;
+            return restaurants;
         }
 
-        public ICollection<AppUser> GetSellersFiltered(Func<AppUser, bool> func)
+        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories)
         {
-            var sellers = GetSellers();
+            var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
 
-            return sellers.Where(func).ToList();
+            var sellers = from usr in _context.Users
+                          join uRole in _context.UserRoles
+                          on usr.Id equals uRole.UserId
+                          join seller in _context.Sellers
+                          on usr.Id equals seller.Id
+                          where uRole.RoleId == roleId && seller.Categories.Any(c => categories.Contains(c))
+                          select new
+                          {
+                              usr.Id,
+                              seller.Logo,
+                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
+                              seller.StoreName
+                          };
+
+            List<SellerViewModel> restaurants = new();
+
+            foreach (var seller in sellers)
+            {
+                restaurants.Add(new()
+                {
+                    Id = seller.Id,
+                    Categories = string.Join(", ", seller.Categories),
+                    StoreName = seller.StoreName,
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}"
+                });
+            }
+
+            return restaurants;
         }
     }
 }

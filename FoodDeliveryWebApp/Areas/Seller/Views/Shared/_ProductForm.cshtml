@@ -1,4 +1,6 @@
-﻿@model FoodDeliveryWebApp.Models.Product
+﻿@using FoodDeliveryWebApp.Models.Enums;
+    using FoodDeliveryWebApp.Models;
+@model FoodDeliveryWebApp.Models.Product
 
 <div asp-validation-summary="All" class="text-danger"></div>
 <div class="form-group">
@@ -8,17 +10,23 @@
 </div>
 <div class="form-group">
     <label asp-for="Description" class="control-label"></label>
-    <input asp-for="Description" class="form-control" />
+    <textarea asp-for="Description" class="form-control"
+    style="resize:none;"></textarea>
     <span asp-validation-for="Description" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Price" class="control-label"></label>
-    <input asp-for="Price" class="form-control" />
+    <input asp-for="Price" class="form-control" id="Price"/>
     <span asp-validation-for="Price" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Sale" class="control-label"></label>
+    <input asp-for="Sale" class="form-control" value="0"/>
+    <span asp-validation-for="Sale" class="text-danger"></span>
 </div>
 <div class="form-group form-check">
     <label class="form-check-label">
-        <input class="form-check-input" asp-for="InStock" /> @Html.DisplayNameFor(model => model.InStock)
+        <input class="form-check-input" asp-for="InStock" checked="checked" /> @Html.DisplayNameFor(model => model.InStock)
     </label>
 </div>
 <div class="form-group">
@@ -36,14 +44,15 @@
     }
     else
     {
-        <img alt="productImg" class="productImg" src="~/images/products-icon.jpg" />
+        <img alt="product Img" class="productImg" src="~/images/products-icon.jpg" />
     }
     <div class="custom-file mt-2">
         <input type="file"
                 accept="image/*"
                 asp-for="Image"
+                value="@null"
                 class="custom-file-input"
-                onchange="document.getElementById('productImg').src = window.URL.createObjectURL(this.files[0])" />
+               onchange="document.querySelector('.productImg').src = window.URL.createObjectURL(this.files[0])" />
         <label class="custom-file-label" asp-for="Image">Choose picture...</label>
         <span asp-validation-for="Image" class="text-danger"></span>
     </div>
@@ -53,3 +62,11 @@
 <select asp-for="SellerId" class ="form-control" asp-items="ViewBag.SellerId"></select>
 </div>*@
 <input asp-for="SellerId" type="hidden" value="@ViewBag.sell" />
+
+<script>
+    document.getElementById("Sale").addEventListener("input") = () =>
+    {
+        this.nextElementSibling.value = this.value;
+        this.previousElementSibling.value = document.getElementById("Sale").value * (100 - this.value) / 100;
+    }
+</script>

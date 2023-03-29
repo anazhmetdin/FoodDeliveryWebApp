@@ -1,0 +1,61 @@
+﻿@model List<FoodDeliveryWebApp.ViewModels.SellerViewModel>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Restaurant</h1>
+
+<div class="container">
+    @{
+        for (int i = 0; i < Model.Count; i += 3)
+        {
+            <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
+                @{
+                    for (int j = i; j < i + 3; j++)
+                    {
+                        if (j == Model.Count) break;
+
+                        <div class="col">
+                            <div class="card accordion-body">
+                                <img src="@Model[j].Logo">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Model[j].StoreName</h5>
+                                    <p class="card-text text-truncate">@Model[j].Categories</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button seller-id="@Model[j].Id" type="button" class="details-btn btn fs-4 btn-secondary">Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>
+
+<script>
+    const detailsButtons = document.querySelectorAll('.details-btn');
+
+    detailsButtons.forEach(button => {
+        button.addEventListener('click', event => {
+
+            const sellerId = $(event.target).attr('seller-id');
+
+            $.ajax({
+                url: `/Customer/Restaurants/Restaurant/${sellerId}`,
+                type: 'GET',
+                //data: jsonData,
+                //contentType: "application/json; charset=utf-8",
+                //dataType: "json",
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    });
+</script>

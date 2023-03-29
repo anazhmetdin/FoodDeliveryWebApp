@@ -1,5 +1,5 @@
 ﻿using FoodDeliveryWebApp.Data;
-using FoodDeliveryWebApp.Models.Categories;
+using FoodDeliveryWebApp.Models;
 
 namespace FoodDeliveryWebApp.Repositories
 {

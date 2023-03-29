@@ -10,14 +10,17 @@ namespace FoodDeliveryWebApp.Repositories
         {
         }
 
-        public override bool TryInsert(Product t, IFormFile Image)
+        public override bool TryInsert(Product t, IFormFile? Image)
         {
             CopyImage(t, Image);
+            t.HasSale = t.Sale > 0;
             return TryInsert(t);
         }
 
-        private static void CopyImage(Product t, IFormFile Image)
+        private static void CopyImage(Product t, IFormFile? Image)
         {
+            if (Image == null) { return; }
+
             using (var stream = new MemoryStream())
             {
                 Image.CopyTo(stream);
@@ -25,9 +28,10 @@ namespace FoodDeliveryWebApp.Repositories
             }
         }
 
-        public override bool TryUpdate(Product t, IFormFile Image)
+        public override bool TryUpdate(Product t, IFormFile? Image)
         {
             CopyImage(t, Image);
+            t.HasSale = t.Sale > 0;
             return TryUpdate(t);
         }
     }

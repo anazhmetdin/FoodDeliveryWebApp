@@ -5,6 +5,9 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Stripe;
+using FoodDeliveryWebApp.Models;
+
 
 namespace FoodDeliveryWebApp
 {
@@ -64,6 +67,9 @@ namespace FoodDeliveryWebApp
 
             #region Repository Services
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
+            builder.Services.AddScoped<ISellerRepo, SellerRepo>();
+            builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
@@ -72,6 +78,9 @@ namespace FoodDeliveryWebApp
             #endregion
 
             var app = builder.Build();
+
+            StripeConfiguration.ApiKey = "sk_test_51Mq0DEDRs2d2XncX3l5gLODG0on2gtdtEiPEXSsyB2m2TUfGwZwlanLbn5ZBZGP3LJbOjDXlsx1f5j0eTcKbKKJI00mPVX4uAc";
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -93,6 +102,9 @@ namespace FoodDeliveryWebApp
 
 
             app.MapRazorPages();
+
+            app.MapRazorPages();
+
 
             app.MapControllerRoute(
                 name: "defaultWithArea",

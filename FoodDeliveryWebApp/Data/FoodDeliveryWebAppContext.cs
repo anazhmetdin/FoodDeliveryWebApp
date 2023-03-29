@@ -1,4 +1,4 @@
-﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -17,9 +17,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<CustomerOrderProduct> CustomerOrderProducts { get; set; }
+    public DbSet<OrderProduct> OrderProducts { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
-    public DbSet<Payment> Payment { get; set; }
 
     public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options) { }
 
@@ -29,42 +29,85 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
-        builder.Entity<Payment>().HasKey(p => p.Id);
-        builder.Entity<Seller>().HasIndex(s => s.StoreName).IsUnique();
+
+        builder.Entity<Seller>(b =>
+        {
+            b.HasIndex(s => s.StoreName).IsUnique();
+
+            b.HasMany(s => s.Reviews)
+            .WithOne(op => op.Seller)
+            .HasForeignKey(r => r.SellerId);
+
+            b.HasMany(s => s.Categories)
+           .WithMany(op => op.Sellers);
+        });
+
+        builder.Entity<Category>(b =>
+        {
+            b.HasMany(s => s.Sellers)
+           .WithMany(op => op.Categories);
+
+            b.HasMany(s => s.Products)
+           .WithOne(op => op.Category)
+           .HasForeignKey(p => p.CategoryId)
+           .OnDelete(DeleteBehavior.Restrict);
+        });
 
         builder.Entity<Product>(b =>
         {
+            b.HasMany(p => p.OrderProducts)
+            .WithOne(op => op.Product)
+            .HasForeignKey(op => op.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             b.Property(p => p.Price).HasColumnType("money");
             b.Property(p => p.Image).HasColumnType("image");
         });
 
         builder.Entity<Order>(b =>
         {
+            b.HasOne(r => r.Review)
+            .WithMany()
+            .HasForeignKey(r => r.ReviewId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasMany(o => o.OrderProducts)
+            .WithOne(op => op.Order)
+            .HasForeignKey(op => op.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasOne(o => o.Seller)
+            .WithMany(op => op.Orders)
+            .HasForeignKey(op => op.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             b.Property(o => o.TotalPrice).HasColumnType("money");
 
             b.Property(o => o.Status)
             .HasConversion(new EnumToStringConverter<OrderStatus>());
         });
 
-        builder.Entity<CustomerOrderProduct>(b =>
+        builder.Entity<Review>(b =>
         {
-            b.HasKey(cop => new { cop.ProductId, cop.OrderId, cop.CustomerId });
+            b.HasOne(r=>r.Seller)
+            .WithMany(op => op.Reviews)
+            .HasForeignKey(r => r.SellerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            b.HasOne(cop => cop.Product)
-             .WithMany(o => o.CustomerOrderProducts)
-             .HasForeignKey(cop => cop.ProductId)
-             .OnDelete(DeleteBehavior.Restrict);
-
-            b.HasOne(cop => cop.Order)
-             .WithMany(o => o.CustomerOrderProducts)
-             .HasForeignKey(cop => cop.OrderId)
-             .OnDelete(DeleteBehavior.Restrict);
-
-            b.HasOne(cop => cop.Customer)
-              .WithMany(o => o.CustomerOrderProducts)
-              .HasForeignKey(cop => cop.CustomerId)
-              .OnDelete(DeleteBehavior.Restrict);
+            //b.HasOne(r => r.Order)
+            //.WithMany()
+            //.HasForeignKey(r => r.OrderId)
+            //.OnDelete(DeleteBehavior.NoAction);
         });
 
+        builder.Entity<OrderProduct>(b =>
+        {
+            b.HasKey(o => new { o.ProductId, o.OrderId });
+        });
+    
+        builder.Entity<PromoCode>(b =>
+        {
+            b.Property(p => p.MaximumDiscount).HasColumnType("money");
+        });
     }
 }

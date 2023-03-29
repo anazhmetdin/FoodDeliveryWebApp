@@ -1,7 +1,6 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Models.Categories;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
@@ -19,25 +19,70 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
     [AutoValidateAntiforgeryToken]
     public class ProductsController : Controller
     {
-        private readonly ISellerRepo _sellerRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ISellerRepo _sellerRepo;
         private readonly IModelRepo<Category> _categryRepo;
         private readonly ModelRepo<Product> _productRepo;
 
-        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, IModelRepo<Category> categryRepo, ModelRepo<Product> productRepo)
+        public ProductsController(ISellerRepo sellerRepo, UserManager<AppUser> userManager, ModelRepo<Product> productRepo, IModelRepo<Category> categryRepo)
         {
             _sellerRepo = sellerRepo;
             _userManager = userManager;
-            _categryRepo = categryRepo;
             _productRepo = productRepo;
+            _categryRepo = categryRepo;
         }
 
         // GET: Seller/Products
-        public ActionResult Index()
+        public ActionResult Index(int? category, string? hasSale)
+        {
+            ViewBag.hasSale = new SelectList(new List<string>() { "All", "Yes", "No" }, hasSale);
+            
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", category);
+            var sellerId = _userManager.GetUserId(User);
+
+            bool sale = hasSale?.ToLower() == "yes";
+            hasSale = hasSale?.ToLower() == "all" ? null : hasSale;
+
+            category = category == 0 ? null : category;
+
+            var products = _sellerRepo.GetSellerProducts(sellerId)
+                .Where(s => (s.CategoryId == category || category == null) 
+                    && (s.HasSale == sale || hasSale == null) ).ToList();
+            
+            return View(products);
+        }
+
+        // POST: Seller/Products
+        [HttpPost]
+        public ActionResult Restock(IFormCollection pairs, string? returnUrl)
         {
             var sellerId = _userManager.GetUserId(User);
 
-            return View(_sellerRepo.GetSellerProducts(sellerId));
+            _sellerRepo.Restock(pairs, sellerId, true);
+
+            return RedirectToIndex(returnUrl);
+        }
+
+        // POST: Seller/Products
+        [HttpPost]
+        public ActionResult ApplySale(IFormCollection pairs, string? returnUrl)
+        {
+            var sellerId = _userManager.GetUserId(User);
+
+            _sellerRepo.ApplySale(pairs, sellerId);
+
+            return RedirectToIndex(returnUrl);
+        }
+
+        // POST: Seller/Products
+        [HttpPost]
+        public ActionResult Destock(IFormCollection pairs, string? returnUrl)
+        {
+            var sellerId = _userManager.GetUserId(User);
+
+            _sellerRepo.Restock(pairs, sellerId, false);
+
+            return RedirectToIndex(returnUrl);
         }
 
         // GET: Seller/Details/5
@@ -45,9 +90,10 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
-            var Model = _productRepo.GetById(id);
+
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
             
-            if (Model.SellerId != sellerId)
+            if (Model == null)
                 return NotFound();
             
             return View(Model);
@@ -65,16 +111,16 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
+        public ActionResult Create([Bind("Name,Description,Price,InStock,Sale,SellerId,CategoryId")] Product product, IFormFile Image)
         {
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name");
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", product.CategoryId);
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (_productRepo.TryInsert(product, Image))
+                    if (product.SellerId == sellerId && _productRepo.TryInsert(product, Image))
                         return RedirectToAction(nameof(Index));
                 }
                 return View(product);
@@ -91,35 +137,42 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
 
-            var Model = _productRepo.GetById(id);
-            if (Model == null || Model.SellerId != sellerId)
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+            if (Model == null)
             {
                 return NotFound();
             }
 
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
 
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(),
+                "Id", "Name", Model.CategoryId);
+                
             return View(Model);
         }
 
         // POST: SellerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,Image,SellerId,CategoryId")] Product product, IFormFile Image)
+        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,Sale,CategoryId")] Product product, IFormFile? Image)
         {
             try
             {
                 var sellerId = _userManager.GetUserId(User);
                 ViewBag.sell = sellerId;
 
-                var Model = _productRepo.GetById(id);
-                if (Model == null || Model.SellerId != sellerId)
+                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+                if (Model == null)
                 {
                     return NotFound();
                 }
 
                 product.Id = id;
-                ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", Model.CategoryId);
+
+                if (Image == null)
+                {
+                    ModelState.Remove("Image");
+                    product.Image = Model.Image;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -140,8 +193,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
 
-            var Model = _productRepo.GetById(id);
-            if (Model == null || Model.SellerId != sellerId)
+            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+            if (Model == null)
             {
                 return NotFound();
             }
@@ -159,8 +212,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 var sellerId = _userManager.GetUserId(User);
                 ViewBag.sell = sellerId;
 
-                var Model = _productRepo.GetById(id);
-                if (Model == null || Model.SellerId != sellerId)
+                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
+                if (Model == null)
                 {
                     return NotFound();
                 }
@@ -174,6 +227,13 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             {
                 return View();
             }
+        }
+        ActionResult RedirectToIndex(string? returnUrl)
+        {
+            if (returnUrl != null)
+                return Redirect(returnUrl);
+            else
+                return RedirectToAction(nameof(Index));
         }
     }
 }

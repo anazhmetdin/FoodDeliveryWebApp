@@ -17,12 +17,12 @@ namespace FoodDeliveryWebApp.Repositories
             return Context.Set<T>().ToList();
         }
 
-        public virtual T? GetById(int? id)
+        public virtual T? GetById(dynamic? id)
         {
             return Context.Set<T>().Find(id);
         }
 
-        public virtual bool TryDelete(int? id)
+        public virtual bool TryDelete(dynamic? id)
         {
             if (GetById(id) is T t && t != null)
             {
@@ -54,19 +54,25 @@ namespace FoodDeliveryWebApp.Repositories
                 return false;
             }
         }
-        public virtual bool TryInsert(Product t, IFormFile Image) { return false; }
-        public virtual bool TryUpdate(Product t, IFormFile Image) { return false; }
+        public virtual bool TryInsert(Product t, IFormFile? Image) { return false; }
+        public virtual bool TryUpdate(Product t, IFormFile? Image) { return false; }
 
         public virtual bool TryUpdate(T t)
         {
             try
             {
-                if (GetById(t.Id) == null)
+                var tentry = Context.Entry(t);
+                if (tentry == null)
                 {
                     throw new KeyNotFoundException();
                 }
 
+                var tid = tentry.Metadata.FindPrimaryKey()!
+                    .Properties.Select(p => tentry.Property(p.Name).CurrentValue).First();
+                
+
                 var local = Context.Set<T>().Local.FirstOrDefault(s => s.Id == t.Id);
+                
                 if (local != null)
                     Context.Entry(local).State = EntityState.Detached;
 

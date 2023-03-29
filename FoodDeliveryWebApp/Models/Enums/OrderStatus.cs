@@ -2,6 +2,6 @@
 {
     public enum OrderStatus
     {
-        Pending, InProgress, Delivered, Rejected
+        Pending, Posted, InProgress, Delivered, Rejected
     }
 }
