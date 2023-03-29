@@ -5,6 +5,7 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Stripe;
 
 namespace FoodDeliveryWebApp
 {
@@ -72,6 +73,8 @@ namespace FoodDeliveryWebApp
             #endregion
 
             var app = builder.Build();
+
+            StripeConfiguration.ApiKey = "sk_test_51Mq0DEDRs2d2XncX3l5gLODG0on2gtdtEiPEXSsyB2m2TUfGwZwlanLbn5ZBZGP3LJbOjDXlsx1f5j0eTcKbKKJI00mPVX4uAc";
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

@@ -16,9 +16,5 @@ public class AppUser : IdentityUser
     public string LastName { get; set; } = string.Empty;
 
     public virtual List<Address> Addresses { get; set; } = new();
-
-    public virtual FoodDeliveryWebApp.Models.Customer? Customer { get; set; }
-    public virtual FoodDeliveryWebApp.Models.Seller? Seller { get; set; }
-
 }
 

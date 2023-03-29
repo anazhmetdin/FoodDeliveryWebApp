@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FoodDeliveryWebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,19 +50,6 @@ namespace FoodDeliveryWebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Category",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,15 +199,14 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.UserId);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Customers_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Customers_AspNetUsers_Id",
+                        column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -235,6 +221,7 @@ namespace FoodDeliveryWebApp.Migrations
                     Discount = table.Column<double>(type: "float", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaximumDiscount = table.Column<decimal>(type: "money", nullable: false),
                     SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -252,20 +239,38 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "Sellers",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StoreName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sellers", x => x.UserId);
+                    table.PrimaryKey("PK_Sellers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sellers_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Sellers_AspNetUsers_Id",
+                        column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PromoCodeId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_PromoCodes_PromoCodeId",
+                        column: x => x.PromoCodeId,
+                        principalTable: "PromoCodes",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -277,9 +282,10 @@ namespace FoodDeliveryWebApp.Migrations
                     TotalPrice = table.Column<decimal>(type: "money", nullable: false),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ReviewId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PromoCodeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -288,37 +294,18 @@ namespace FoodDeliveryWebApp.Migrations
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_PromoCodes_PromoCodeId",
+                        column: x => x.PromoCodeId,
+                        principalTable: "PromoCodes",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Reviews_ReviewId",
                         column: x => x.ReviewId,
                         principalTable: "Reviews",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CategorySeller",
-                columns: table => new
-                {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    SellersUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategorySeller", x => new { x.CategoriesId, x.SellersUserId });
-                    table.ForeignKey(
-                        name: "FK_CategorySeller_Category_CategoriesId",
-                        column: x => x.CategoriesId,
-                        principalTable: "Category",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategorySeller_Sellers_SellersUserId",
-                        column: x => x.SellersUserId,
-                        principalTable: "Sellers",
-                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -333,65 +320,69 @@ namespace FoodDeliveryWebApp.Migrations
                     Price = table.Column<decimal>(type: "money", nullable: false),
                     InStock = table.Column<bool>(type: "bit", nullable: false),
                     Image = table.Column<byte[]>(type: "image", nullable: false),
-                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Sale = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    PromoCodeId = table.Column<int>(type: "int", nullable: true)
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Category_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Products_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Products_PromoCodes_PromoCodeId",
-                        column: x => x.PromoCodeId,
-                        principalTable: "PromoCodes",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Sellers_SellerId",
                         column: x => x.SellerId,
                         principalTable: "Sellers",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerOrderProducts",
+                name: "SellerCategories",
                 columns: table => new
                 {
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerOrderProducts", x => new { x.ProductId, x.OrderId, x.CustomerId });
+                    table.PrimaryKey("PK_SellerCategories", x => new { x.CategoryId, x.SellerId });
                     table.ForeignKey(
-                        name: "FK_CustomerOrderProducts_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_SellerCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomerOrderProducts_Orders_OrderId",
+                        name: "FK_SellerCategories_Sellers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "Sellers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderProducts",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderProducts", x => new { x.ProductId, x.OrderId });
+                    table.ForeignKey(
+                        name: "FK_OrderProducts_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomerOrderProducts_Products_ProductId",
+                        name: "FK_OrderProducts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -443,24 +434,24 @@ namespace FoodDeliveryWebApp.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategorySeller_SellersUserId",
-                table: "CategorySeller",
-                column: "SellersUserId");
+                name: "IX_Categories_PromoCodeId",
+                table: "Categories",
+                column: "PromoCodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomerOrderProducts_CustomerId",
-                table: "CustomerOrderProducts",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CustomerOrderProducts_OrderId",
-                table: "CustomerOrderProducts",
+                name: "IX_OrderProducts_OrderId",
+                table: "OrderProducts",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PromoCodeId",
+                table: "Orders",
+                column: "PromoCodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_ReviewId",
@@ -473,16 +464,6 @@ namespace FoodDeliveryWebApp.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_OrderId",
-                table: "Products",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_PromoCodeId",
-                table: "Products",
-                column: "PromoCodeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
                 table: "Products",
                 column: "SellerId");
@@ -491,6 +472,17 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "IX_PromoCodes_SellerId",
                 table: "PromoCodes",
                 column: "SellerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SellerCategories_SellerId",
+                table: "SellerCategories",
+                column: "SellerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sellers_StoreName",
+                table: "Sellers",
+                column: "StoreName",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -515,34 +507,34 @@ namespace FoodDeliveryWebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CategorySeller");
+                name: "OrderProducts");
 
             migrationBuilder.DropTable(
-                name: "CustomerOrderProducts");
+                name: "SellerCategories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
-                name: "Category");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "PromoCodes");
-
-            migrationBuilder.DropTable(
-                name: "Sellers");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Sellers");
+
+            migrationBuilder.DropTable(
+                name: "PromoCodes");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

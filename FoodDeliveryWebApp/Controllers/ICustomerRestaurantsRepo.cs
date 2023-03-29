@@ -6,10 +6,10 @@ namespace FoodDeliveryWebApp.Contracts
 {
     public interface ICustomerRestaurantsRepo
     {
-        public ICollection<AppUser> GetSellers();
+        public ICollection<SellerViewModel> GetSellers();
 
         public ICollection<ProductViewModel> GetSellerProducts(string sellerId);
 
-        public ICollection<AppUser> GetSellersFiltered(Func<AppUser, bool> func);
+        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories);
     }
 }

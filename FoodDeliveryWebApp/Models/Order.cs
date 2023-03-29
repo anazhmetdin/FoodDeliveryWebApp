@@ -8,8 +8,13 @@ namespace FoodDeliveryWebApp.Models
     public class Order:BaseModel
     {
         public decimal TotalPrice { get; set;}
+        
         public DateTime DeliveryDate { get; set;}
+        
         public DateTime CheckOutDate { get; set;}
+        
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+
         [ForeignKey("Customer")]
         public string CustomerId { get; set; } = string.Empty;
 
@@ -17,11 +22,11 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual Review Review { get; set; } = new();
 
-        public virtual ICollection<CustomerOrderProduct> CustomerOrderProducts { get; set; } = new List<CustomerOrderProduct>();
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-        public OrderStatus Status { get; set; } = OrderStatus.Pending;
-
+        [ForeignKey("PromoCode")]
         public int? PromoCodeId { get; set; }
+
         public virtual PromoCode? PromoCode { get; set; }
+        
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }
 }
