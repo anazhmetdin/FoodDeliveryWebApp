@@ -13,6 +13,7 @@ namespace FoodDeliveryWebApp.Repositories
         public override bool TryInsert(Product t, IFormFile? Image)
         {
             CopyImage(t, Image);
+            t.HasSale = t.Sale > 0;
             return TryInsert(t);
         }
 
@@ -30,6 +31,7 @@ namespace FoodDeliveryWebApp.Repositories
         public override bool TryUpdate(Product t, IFormFile? Image)
         {
             CopyImage(t, Image);
+            t.HasSale = t.Sale > 0;
             return TryUpdate(t);
         }
     }
