@@ -28,20 +28,20 @@ namespace FoodDeliveryWebApp.Controllers
 
         // POST: PaymentController/Create
         [HttpPost]
-        public ActionResult Create(PaymentIntentCreateRequest request)
+        public ActionResult Create(Order order)
         {
             var paymentIntentService = new PaymentIntentService();
             var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
             {
-                Amount = CalculateOrderAmount(request.Items),
+                Amount = (long)order.TotalPrice * 10,
                 Currency = "usd",
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 {
-                    
+
                     Enabled = true,
                 },
             });
-
+           
             return Json(new { clientSecret = paymentIntent.ClientSecret });
 
         }
@@ -88,14 +88,6 @@ namespace FoodDeliveryWebApp.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-        private int CalculateOrderAmount(Item[] items)
-        {
-            // Replace this constant with a calculation of the order's amount
-            // Calculate the order total on the server to prevent
-            // people from directly manipulating the amount on the client
-            return 1400;
         }
     }
 }
