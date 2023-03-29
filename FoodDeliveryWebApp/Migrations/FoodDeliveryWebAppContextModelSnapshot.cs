@@ -198,6 +198,9 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<int?>("PromoCodeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SellerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -214,6 +217,8 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("PromoCodeId");
+
+                    b.HasIndex("ReviewId");
 
                     b.HasIndex("SellerId");
 
@@ -322,9 +327,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
@@ -340,8 +342,6 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("SellerId");
 
@@ -562,6 +562,12 @@ namespace FoodDeliveryWebApp.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("PromoCodeId");
 
+                    b.HasOne("FoodDeliveryWebApp.Models.Review", "Review")
+                        .WithMany()
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FoodDeliveryWebApp.Models.Seller", "Seller")
                         .WithMany("Orders")
                         .HasForeignKey("SellerId")
@@ -571,6 +577,8 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("PromoCode");
+
+                    b.Navigation("Review");
 
                     b.Navigation("Seller");
                 });
@@ -620,10 +628,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("FoodDeliveryWebApp.Models.Order", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("OrderId");
 
                     b.HasOne("FoodDeliveryWebApp.Models.Seller", "Seller")
                         .WithMany("Reviews")
@@ -716,8 +720,6 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Order", b =>
                 {
                     b.Navigation("OrderProducts");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>

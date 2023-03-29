@@ -10,11 +10,20 @@ namespace FoodDeliveryWebApp.Models
 
         [MaxLength(100)]
         public string UserReview { get; set; } = string.Empty;
+        
         [ForeignKey("Customer")]
         public string CustomerId { get; set; }
+        
         public virtual Customer Customer { get; set; }
+        
         [ForeignKey("Seller")]
         public string SellerId { get; set; }
+        
         public virtual Seller Seller { get; set; }
+
+        //[ForeignKey("Order")]
+        //public int OrderId { get; set; }
+
+        //public virtual Order Order { get; set; }
     }
 }
