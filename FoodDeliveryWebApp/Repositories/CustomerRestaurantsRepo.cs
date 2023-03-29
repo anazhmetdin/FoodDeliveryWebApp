@@ -49,7 +49,7 @@ namespace FoodDeliveryWebApp.Repositories
                           { 
                               usr.Id,
                               seller.Logo,
-                              Categories = string.Join(", ", seller.SellerCategories.Select(sc => sc.Category.Name)),
+                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
                               seller.StoreName 
                           };
 
@@ -78,12 +78,12 @@ namespace FoodDeliveryWebApp.Repositories
                           on usr.Id equals uRole.UserId
                           join seller in _context.Sellers
                           on usr.Id equals seller.Id
-                          where uRole.RoleId == roleId && seller.SellerCategories.Any(c => categories.Contains(c.Category))
+                          where uRole.RoleId == roleId && seller.Categories.Any(c => categories.Contains(c))
                           select new
                           {
                               usr.Id,
                               seller.Logo,
-                              Categories = string.Join(", ", seller.SellerCategories.Select(sc => sc.Category.Name)),
+                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
                               seller.StoreName
                           };
 

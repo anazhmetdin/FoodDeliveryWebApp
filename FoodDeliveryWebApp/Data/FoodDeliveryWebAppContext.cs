@@ -18,7 +18,6 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
-    public DbSet<SellerCategories> SellerCategories { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
 
@@ -35,17 +34,18 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasIndex(s => s.StoreName).IsUnique();
 
-            b.HasMany(s => s.SellerCategories)
-           .WithOne(op => op.Seller)
-           .HasForeignKey(op => op.SellerId)
-           .OnDelete(DeleteBehavior.Restrict);
+            b.HasMany(s => s.Categories)
+           .WithMany(op => op.Sellers);
         });
 
         builder.Entity<Category>(b =>
         {
-            b.HasMany(s => s.SellerCategories)
+            b.HasMany(s => s.Sellers)
+           .WithMany(op => op.Categories);
+
+            b.HasMany(s => s.Products)
            .WithOne(op => op.Category)
-           .HasForeignKey(op => op.CategoryId)
+           .HasForeignKey(p => p.CategoryId)
            .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -84,11 +84,6 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<OrderProduct>(b =>
         {
             b.HasKey(o => new { o.ProductId, o.OrderId });
-        });
-        
-        builder.Entity<SellerCategories>(b =>
-        {
-            b.HasKey(o => new { o.CategoryId, o.SellerId });
         });
     
         builder.Entity<PromoCode>(b =>
