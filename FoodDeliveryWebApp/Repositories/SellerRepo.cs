@@ -11,13 +11,16 @@ namespace FoodDeliveryWebApp.Repositories
     {
         private readonly ModelRepo<Product> _productRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IModelRepo<Review> _reviewRepo;
 
         public SellerRepo(FoodDeliveryWebAppContext context,
             ModelRepo<Product> productRepo,
-            UserManager<AppUser> userManager) : base(context)
+            UserManager<AppUser> userManager,
+            IModelRepo<Review> reviewRepo) : base(context)
         {
             _productRepo = productRepo;
             _userManager = userManager;
+            _reviewRepo = reviewRepo;
         }
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
@@ -118,6 +121,15 @@ namespace FoodDeliveryWebApp.Repositories
                 product.HasSale = sale != 0;
                 product.Sale = sale;
             }
+        }
+
+        public ICollection<Review> GetReviews(string? sellerId)
+        {
+            if (sellerId == null) { return new List<Review>(); }
+
+            var reviews = _reviewRepo.Where(p => p.SellerId == sellerId);
+
+            return reviews;
         }
     }
 }
