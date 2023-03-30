@@ -15,10 +15,8 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
     {
         private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;
         private readonly IModelRepo<Category> _categoryRepo;
-
-        public RestaurantsController(ICustomerRestaurantsRepo customerRestaurantRepo, IModelRepo<Category> categoryRepo)
         private readonly UserManager<AppUser> _userManger;
-        public RestaurantsController(ICustomerRestaurantsRepo customerRestaurantRepo, UserManager<AppUser> userManager)
+        public RestaurantsController(ICustomerRestaurantsRepo customerRestaurantRepo, IModelRepo<Category> categoryRepo, UserManager<AppUser> userManager)
         {
             _customerRestaurantRepo = customerRestaurantRepo;
             _categoryRepo = categoryRepo;
