@@ -66,6 +66,10 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
         builder.Entity<Order>(b =>
         {
+            b.Property(o => o.CheckOutDate).IsRequired(false);
+            b.Property(o => o.DeliveryDate).IsRequired(false);
+            b.Property(o => o.ReviewId).IsRequired(false);
+
             b.HasOne(r => r.Review)
             .WithMany()
             .HasForeignKey(r => r.ReviewId)
