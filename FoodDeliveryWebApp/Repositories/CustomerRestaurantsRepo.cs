@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using System.Linq;
 
 namespace FoodDeliveryWebApp.Repositories
@@ -83,19 +84,15 @@ namespace FoodDeliveryWebApp.Repositories
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
 
-            var sellers = from usr in _context.Users
-                          join uRole in _context.UserRoles
-                          on usr.Id equals uRole.UserId
-                          join seller in _context.Sellers
-                          on usr.Id equals seller.Id
-                          where uRole.RoleId == roleId
-                          select new
-                          {
-                              usr.Id,
-                              seller.Logo,
-                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
-                              seller.StoreName
-                          };
+            var sellers = _context.Sellers.Include(s => s.Categories)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.Logo,
+                    Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                    s.StoreName
+                });
+
 
             List<SellerViewModel> restaurants = new();
 
@@ -117,19 +114,14 @@ namespace FoodDeliveryWebApp.Repositories
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
 
-            var sellers = from usr in _context.Users
-                          join uRole in _context.UserRoles
-                          on usr.Id equals uRole.UserId
-                          join seller in _context.Sellers
-                          on usr.Id equals seller.Id
-                          where uRole.RoleId == roleId && seller.Categories.Any(c => categories.Contains(c))
-                          select new
-                          {
-                              usr.Id,
-                              seller.Logo,
-                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
-                              seller.StoreName
-                          };
+            var sellers = _context.Sellers.Include(s => s.Categories).Where(s => s.Categories.Any(cat => categories.Contains(cat)))
+                .Select(s => new
+                {
+                    s.Id,
+                    s.Logo,
+                    Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                    s.StoreName
+                });
 
             List<SellerViewModel> restaurants = new();
 
@@ -145,6 +137,18 @@ namespace FoodDeliveryWebApp.Repositories
             }
 
             return restaurants;
+        }
+
+        public ICollection<SellerViewModel> GetSellersSearched(string text)
+        {
+            return _context.Sellers.Include(s => s.Categories).Where(s => s.StoreName.Contains(text))
+                       .OrderBy(s => s.StoreName.IndexOf(text)).Select(s => new SellerViewModel()
+                       {
+                           Id = s.Id,
+                           Categories = string.Join(", ", s.Categories.Select(c => c.Name)),
+                           StoreName = s.StoreName,
+                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo)}"
+                       }).ToList();
         }
     }
 }
