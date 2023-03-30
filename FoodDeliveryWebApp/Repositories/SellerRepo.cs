@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using FoodDeliveryWebApp.Models.Enums;
 
 namespace FoodDeliveryWebApp.Repositories
 {
@@ -11,13 +12,18 @@ namespace FoodDeliveryWebApp.Repositories
     {
         private readonly ModelRepo<Product> _productRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IModelRepo<Order> _orderRepo;
 
         public SellerRepo(FoodDeliveryWebAppContext context,
             ModelRepo<Product> productRepo,
-            UserManager<AppUser> userManager) : base(context)
+            UserManager<AppUser> userManager,
+            IModelRepo<Order> orderRepo) : base(context)
         {
             _productRepo = productRepo;
             _userManager = userManager;
+            _orderRepo = orderRepo;
+
+            _productRepo.Query = _productRepo.Query.Include(p => p.Category);
         }
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
@@ -118,6 +124,28 @@ namespace FoodDeliveryWebApp.Repositories
                 product.HasSale = sale != 0;
                 product.Sale = sale;
             }
+        }
+
+        public List<Order> GetOrders(string? sellerId, OrderStatus orderStatus)
+        {
+            if (sellerId == null) { return new List<Order>(); }
+
+            var orders = _orderRepo.Where(p => p.SellerId == sellerId
+                                          && p.Status == orderStatus);
+
+            return orders;
+        }
+
+        public Order? GetOrder(int? id, string? sellerId)
+        {
+            if (sellerId == null || id == null) { return null; }
+
+            var order = _orderRepo.GetById(id);
+
+            if (order != null && order.SellerId != sellerId)
+                order = null;
+
+            return order;
         }
     }
 }

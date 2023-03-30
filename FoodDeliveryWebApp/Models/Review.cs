@@ -16,5 +16,8 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("Seller")]
         public string SellerId { get; set; }
         public virtual Seller Seller { get; set; }
+        [ForeignKey("Order")]
+        public int OrderId { get; set; }
+        public virtual Order Order { get; set; }
     }
 }

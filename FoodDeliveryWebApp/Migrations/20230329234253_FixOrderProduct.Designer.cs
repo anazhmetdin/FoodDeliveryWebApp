@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    partial class FoodDeliveryWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230329234253_FixOrderProduct")]
+    partial class FixOrderProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,9 +188,6 @@ namespace FoodDeliveryWebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
@@ -217,8 +217,6 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("PromoCodeId");
@@ -244,7 +242,7 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("money");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ProductId", "OrderId");
 
@@ -575,12 +573,6 @@ namespace FoodDeliveryWebApp.Migrations
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Order", b =>
                 {
-                    b.HasOne("FoodDeliveryWebApp.Models.Address", "Address")
-                        .WithMany("Orders")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FoodDeliveryWebApp.Models.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
@@ -601,8 +593,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Address");
 
                     b.Navigation("Customer");
 
@@ -735,11 +725,6 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Areas.Identity.Data.AppUser", b =>
                 {
                     b.Navigation("Addresses");
-                });
-
-            modelBuilder.Entity("FoodDeliveryWebApp.Models.Address", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Category", b =>

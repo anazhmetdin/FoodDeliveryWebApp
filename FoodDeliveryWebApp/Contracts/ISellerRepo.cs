@@ -1,5 +1,5 @@
 ﻿using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Repositories;
+using FoodDeliveryWebApp.Models.Enums;
 using System.Runtime.InteropServices;
 
 namespace FoodDeliveryWebApp.Contracts
@@ -16,5 +16,7 @@ namespace FoodDeliveryWebApp.Contracts
         public void Restock(IFormCollection pairs, string? sellerId, bool stock);
         public void ApplySale(IFormCollection pairs, string? sellerId);
         public void ApplySale(int id, string sellerId, int sale);
+        public List<Order> GetOrders(string? sellerId, OrderStatus orderStatus);
+        public Order? GetOrder(int? id, string? sellerId);
     }
 }

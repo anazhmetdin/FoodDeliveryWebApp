@@ -1,6 +1,9 @@
-﻿using FoodDeliveryWebApp.Data;
+﻿using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
 
 namespace FoodDeliveryWebApp.Repositories
 {
@@ -9,17 +12,19 @@ namespace FoodDeliveryWebApp.Repositories
         public ModelRepo(FoodDeliveryWebAppContext context)
         {
             Context = context;
+            Query = Context.Set<T>();
         }
-        public FoodDeliveryWebAppContext Context { get; }
+        protected FoodDeliveryWebAppContext Context { get; }
+        public IQueryable<T> Query { get; set; }
 
         public virtual List<T> GetAll()
         {
-            return Context.Set<T>().ToList();
+            return Query.ToList();
         }
 
-        public virtual T? GetById(dynamic? id)
+        public virtual T? GetById<U>(U? id)
         {
-            return Context.Set<T>().Find(id);
+            return Query.FirstOrDefault(t => t.Id.Equals(id));
         }
 
         public virtual bool TryDelete(dynamic? id)
@@ -38,7 +43,7 @@ namespace FoodDeliveryWebApp.Repositories
 
         public virtual List<T> Where(Func<T, bool> lambda)
         {
-            return Context.Set<T>().Where(lambda).ToList();
+            return Query.Where(lambda).ToList();
         }
 
         public bool TryInsert(T t)
@@ -61,16 +66,6 @@ namespace FoodDeliveryWebApp.Repositories
         {
             try
             {
-                var tentry = Context.Entry(t);
-                if (tentry == null)
-                {
-                    throw new KeyNotFoundException();
-                }
-
-                var tid = tentry.Metadata.FindPrimaryKey()!
-                    .Properties.Select(p => tentry.Property(p.Name).CurrentValue).First();
-                
-
                 var local = Context.Set<T>().Local.FirstOrDefault(s => s.Id == t.Id);
                 
                 if (local != null)

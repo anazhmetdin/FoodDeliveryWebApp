@@ -67,6 +67,15 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .HasForeignKey(op => op.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
+            b.HasOne(o => o.Review)
+            .WithOne(op => op.Order)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasOne(o => o.Address)
+            .WithMany(o => o.Orders)
+            .HasForeignKey(op => op.AddressId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             b.HasOne(o => o.Seller)
             .WithMany(op => op.Orders)
             .HasForeignKey(op => op.SellerId)
@@ -89,11 +98,15 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         builder.Entity<OrderProduct>(b =>
         {
             b.HasKey(o => new { o.ProductId, o.OrderId });
+
+            b.Property(o => o.UnitPrice).HasColumnType("money");
         });
     
         builder.Entity<PromoCode>(b =>
         {
             b.Property(p => p.MaximumDiscount).HasColumnType("money");
+
+            b.HasIndex(s => s.Code).IsUnique();
         });
     }
 }
