@@ -66,11 +66,18 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
         public IActionResult Checkout([FromBody] List<CheckoutViewModel> items)
         {
             Console.WriteLine(items.Count);
-            string sellerId = _customerRestaurantRepo.GetProductSellerID(items[0].Id);
+            string sellerId = Request.Query["search"][0] ?? string.Empty;
+
+
             List<ProductViewModel> products = _customerRestaurantRepo.GetSellerProducts(sellerId)
                 .IntersectBy(items.Select(i => i.Id), x => x.Id).ToList();
             string userId = _userManger.GetUserId(User) ?? string.Empty;
+
+            // crazy code  start
             Order o = _customerRestaurantRepo.CreateOrder(sellerId, userId);
+            // crazy code  eend
+
+
 
             foreach (ProductViewModel product in products)
             {
@@ -84,7 +91,7 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
                 Console.WriteLine(product.Id);
             }
             _customerRestaurantRepo.UpdateOrder(o);
-            return RedirectToAction("Checkout");
+            return RedirectToAction("Checkout", new { order = o });
         }
         public IActionResult Checkout(Order order)
         {

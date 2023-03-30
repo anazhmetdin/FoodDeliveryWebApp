@@ -7,12 +7,12 @@ namespace FoodDeliveryWebApp.Models
 {
     public class Order : BaseModel
     {
-        public decimal TotalPrice { get; set;}
-        
-        public DateTime? DeliveryDate { get; set;}
-        
-        public DateTime? CheckOutDate { get; set;}
-        
+        public decimal TotalPrice { get; set; } = decimal.Zero;
+
+        public DateTime? DeliveryDate { get; set; }
+
+        public DateTime? CheckOutDate { get; set; }
+
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         [ForeignKey("Customer")]
@@ -28,7 +28,7 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("seller")]
         public string SellerId { get; set; } = string.Empty;
 
-        public virtual Seller Seller { get; set; } = new();
+        public virtual Seller? Seller { get; set; } = new();
 
         [ForeignKey("PromoCode")]
         public int? PromoCodeId { get; set; }
