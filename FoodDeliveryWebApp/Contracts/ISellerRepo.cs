@@ -16,5 +16,6 @@ namespace FoodDeliveryWebApp.Contracts
         public void Restock(IFormCollection pairs, string? sellerId, bool stock);
         public void ApplySale(IFormCollection pairs, string? sellerId);
         public void ApplySale(int id, string sellerId, int sale);
+        public ICollection<Review> GetReviews(string? sellerId);
     }
 }

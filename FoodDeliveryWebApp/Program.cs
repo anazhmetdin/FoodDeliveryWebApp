@@ -69,6 +69,7 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
+            builder.Services.AddScoped<IModelRepo<Models.Review>, ReviewRepo>();
             builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
             builder.Services.AddScoped<ICustomerOrderRepo, CustomerOrderRepo>();
             #endregion
