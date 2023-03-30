@@ -19,26 +19,21 @@ namespace FoodDeliveryWebApp.Repositories
         }
         public Order CreateOrder(string sellerId, string customerId)
         {
-            /*   Order order = new Order()
-               {
-                   TotalPrice = 0,
-                   DeliveryDate = DateTime.Now,
-                   CheckOutDate = DateTime.Now,
-                   SellerId = sellerId,
-                   CustomerId = customerId,    
-               };*/
-            _context.Orders.Add(new Order()
+            Order order = new Order()
             {
                 TotalPrice = 0,
                 DeliveryDate = DateTime.Now,
                 CheckOutDate = DateTime.Now,
                 SellerId = sellerId,
                 CustomerId = customerId,
-            });
+            };
+            _context.Orders.Load();
+            _context.Orders.Add(order);
             //Console.WriteLine("This the empty CustomerId: " + _context.Orders.ToList().LastOrDefault()?.CustomerId ?? "HMM");
             _context.SaveChanges();// why you do this to me ?
             return _context.Orders.ToList().LastOrDefault() ?? new Order();
         }
+        
         public bool UpdateOrder(Order o)
         {
             try
@@ -63,6 +58,7 @@ namespace FoodDeliveryWebApp.Repositories
             _context.SaveChanges();
             return orderProduct;
         }
+        
         public string GetProductSellerID(int productId)
         {
             //new ProductViewModel() { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description, Image = p.Image };

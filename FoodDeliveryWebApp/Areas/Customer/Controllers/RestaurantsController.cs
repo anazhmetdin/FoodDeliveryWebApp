@@ -66,9 +66,10 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
         public IActionResult Checkout([FromBody] List<CheckoutViewModel> items)
         {
             Console.WriteLine(items.Count);
-            string sellerId = Request.Query["search"][0] ?? string.Empty;
+            //string sellerId = Request.Query["search"][0] ?? string.Empty;
 
-
+            string sellerId = _customerRestaurantRepo.GetProductSellerID(items[0].Id);
+            
             List<ProductViewModel> products = _customerRestaurantRepo.GetSellerProducts(sellerId)
                 .IntersectBy(items.Select(i => i.Id), x => x.Id).ToList();
             string userId = _userManger.GetUserId(User) ?? string.Empty;
