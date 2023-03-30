@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Order:BaseModel
+    public class Order : BaseModel
     {
-        public decimal TotalPrice { get; set;}
-        
-        public DateTime DeliveryDate { get; set;}
-        
-        public DateTime CheckOutDate { get; set;}
-        
+        public decimal TotalPrice { get; set; }
+
+        public DateTime DeliveryDate { get; set; }
+
+        public DateTime CheckOutDate { get; set; }
+
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         [ForeignKey("Customer")]
@@ -23,7 +23,7 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("Review")]
         public int ReviewId { get; set; }
 
-        public virtual Review Review { get; set; } = new();
+        public virtual Review? Review { get; set; } = new();
 
         [ForeignKey("seller")]
         public string SellerId { get; set; }
@@ -34,7 +34,7 @@ namespace FoodDeliveryWebApp.Models
         public int? PromoCodeId { get; set; }
 
         public virtual PromoCode? PromoCode { get; set; }
-        
+
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }
 }

@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Stripe;
-using FoodDeliveryWebApp.Models;
 
 
 namespace FoodDeliveryWebApp

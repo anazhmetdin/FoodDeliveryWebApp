@@ -16,6 +16,50 @@ namespace FoodDeliveryWebApp.Repositories
         {
             _context = context;
         }
+        public Order CreateOrder(string sellerId, string customerId)
+        {
+            Order order = new Order()
+            {
+                TotalPrice = 0,
+                DeliveryDate = DateTime.Now,
+                CheckOutDate = DateTime.Now,
+                SellerId = sellerId,
+                CustomerId = customerId,
+            };
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
+        }
+        public bool UpdateOrder(Order o)
+        {
+            try
+            {
+                _context.Update(o);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+        }
+
+        public OrderProduct CreateOrderProduct(int orderId, int prodId)
+        {
+            OrderProduct orderProduct = new OrderProduct()
+            { OrderId = orderId, ProductId = prodId };
+            _context.OrderProducts.Add(orderProduct);
+            _context.SaveChanges();
+            return orderProduct;
+        }
+        public string GetProductSellerID(int productId)
+        {
+            //new ProductViewModel() { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description, Image = p.Image };
+
+            return _context.Products.FirstOrDefault(p => p.Id == productId)?.SellerId ?? string.Empty;
+        }
 
         public ICollection<ProductViewModel> GetSellerProducts(string sellerId)
         {
@@ -45,12 +89,12 @@ namespace FoodDeliveryWebApp.Repositories
                           join seller in _context.Sellers
                           on usr.Id equals seller.Id
                           where uRole.RoleId == roleId
-                          select new 
-                          { 
+                          select new
+                          {
                               usr.Id,
                               seller.Logo,
                               Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
-                              seller.StoreName 
+                              seller.StoreName
                           };
 
             List<SellerViewModel> restaurants = new();

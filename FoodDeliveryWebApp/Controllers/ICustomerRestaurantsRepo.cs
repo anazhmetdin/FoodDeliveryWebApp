@@ -8,6 +8,10 @@ namespace FoodDeliveryWebApp.Contracts
     {
 
         public ICollection<SellerViewModel> GetSellers();
+        public string GetProductSellerID(int productId);
+        public Order CreateOrder(string sellerId, string customerId);
+        public OrderProduct CreateOrderProduct(int orderId, int prodId);
+        public bool UpdateOrder(Order o);
 
         public ICollection<ProductViewModel> GetSellerProducts(string sellerId);
 

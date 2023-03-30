@@ -23,7 +23,9 @@
                                     <h5 class="card-title">@Model[j].StoreName</h5>
                                     <p class="card-text text-truncate">@Model[j].Categories</p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button seller-id="@Model[j].Id" type="button" class="details-btn btn fs-4 btn-secondary">Details</button>
+
+                                        <a href=@Url.Action("Restaurant", "Restaurants", new { Area = "Customer" ,id =Model[j].Id })
+                                           seller-id="@Model[j].Id" type="button" class="details-btn btn fs-4 btn-secondary">Details</a>
                                     </div>
                                 </div>
                             </div>

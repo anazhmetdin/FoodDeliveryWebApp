@@ -126,9 +126,8 @@
             type: 'POST',
             data: jsonData,
             contentType: "application/json; charset=utf-8",
-            dataType: "json",
             success: function (response) {
-                console.log(response);
+                window.location.href = "@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })"
             },
             error: function (xhr, status, error) {
                 console.log('Error:', error);
