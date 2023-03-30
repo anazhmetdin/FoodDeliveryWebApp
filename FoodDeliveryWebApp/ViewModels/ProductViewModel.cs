@@ -12,5 +12,6 @@ namespace FoodDeliveryWebApp.ViewModels
         public required string Description { get; set; }
         public required decimal Price { get; set; }
         public required string Image { get; set; }
+        public int Quantity { get; set; }
     }
 }
