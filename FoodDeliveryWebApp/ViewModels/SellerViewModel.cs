@@ -9,5 +9,7 @@
         public string Logo { get; set; } = string.Empty;
 
         public string Categories { get; set; } = string.Empty;
+        
+        public int Rate { get; set; }
     }
 }

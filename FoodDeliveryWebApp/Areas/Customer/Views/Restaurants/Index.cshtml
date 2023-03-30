@@ -3,34 +3,45 @@
 @{
     ViewData["Title"] = "Home";
     List<(string, int, bool)> categories = (List<(string, int, bool)>)ViewBag.Categories;
+    string ConvertToStars(int rating)
+    {
+        string stars = "";
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < rating)
+            {
+                stars += "<span style='color:yellow;font-size:1.2rem;'>&#9733;</span>";
+            }
+            else
+            {
+                stars += "<span style='color:gray;font-size:1.2rem;'>&#9733;</span>";
+            }
+        }
+        return stars;
+    }
 }
 
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-8">
-            <div class="container-fluid text-center">
-                <form>
-                    <div class="form-group row">
-                        <div class="col-9">
-                            <input type="text" class="form-control" id="inputText" name="search" placeholder="Search...">
-                        </div>
-                        <div class="col-3">
-                            <button type="submit" class="btn text-white" style="background-color: #ff5a00">Search</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div class="row">
-        <div class="col-2">
+        <div class="col-2 mt-1">
             <form>
-                <h2>Categories</h2>
+                <p class="h4">Show results for</p>
+                <br />
+                <div class="form-group p-2">
+                    <input type="checkbox" id="promo" name="promo" class="form-check-input">
+                    <label for="promo" class="form-check-label">Promo Code</label>
+                </div>
+                <hr />
+                <p class="text-black fw-bold my-0">Sort by</p>
+                <div class="form-group p-2">
+                    <input type="checkbox" id="rating" name="rating" class="form-check-input">
+                    <label for="rating" class="form-check-label">Rating</label>
+                </div>
+                <hr />
+                <p class="text-black fw-bold my-0">Filter by</p>
                 @{
                     foreach (var item in categories)
                     {
-
                         <div class="form-group p-2">
                             <input type="checkbox" id="@item.Item2" name="@item.Item2" class="form-check-input" checked="@item.Item3">
                             <label for="@item.Item2" class="form-check-label">@item.Item1</label>
@@ -39,41 +50,68 @@
                 }
                 <div class="row justify-content-center mt-3">
                     <div class="col-auto">
-                        <button type="submit" class="btn text-white" style="background-color: #ff5a00">Filter</button>
+                        <button type="submit" class="btn text-white" style="background-color: #ff5a00">Apply</button>
                     </div>
                 </div>
             </form>
         </div>
 
         <div class="col-10">
-            @{
-                for (int i = 0; i < Model.Count; i += 3)
-                {
-                    <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
-                        @{
-                            for (int j = i; j < i + 3; j++)
-                            {
-                                if (j == Model.Count) break;
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="container-fluid text-center">
+                        <form>
+                            <div class="form-group row">
+                                <div class="col-9">
+                                    <input type="text" class="form-control" id="inputText" name="search" placeholder="Search...">
+                                </div>
+                                <div class="col-3">
+                                    <button type="submit" class="btn text-white" style="background-color: #ff5a00">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                                <div class="col">
-                                    <div class="card accordion-body">
-                                        <img src="@Model[j].Logo">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@Model[j].StoreName</h5>
-                                            <p class="card-text text-truncate">Categories: @Model[j].Categories</p>
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <button seller-id="@Model[j].Id" type="button" class="details-btn btn btn-success">Order now</button>
+            <div class="row">
+                @{
+                    for (int i = 0; i < Model.Count; i += 3)
+                    {
+                        <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
+                            @{
+                                for (int j = i; j < i + 3; j++)
+                                {
+                                    if (j == Model.Count) break;
+
+                                    <div class="col">
+                                        <div class="card accordion-body">
+                                            <img src="@Model[j].Logo">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <h5 class="card-title col-md d-inline">@Model[j].StoreName</h5>
+                                                    <div class="col-md text-md-right d-flex justify-content-end">
+                                                        @Html.Raw(ConvertToStars(Model[j].Rate))
+                                                    </div>
+                                                </div>
+                                                <p class="card-text text-truncate">Categories: @Model[j].Categories</p>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <button seller-id="@Model[j].Id" type="button" class="details-btn btn btn-success">Order now</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             }
-                        }
-                    </div>
+                        </div>
+                    }
                 }
-            }
+            </div>
         </div>
     </div>
+
+
+
 </div>
 
 <script>
