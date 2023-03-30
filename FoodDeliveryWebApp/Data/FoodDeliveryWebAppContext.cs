@@ -1,4 +1,4 @@
-using FoodDeliveryWebApp.Areas.Identity.Data;
+﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection.Emit;
+using FoodDeliveryWebApp.ViewModels;
 
 namespace FoodDeliveryWebApp.Data;
 
@@ -70,6 +71,11 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.Property(o => o.DeliveryDate).IsRequired(false);
             b.Property(o => o.ReviewId).IsRequired(false);
 
+            b.HasOne(r => r.Address)
+            .WithMany()
+            .HasForeignKey(r => r.AddressId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             b.HasOne(r => r.Review)
             .WithMany()
             .HasForeignKey(r => r.ReviewId)
@@ -97,16 +103,12 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .WithMany(op => op.Reviews)
             .HasForeignKey(r => r.SellerId)
             .OnDelete(DeleteBehavior.Restrict);
-
-            //b.HasOne(r => r.Order)
-            //.WithMany()
-            //.HasForeignKey(r => r.OrderId)
-            //.OnDelete(DeleteBehavior.NoAction);
         });
 
         builder.Entity<OrderProduct>(b =>
         {
             b.HasKey(o => new { o.ProductId, o.OrderId });
+            b.Property(o => o.UnitPrice).HasColumnType("money");
         });
     
         builder.Entity<PromoCode>(b =>

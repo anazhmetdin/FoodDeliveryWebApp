@@ -10,6 +10,10 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("Order")]
         public int OrderId { get; set; }
 
+        public int Quantity { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
         public Product Product { get; set; } = new();
 
         public Order Order { get; set; } = new();
