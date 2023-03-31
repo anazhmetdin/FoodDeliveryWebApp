@@ -15,6 +15,30 @@ namespace FoodDeliveryWebApp.Repositories
             _context = context;
         }
 
+        public bool AddReview(ReviewViewModel review, int orderId)
+        {
+            try
+            {
+                var order = _context.Orders.Find(orderId);
+                order.Review = new()
+                {
+                    CustomerId = order.CustomerId,
+                    SellerId = order.SellerId,
+                    Rate = review.Rate,
+                    UserReview = review.UserReview
+                };
+
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
         public OrderViewModel GetOrder(int id)
         {
             return _context.Orders.Where(o => o.Id == id)

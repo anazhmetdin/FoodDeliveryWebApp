@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Home";
     List<(string, int, bool)> categories = (List<(string, int, bool)>)ViewBag.Categories;
+    bool promo = ViewBag.Promo;
+    bool orderAlpha = ViewBag.OrderAlpha;
+    bool orderRate = ViewBag.OrderRate;
+
     string ConvertToStars(int rating)
     {
         string stars = "";
@@ -28,13 +32,17 @@
                 <p class="h4">Show results for</p>
                 <br />
                 <div class="form-group p-2">
-                    <input type="checkbox" id="promo" name="promo" class="form-check-input">
-                    <label for="promo" class="form-check-label">Promo Code</label>
+                    <input type="checkbox" id="promo" name="promo" class="form-check-input" checked="@promo">
+                    <label for="promo" class="form-check-label">Has Promocode</label>
                 </div>
                 <hr />
                 <p class="text-black fw-bold my-0">Sort by</p>
                 <div class="form-group p-2">
-                    <input type="checkbox" id="rating" name="rating" class="form-check-input">
+                    <input type="checkbox" id="name" name="name" class="form-check-input" checked="@orderAlpha">
+                    <label for="name" class="form-check-label">Name</label>
+                </div>
+                <div class="form-group p-2">
+                    <input type="checkbox" id="rating" name="rating" class="form-check-input" checked="@orderRate">
                     <label for="rating" class="form-check-label">Rating</label>
                 </div>
                 <hr />
@@ -123,4 +131,17 @@
             window.location.href = `/Customer/Restaurants/Restaurant/${sellerId}`
         });
     });
+</script>
+
+
+<script>
+    var orderName = document.getElementById("name")
+    var orderRate = document.getElementById("rating")
+
+    orderName.addEventListener("change", function () {
+        if (this.checked) orderRate.checked = false;
+    })
+    orderRate.addEventListener("change", function () {
+        if (this.checked) orderName.checked = false;
+    })
 </script>
