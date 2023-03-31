@@ -1,7 +1,5 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
-using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +26,12 @@ namespace FoodDeliveryWebApp.Controllers
             }
 
             return View(reviews);
+        }
+
+        public IActionResult Delete(int id)
+        {
+            _sellerRepo.DeleteReview(id);
+            return Redirect("/review/index");
         }
 
 

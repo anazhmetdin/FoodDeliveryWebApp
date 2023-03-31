@@ -31,7 +31,7 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
         {
-            if (sellerId == null ) { return new List<Product>(); }
+            if (sellerId == null) { return new List<Product>(); }
 
             var products = _productRepo.Where(p => p.SellerId == sellerId);
 
@@ -56,10 +56,10 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<Category> GetSellerCategories(string sellerId)
         {
-            var seller = Context.Sellers.Where( s => s.Id == sellerId)
+            var seller = Context.Sellers.Where(s => s.Id == sellerId)
                 .Include(s => s.Categories)
                 .FirstOrDefault();
-            return seller.Categories.ToList();
+            return seller?.Categories.ToList();
         }
 
 
@@ -171,6 +171,11 @@ namespace FoodDeliveryWebApp.Repositories
 
             order.Status = (OrderStatus)status;
             return Context.SaveChanges() > 0;
+        }
+
+        public bool DeleteReview(int id)
+        {
+            return _reviewRepo.TryDelete(id);
         }
     }
 }
