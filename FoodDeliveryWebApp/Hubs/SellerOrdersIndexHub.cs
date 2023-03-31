@@ -28,8 +28,9 @@ namespace FoodDeliveryWebApp.Hubs
                 var _SellerRepo = scope.ServiceProvider.GetRequiredService<ISellerRepo>();
                 var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
                 var _renderer = scope.ServiceProvider.GetRequiredService<IRazorPartialToStringRenderer>();
+                var httpContext = Context.GetHttpContext();
 
-                if (Context.User != null)
+                if (Context.User != null && httpContext != null)
                 {
                     var SellerId = _userManager.GetUserId(Context.User);
                     if (SellerId != null)
@@ -37,10 +38,12 @@ namespace FoodDeliveryWebApp.Hubs
                         var partial = "~/Areas/Seller/Views/Shared/_SellerOrderIndex.cshtml";
 
                         string PostedProducts = await _renderer.RenderPartialToStringAsync(partial,
-                            _SellerRepo.GetOrders(SellerId, OrderStatus.Posted));
+                            _SellerRepo.GetOrders(SellerId, OrderStatus.Posted),
+                            httpContext);
                         
                         string InProgressProducts = await _renderer.RenderPartialToStringAsync(partial,
-                            _SellerRepo.GetOrders(SellerId, OrderStatus.InProgress));
+                            _SellerRepo.GetOrders(SellerId, OrderStatus.InProgress),
+                            httpContext);
 
                         await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts, InProgressProducts);
                     }

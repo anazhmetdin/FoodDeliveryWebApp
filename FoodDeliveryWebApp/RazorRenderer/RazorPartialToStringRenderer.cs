@@ -26,9 +26,9 @@ namespace FoodDeliveryWebApp.RazorRenderer
             _serviceProvider = serviceProvider;
             _contextAccessor = contextAccessor;
         }
-        public async Task<string> RenderPartialToStringAsync<TModel>(string partialName, TModel model)
+        public async Task<string> RenderPartialToStringAsync<TModel>(string partialName, TModel model, HttpContext httpContext)
         {
-            var actionContext = new ActionContext(_contextAccessor.HttpContext, _contextAccessor.HttpContext.GetRouteData(), new ActionDescriptor());
+            var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
 
             var partial = FindView(actionContext, partialName);
 
