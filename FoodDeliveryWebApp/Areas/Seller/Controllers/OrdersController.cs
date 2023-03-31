@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using FoodDeliveryWebApp.ViewModels;
 using FoodDeliveryWebApp.SubscribeTableDependencies;
 using FoodDeliveryWebApp.Models.Enums;
+using System.Composition;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
@@ -36,19 +37,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // GET: Seller/Orders
         public IActionResult Index()
         {
-            var SellerId = _userManager.GetUserId(User);
-            var PostedOrders = _sellerRepo.GetOrders(SellerId, Models.Enums.OrderStatus.Posted);
-            var InProgressOrders = _sellerRepo.GetOrders(SellerId, Models.Enums.OrderStatus.InProgress);
-
-            var Model = new SellerOrdersViewModel()
-            {
-                PostedOrders = PostedOrders,
-                InProgressOrders = InProgressOrders
-            };
-
-            var x = SubscribeOrderTableDependency.tableDependency;
-
-            return View(Model);
+            return View();
         }
 
         // GET: Seller/Orders/Details/5
@@ -65,43 +54,14 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             return View(order);
         }
 
-        // GET: Seller/Orders/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet]
+        public IActionResult ChangeStatus(int? id, OrderStatus? status)
         {
-            if (id == null || _context.Orders == null)
-            {
-                return NotFound();
-            }
+            var SellerId = _userManager.GetUserId(User);
+            if (_sellerRepo.ChangeOrderStatus(id, SellerId, status))
+                return Ok();
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.PromoCode)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
-        }
-
-        // POST: Seller/Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Orders == null)
-            {
-                return Problem("Entity set 'FoodDeliveryWebAppContext.Orders'  is null.");
-            }
-            var order = await _context.Orders.FindAsync(id);
-            if (order != null)
-            {
-                _context.Orders.Remove(order);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return BadRequest();
         }
     }
 }

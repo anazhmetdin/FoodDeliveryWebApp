@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 
 namespace FoodDeliveryWebApp.Data;
 
@@ -60,6 +61,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.Property(p => p.Image).HasColumnType("image");
         });
 
+        builder.Entity<Order>()
+            .ToTable(tb => tb.HasTrigger("SellerOrderIndex"));
+
         builder.Entity<Order>(b =>
         {
             b.HasMany(o => o.OrderProducts)
@@ -85,6 +89,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
             b.Property(o => o.Status)
             .HasConversion(new EnumToStringConverter<OrderStatus>());
+
         });
 
         builder.Entity<Review>(b =>

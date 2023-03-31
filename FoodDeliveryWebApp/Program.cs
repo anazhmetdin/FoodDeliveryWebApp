@@ -13,6 +13,7 @@ using FoodDeliveryWebApp.MiddlewareExtensions;
 using System.Text.Json.Serialization;
 using System.Diagnostics;
 using FoodDeliveryWebApp.RazorRenderer;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace FoodDeliveryWebApp
 {
@@ -35,6 +36,10 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<IRazorPartialToStringRenderer, RazorPartialToStringRenderer>();
             builder.Services.AddSingleton<SellerOrdersIndexHub>();
             builder.Services.AddSingleton<ISubscribeTableDependency, SubscribeOrderTableDependency>();
+            builder.Services.Configure<RazorViewEngineOptions>(o =>
+            {
+                o.ViewLocationExpanders.Add(new SubAreaViewLocationExpander());
+            });
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();

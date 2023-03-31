@@ -142,10 +142,23 @@ namespace FoodDeliveryWebApp.Repositories
 
             var order = _orderRepo.GetById(id);
 
-            if (order != null && order.SellerId != sellerId)
+            if (order == null || order.SellerId != sellerId)
                 order = null;
 
             return order;
+        }
+
+        public bool ChangeOrderStatus(int? id, string? sellerId, OrderStatus? status)
+        {
+            if (sellerId == null || id == null || status == null) { return false; }
+
+            var order = _orderRepo.GetById(id);
+
+            if (order == null || order.SellerId != sellerId)
+                return false;
+
+            order.Status = (OrderStatus)status;
+            return Context.SaveChanges() > 0;
         }
     }
 }

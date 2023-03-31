@@ -1,30 +1,41 @@
-﻿@model IEnumerable<FoodDeliveryWebApp.Models.Order>
+﻿@model FoodDeliveryWebApp.ViewModels.SellerOrdersViewData
 
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
+                @Html.DisplayNameFor(model => model.Oders.First().TotalPrice)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CheckOutDate)
+                @Html.DisplayNameFor(model => model.Oders.First().CheckOutDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Customer.User.PhoneNumber)
+                @Html.DisplayNameFor(model => model.Oders.First().Customer.User.PhoneNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                @Html.DisplayNameFor(model => model.Oders.First().Address)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Oders)
         {
-
             var guid = $"order{item.Id}";
-
             <tr>
+                <td>
+                    @foreach (var button in Model.Buttons)
+                    {
+                        <button asp-action="ChangeStatus" asp-area="Seller"
+                        asp-route-id="@item.Id" asp-controller="Orders"
+                        asp-route-status="@button.Status"
+                        class="btn @button.ClassList order-button">
+
+                            @button.Content
+                        </button>
+                    }
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TotalPrice)
                 </td>
@@ -38,7 +49,10 @@
                     @Html.DisplayFor(modelItem => item.Address.FullAddress)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a asp-action="Details" asp-area="Seller"
+                   asp-route-id="@item.Id" asp-controller="Orders">
+                        Details
+                    </a>
                 </td>
             </tr>
             <tr>
@@ -46,44 +60,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
-                                <button class="btn" data-bs-toggle="collapse" data-bs-target="#@guid">
+                                <button class="btn col-12" data-bs-toggle="collapse" data-bs-target="#@guid">
                                     Items
                                 </button>
                             </h5>
                         </div>
                         <div id="@guid" class="collapse" aria-labelledby="headingOne">
                             <div class="card-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                Product
-                                            </th>
-                                            <th>
-                                                Quantity
-                                            </th>
-                                            <th>
-                                                Unit Price
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            @foreach (var OrderProduct in item.OrderProducts)
-                                            {
-                                                <td>
-                                                    @OrderProduct.Product.Name
-                                                </td>
-                                                <td>
-                                                    @OrderProduct.Quantity
-                                                </td>
-                                                <td>
-                                                    @OrderProduct.UnitPrice
-                                                </td>
-                                            }
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <partial name="_OrderProducts" model="item.OrderProducts" />
                             </div>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.RazorRenderer;
 using FoodDeliveryWebApp.Repositories;
+using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,17 +36,27 @@ namespace FoodDeliveryWebApp.Hubs
                     var SellerId = _userManager.GetUserId(Context.User);
                     if (SellerId != null)
                     {
-                        var partial = "~/Areas/Seller/Views/Shared/_SellerOrderIndex.cshtml";
+                        var partial = "_SellerOrderIndex";
+
+                        var posted = _SellerRepo.GetOrders(SellerId, OrderStatus.Posted);
+                        var inprogress = _SellerRepo.GetOrders(SellerId, OrderStatus.InProgress);
+
+                        var Model = new SellerOrdersViewModel()
+                        {
+                            PostedOrders = new() { Oders = posted,
+                                Buttons = new() { SellerOrderButtons.Accept, SellerOrderButtons.Cancel } },
+                            InProgressOrders = new() { Oders = inprogress,
+                                Buttons = new() { SellerOrderButtons.Delivered, SellerOrderButtons.Cancel } }
+                        };
 
                         string PostedProducts = await _renderer.RenderPartialToStringAsync(partial,
-                            _SellerRepo.GetOrders(SellerId, OrderStatus.Posted),
-                            httpContext);
+                            Model.PostedOrders, httpContext);
                         
                         string InProgressProducts = await _renderer.RenderPartialToStringAsync(partial,
-                            _SellerRepo.GetOrders(SellerId, OrderStatus.InProgress),
-                            httpContext);
+                            Model.InProgressOrders, httpContext);
 
-                        await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts, InProgressProducts);
+                        await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts,
+                            InProgressProducts, posted.Count);
                     }
                 }
             }
