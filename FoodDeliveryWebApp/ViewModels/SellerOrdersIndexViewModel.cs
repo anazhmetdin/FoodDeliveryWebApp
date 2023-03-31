@@ -24,15 +24,11 @@ namespace FoodDeliveryWebApp.ViewModels
         public List<SellerOrderButton> Buttons { get; set; } = new List<SellerOrderButton>();
     }
 
-    public class SellerOrdersViewModel
+    public class SellerOrdersIndexViewModel
     {
         [DisplayName("Posted")]
         public SellerOrdersViewData PostedOrders { get; set; } = new SellerOrdersViewData();
         [DisplayName("In Progress")]
         public SellerOrdersViewData InProgressOrders { get; set; } = new SellerOrdersViewData();
-        [DisplayName("Rejected")]
-        public SellerOrdersViewData RejectedOrders { get; set; } = new SellerOrdersViewData();
-        [DisplayName("Delivered")]
-        public SellerOrdersViewData DeliveredOrders { get; set; } = new SellerOrdersViewData();
     }
 }

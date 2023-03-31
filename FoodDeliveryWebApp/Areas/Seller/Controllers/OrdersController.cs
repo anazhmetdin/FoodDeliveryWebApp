@@ -14,6 +14,9 @@ using FoodDeliveryWebApp.ViewModels;
 using FoodDeliveryWebApp.SubscribeTableDependencies;
 using FoodDeliveryWebApp.Models.Enums;
 using System.Composition;
+using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Repositories;
+using FoodDeliveryWebApp.Areas.Seller.Hubs;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
@@ -23,13 +26,11 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
     [AutoValidateAntiforgeryToken]
     public class OrdersController : Controller
     {
-        private readonly FoodDeliveryWebAppContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly ISellerRepo _sellerRepo;
 
-        public OrdersController(FoodDeliveryWebAppContext context, ISellerRepo sellerRepo, UserManager<AppUser> userManager)
+        public OrdersController(ISellerRepo sellerRepo, UserManager<AppUser> userManager)
         {
-            _context = context;
             _sellerRepo = sellerRepo;
             _userManager = userManager;
         }
@@ -37,7 +38,27 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // GET: Seller/Orders
         public IActionResult Index()
         {
-            return View();
+            var SellerId = _userManager.GetUserId(User);
+
+            var Model = SellerOrdersHelper.GetActiveOrders(SellerId??"", _sellerRepo);
+
+            return View(Model);
+        }
+
+        // GET: Seller/Orders
+        public IActionResult Archive()
+        {
+            var SellerId = _userManager.GetUserId(User);
+
+            var DeliveredOrders = _sellerRepo.GetOrders(SellerId, OrderStatus.Delivered);
+            var RejectedOrders = _sellerRepo.GetOrders(SellerId, OrderStatus.Rejected);
+
+            SellerOrderArchiveViewModel Model = new SellerOrderArchiveViewModel() {
+                DeliveredOrders = DeliveredOrders,
+                RejectedOrders = RejectedOrders
+            };
+
+            return View(Model);
         }
 
         // GET: Seller/Orders/Details/5

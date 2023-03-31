@@ -16,14 +16,6 @@
 			//})
 	});
 
-	// Order
-	function InvokeOrders() {
-		connection.invoke("SendOrders");
-			//.catch(function (err) {
-			//	return console.error(err.toString());
-			//});
-	}
-
 	postedTab.click((e) => { postedTab.addClass('nav-link') });
 
 	connection.on("ReceivedOrders", function (PostedOrders, InprogressOrders, PostedCount) {

@@ -1,4 +1,5 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Seller.Hubs;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
@@ -38,16 +39,7 @@ namespace FoodDeliveryWebApp.Hubs
                     {
                         var partial = "_SellerOrderIndex";
 
-                        var posted = _SellerRepo.GetOrders(SellerId, OrderStatus.Posted);
-                        var inprogress = _SellerRepo.GetOrders(SellerId, OrderStatus.InProgress);
-
-                        var Model = new SellerOrdersViewModel()
-                        {
-                            PostedOrders = new() { Oders = posted,
-                                Buttons = new() { SellerOrderButtons.Accept, SellerOrderButtons.Cancel } },
-                            InProgressOrders = new() { Oders = inprogress,
-                                Buttons = new() { SellerOrderButtons.Delivered, SellerOrderButtons.Cancel } }
-                        };
+                        var Model = SellerOrdersHelper.GetActiveOrders(SellerId, _SellerRepo);
 
                         string PostedProducts = await _renderer.RenderPartialToStringAsync(partial,
                             Model.PostedOrders, httpContext);
@@ -56,7 +48,7 @@ namespace FoodDeliveryWebApp.Hubs
                             Model.InProgressOrders, httpContext);
 
                         await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts,
-                            InProgressProducts, posted.Count);
+                            InProgressProducts, Model.PostedOrders.Oders.Count());
                     }
                 }
             }
