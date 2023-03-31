@@ -23,6 +23,8 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
         public IActionResult Index()
         {
             ICollection<SellerViewModel> sellers;
+            ViewBag.Promo = ViewBag.OrderAlpha = ViewBag.OrderRate = false;
+
             if (Request.Query.Count > 0)
             {
                 if(Request.Query.ContainsKey($"search"))
@@ -33,7 +35,15 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
                 else
                 {
                     var cats = _categoryRepo.GetAll().Where(c => Request.Query.ContainsKey($"{c.Id}")).ToList();
-                    sellers = _customerRestaurantRepo.GetSellersFiltered(cats);
+                    var promo = Request.Query.ContainsKey("promo");
+                    var orderAlpha = Request.Query.ContainsKey("name");
+                    var orderRate = Request.Query.ContainsKey("rating");
+
+                    ViewBag.Promo = promo;
+                    ViewBag.OrderAlpha = orderAlpha;
+                    ViewBag.OrderRate = orderRate;
+
+                    sellers = _customerRestaurantRepo.GetSellersFiltered(cats, promo, orderAlpha, orderRate);
                     ViewBag.Categories = _categoryRepo.GetAll().Select(c => (c.Name, c.Id, Request.Query.ContainsKey($"{c.Id}"))).ToList();
                 }
             }
