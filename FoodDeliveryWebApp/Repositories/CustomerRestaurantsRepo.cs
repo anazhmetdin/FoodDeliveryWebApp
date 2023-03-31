@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using System.Linq;
 
 namespace FoodDeliveryWebApp.Repositories
@@ -30,7 +31,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
-                    Price = p.Price,
+                    Price = p.HasSale? p.SalePrice : p.Price,
                     Image = $"data:image/png;base64,{Convert.ToBase64String(p.Image)}"
                 }).ToList();
         }
@@ -39,19 +40,16 @@ namespace FoodDeliveryWebApp.Repositories
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
 
-            var sellers = from usr in _context.Users
-                          join uRole in _context.UserRoles
-                          on usr.Id equals uRole.UserId
-                          join seller in _context.Sellers
-                          on usr.Id equals seller.Id
-                          where uRole.RoleId == roleId
-                          select new 
-                          { 
-                              usr.Id,
-                              seller.Logo,
-                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
-                              seller.StoreName 
-                          };
+            var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.Logo,
+                    Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                    s.StoreName,
+                    Rate = s.Reviews.Count == 0? 0 : s.Reviews.Average(r => r.Rate)
+                }).ToList();
+
 
             List<SellerViewModel> restaurants = new();
 
@@ -62,45 +60,73 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}"
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}",
+                    Rate = (int)seller.Rate
                 });
             }
 
             return restaurants;
         }
 
-        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories)
+        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories, bool hasPromo, bool orderAlpha, bool orderRate)
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
+            var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews).AsEnumerable();
+            
+            if (categories.Count > 0)
+                sellers = sellers.Where(s => s.Categories.Any(cat => categories.Contains(cat)));
+            
+            if (hasPromo)
+            {
+                var promosCats = _context.PromoCodes.Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
+                sellers = sellers.Where(s => s.Categories.Any(c => promosCats.Contains(c)));
+            }
 
-            var sellers = from usr in _context.Users
-                          join uRole in _context.UserRoles
-                          on usr.Id equals uRole.UserId
-                          join seller in _context.Sellers
-                          on usr.Id equals seller.Id
-                          where uRole.RoleId == roleId && seller.Categories.Any(c => categories.Contains(c))
-                          select new
-                          {
-                              usr.Id,
-                              seller.Logo,
-                              Categories = string.Join(", ", seller.Categories.Select(sc => sc.Name)),
-                              seller.StoreName
-                          };
+            if (orderAlpha)
+                sellers = sellers.OrderBy(s => s.StoreName);
+
+            if (orderRate)
+                sellers = sellers.OrderByDescending(s => s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate));
+
+            var filtered = sellers.Select(s => new
+             {
+                 s.Id,
+                 s.Logo,
+                 Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                 s.StoreName,
+                 Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+             });
 
             List<SellerViewModel> restaurants = new();
 
-            foreach (var seller in sellers)
+            foreach (var seller in filtered)
             {
                 restaurants.Add(new()
                 {
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}"
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}",
+                    Rate = (int)seller.Rate
                 });
             }
 
             return restaurants;
+        }
+
+        public ICollection<SellerViewModel> GetSellersSearched(string text)
+        {
+            return _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews)
+                .Where(s => s.StoreName.Contains(text))
+                       .OrderBy(s => s.StoreName.IndexOf(text))
+                       .Select(s => new SellerViewModel()
+                       {
+                           Id = s.Id,
+                           Categories = string.Join(", ", s.Categories.Select(c => c.Name)),
+                           StoreName = s.StoreName,
+                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo)}",
+                           Rate = s.Reviews.Count == 0 ? 0 : (int)s.Reviews.Average(r => r.Rate)
+                       }).ToList();
         }
     }
 }

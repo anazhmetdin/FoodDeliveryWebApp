@@ -11,7 +11,8 @@ namespace FoodDeliveryWebApp.Contracts
 
         public ICollection<ProductViewModel> GetSellerProducts(string sellerId);
 
-        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories);
+        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categoriesbool, bool hasPromo, bool orderAlpha, bool orderRate);
 
+        public ICollection<SellerViewModel> GetSellersSearched(string text);
     }
 }

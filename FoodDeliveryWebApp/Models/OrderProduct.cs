@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
@@ -13,5 +14,9 @@ namespace FoodDeliveryWebApp.Models
         public Product Product { get; set; } = new();
 
         public Order Order { get; set; } = new();
+        [Range(0, int.MaxValue)]
+        public int Quantity { get; set; }
+        [Range(0, int.MaxValue)]
+        public decimal UnitPrice { get; set; }
     }
 }
