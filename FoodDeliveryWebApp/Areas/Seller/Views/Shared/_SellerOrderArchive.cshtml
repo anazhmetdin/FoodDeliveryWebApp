@@ -1,0 +1,52 @@
+﻿@model IEnumerable<FoodDeliveryWebApp.Models.Order>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CheckOutDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var guid = $"order{item.Id}";
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckOutDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address.FullAddress)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn col-12" data-bs-toggle="collapse" data-bs-target="#@guid">
+                                    Items
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="@guid" class="collapse" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <partial name="_OrderProducts" model="item.OrderProducts" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
