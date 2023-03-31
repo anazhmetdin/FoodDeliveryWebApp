@@ -154,6 +154,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 user.PhoneNumberConfirmed = false;
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                if (!_roleManager.Roles.Any(r => r.Name == "Admin"))
+                    _ = await _roleManager.CreateAsync(new IdentityRole("Admin"));
 
                 if (!_roleManager.Roles.Any(r => r.Name == "Customer"))
                     _ = await _roleManager.CreateAsync(new IdentityRole("Customer"));
