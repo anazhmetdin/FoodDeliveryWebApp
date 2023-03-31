@@ -18,8 +18,9 @@ namespace FoodDeliveryWebApp.Models
         public decimal MaximumDiscount { get; set; }
 
         public virtual ICollection<Category> AppliedTo { get; set; } = new List<Category>();
+        
         public virtual ICollection<Order> Orders { get; set; }
-
+        [MaxLength(16)]
         public string Code { get; set; }
     }
 }

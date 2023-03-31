@@ -1,4 +1,4 @@
-using FoodDeliveryWebApp.Areas.Identity.Data;
+﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +15,7 @@ namespace FoodDeliveryWebApp.Models
         [DisplayName("Delivery Time")]
         public DateTime? DeliveryDate { get; set;}
         [DisplayName("Order Time")]
-        public DateTime CheckOutDate { get; set;}
+        public DateTime? CheckOutDate { get; set;}
         
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
@@ -23,12 +23,21 @@ namespace FoodDeliveryWebApp.Models
         public string CustomerId { get; set; } = string.Empty;
 
         public virtual Customer Customer { get; set; } = new();
+
         [ForeignKey("Review")]
         public int? ReviewId { get; set; }
-        public Review? Review { get; set; }
-        [ForeignKey("seller")]
-        public string SellerId { get; set; }
-        public virtual Seller Seller { get; set; }
+
+        public virtual Review Review { get; set; } = new();
+
+        [ForeignKey("Seller")]
+        public string SellerId { get; set; } = string.Empty;
+
+        public virtual Seller Seller { get; set; } = new();
+
+        [ForeignKey("Address")]
+        public int AddressId { get; set; }
+
+        public virtual Address Address { get; set; } = new();
 
         [ForeignKey("PromoCode")]
         public int? PromoCodeId { get; set; }
@@ -36,8 +45,5 @@ namespace FoodDeliveryWebApp.Models
         public virtual PromoCode? PromoCode { get; set; }
 
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
-        public virtual Address? Address { get; set; }
-        [DataType("Address")]
-        public int AddressId { get; set; }
     }
 }

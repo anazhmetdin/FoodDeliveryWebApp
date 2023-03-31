@@ -19,5 +19,6 @@ namespace FoodDeliveryWebApp.Contracts
         public List<Order> GetOrders(string? sellerId, OrderStatus orderStatus);
         public Order? GetOrder(int? id, string? sellerId);
         public bool ChangeOrderStatus(int? id, string? sellerId, OrderStatus? status);
+        public ICollection<Review> GetReviews(string? sellerId);
     }
 }
