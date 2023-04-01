@@ -1,5 +1,6 @@
 ﻿using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Authorization;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.Repositories;
 using FoodDeliveryWebApp.ViewModels;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Primitives;
 namespace FoodDeliveryWebApp.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [DenySeller]
     public class RestaurantsController : Controller
     {
         private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;
@@ -22,10 +24,6 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            if (User.IsInRole("Seller"))
-            {
-                return RedirectToAction("Index", "Products", new { area = "Seller" });
-            }
             ICollection<SellerViewModel> sellers;
             ViewBag.Promo = ViewBag.OrderAlpha = ViewBag.OrderRate = false;
 

@@ -1,10 +1,12 @@
 ﻿using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Authorization;
 using Microsoft.AspNet.WebHooks;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace FoodDeliveryWebApp.Controllers
 {
+    [DenySeller]
     public class PaymentController : Controller
     {
         // GET: PaymentController
