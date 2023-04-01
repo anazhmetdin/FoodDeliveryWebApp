@@ -16,7 +16,6 @@
     <None Remove="Areas\Seller\Data\**" />
     <None Remove="Areas\Seller\Models\**" />
     <Content Remove="wwwroot\css\checkout.css" />
-    <Content Remove="wwwroot\js\checkout.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +37,6 @@
     <Folder Include="Areas\Seller\Controllers\" />
     <Folder Include="wwwroot\images\" />
     <None Include="wwwroot\css\checkout.css" />
-    <None Include="wwwroot\js\checkout.js" />
   </ItemGroup>
 
 </Project>
