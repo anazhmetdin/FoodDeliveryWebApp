@@ -32,6 +32,8 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
 
+       // builder.Seed();
+
         builder.Entity<Seller>(b =>
         {
             b.HasIndex(s => s.StoreName).IsUnique();

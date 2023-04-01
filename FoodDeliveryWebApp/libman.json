@@ -9,6 +9,13 @@
         "dist/browser/signalr.js",
         "dist/browser/signalr.min.js"
       ]
+    },
+    {
+      "library": "bootbox.js@4.3.0",
+      "destination": "wwwroot/bootbox.js/",
+      "files": [
+        "bootbox.min.js"
+      ]
     }
   ]
 }

@@ -155,10 +155,10 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
 
-                if (!_roleManager.Roles.Any(r => r.Name == "Customer"))
-                    _ = await _roleManager.CreateAsync(new IdentityRole("Customer"));
-                if (!_roleManager.Roles.Any(r => r.Name == "Seller"))
-                    _ = await _roleManager.CreateAsync(new IdentityRole("Seller"));
+                //if (!_roleManager.Roles.Any(r => r.Name == "Customer"))
+                //    _ = await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                //if (!_roleManager.Roles.Any(r => r.Name == "Seller"))
+                //    _ = await _roleManager.CreateAsync(new IdentityRole("Seller"));
 
                 var result1 = await _userManager.CreateAsync(user, Input.Password);
 
