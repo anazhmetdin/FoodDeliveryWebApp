@@ -44,6 +44,11 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual PromoCode? PromoCode { get; set; }
 
+        [ForeignKey("Payment")]
+        public int? PaymentId { get; set; }
+
+        public Payment? Payment { get; set; }
+
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }
 }

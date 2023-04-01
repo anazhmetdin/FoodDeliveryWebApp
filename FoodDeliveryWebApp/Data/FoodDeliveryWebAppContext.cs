@@ -22,6 +22,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options) { }
 
