@@ -169,8 +169,38 @@ namespace FoodDeliveryWebApp.Repositories
             if (order == null || order.SellerId != sellerId)
                 return false;
 
+            if (status == OrderStatus.Delivered)
+                order.DeliveryDate = DateTime.Now;
+
             order.Status = (OrderStatus)status;
             return Context.SaveChanges() > 0;
+        }
+
+        public List<int> GetSalesYears(string sellerId)
+        {
+            return Context.Orders
+                .Where(o => o.SellerId == sellerId && o.Status == OrderStatus.Delivered)
+                .Select(o => o.DeliveryDate)
+                .ToList()
+                .Select(d => d.GetValueOrDefault().Year)
+                .GroupBy(y => y)
+                .Select(g => g.Key)
+                .OrderByDescending(y => y)
+                .ToList();
+        }
+
+        public List<Order> GetSalesPerYear(string sellerId, int year)
+        {
+            _orderRepo.Query = _orderRepo.Query
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Category);
+
+            return _orderRepo
+                .Where(o => o.SellerId == sellerId
+                    && o.Status == OrderStatus.Delivered)
+                .Where(o => o.DeliveryDate.GetValueOrDefault().Year == year)
+                .ToList();
         }
     }
 }

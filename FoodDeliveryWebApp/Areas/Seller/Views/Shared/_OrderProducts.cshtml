@@ -15,9 +15,9 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            @foreach (var OrderProduct in Model)
-            {
+        @foreach (var OrderProduct in Model)
+        {
+            <tr>
                 <td>
                     @OrderProduct.Product.Name
                 </td>
@@ -27,7 +27,7 @@
                 <td>
                     @OrderProduct.UnitPrice
                 </td>
-            }
-        </tr>
+            </tr>
+        }
     </tbody>
 </table>

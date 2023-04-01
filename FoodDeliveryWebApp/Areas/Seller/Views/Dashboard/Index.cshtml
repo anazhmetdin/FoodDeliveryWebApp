@@ -1,0 +1,46 @@
+﻿@model FoodDeliveryWebApp.ViewModels.Charts.SellerDashboard
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<div class="text-center">
+    <p>
+        <h4>
+            Sales and Income Per Year
+        </h4>
+    </p>
+    <div class="flex-d-column">
+        <select id="filterByYear">
+            <option disabled selected value="">Select Year</option>
+        </select>
+
+        <div class="container-fluid">
+
+            <div class="col-12 col-md-10 col-xl-8 mx-auto">
+                <canvas id="sales-per-year-chart"></canvas>
+            </div>
+            <div class="col-12 col-md-10 col-xl-8 mx-auto">
+                <canvas id="income-per-year-chart"></canvas>
+            </div>
+
+            <div class="row mx-auto col-12 col-md-10 col-xl-8">
+                <div class="mx-auto col-10 col-md-6">
+                    <canvas id="sales-per-category"></canvas>
+                </div>
+                <div class="mx-auto col-10 col-md-6">
+                    <canvas id="sales-per-product"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@@^1"></script>
+
+    @*<script src="~/js/chartjs/chart.js"></script>*@
+    <script src="~/js/SellerDashboard.js"></script>
+}

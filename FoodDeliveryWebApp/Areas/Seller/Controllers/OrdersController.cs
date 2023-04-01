@@ -20,7 +20,6 @@ using FoodDeliveryWebApp.Areas.Seller.Hubs;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
-
     [Area("Seller")]
     [Authorize(Roles = "Seller")]
     [AutoValidateAntiforgeryToken]
