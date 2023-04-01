@@ -14,6 +14,8 @@ using System.Text.Json.Serialization;
 using System.Diagnostics;
 using FoodDeliveryWebApp.RazorRenderer;
 using Microsoft.AspNetCore.Mvc.Razor;
+using FoodDeliveryWebApp.Contracts.Charts;
+using FoodDeliveryWebApp.Repositories.Charts;
 
 namespace FoodDeliveryWebApp
 {
@@ -40,6 +42,7 @@ namespace FoodDeliveryWebApp
             {
                 o.ViewLocationExpanders.Add(new SubAreaViewLocationExpander());
             });
+            builder.Services.AddScoped<ISellerDashboardRepo, SellerDashboardRepo>();
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
