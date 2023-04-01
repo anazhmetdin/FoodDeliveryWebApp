@@ -1,0 +1,78 @@
+﻿@model FoodDeliveryWebApp.ViewModels.SellerOrdersViewData
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oders.First().TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oders.First().CheckOutDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oders.First().Customer.User.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Oders.First().Address)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Oders)
+        {
+            var guid = $"order{item.Id}";
+            <tr>
+                <td>
+                    @foreach (var button in Model.Buttons)
+                    {
+                        <button asp-action="ChangeStatus" asp-area="Seller"
+                        asp-route-id="@item.Id" asp-controller="Orders"
+                        asp-route-status="@button.Status"
+                        class="btn @button.ClassList order-button">
+
+                            @button.Content
+                        </button>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckOutDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.User.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address.FullAddress)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-area="Seller"
+                   asp-route-id="@item.Id" asp-controller="Orders">
+                        Details
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn col-12" data-bs-toggle="collapse" data-bs-target="#@guid">
+                                    Items
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="@guid" class="collapse" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <partial name="_OrderProducts" model="item.OrderProducts" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

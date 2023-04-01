@@ -13,5 +13,9 @@ namespace FoodDeliveryWebApp.Models
         public virtual AppUser User { get; set; } = new();
 
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        [NotMapped]
+        public string FullName { get => User.FirstName + " " + User.LastName; }
+
+        public byte[] ProfilePicture { get; set; } = new byte[1];
     }
 }

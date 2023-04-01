@@ -1,6 +1,7 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Authorization;
 using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNet.WebHooks;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +10,7 @@ using Stripe;
 
 namespace FoodDeliveryWebApp.Controllers
 {
+    [DenySeller]
     public class PaymentController : Controller
     {
         private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;

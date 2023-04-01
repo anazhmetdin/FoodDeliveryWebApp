@@ -1,0 +1,68 @@
+﻿@model IEnumerable<FoodDeliveryWebApp.Models.Review>
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+
+<h1>Reviews</h1>
+
+<form method="get" asp-action="Index">
+    <label for="ratingFilter">Filter by rating:</label>
+    <select name="ratingFilter" id="ratingFilter">
+        <option value="">All</option>
+        <option value="1">1 star</option>
+        <option value="2">2 stars</option>
+        <
+        <option value="3">3 stars</option>
+        <option value="4">4 stars</option>
+        <option value="5">5 stars</option>
+    </select>
+    <button class="btn btn-dark" type="submit">Filter</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Rate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserReview)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @*Html.Raw method to prevent HTML encoding*@
+                    @Html.Raw(ConvertToStars(item.Rate))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserReview)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    string ConvertToStars(int rating, int totalStars = 5)
+    {
+        string stars = "";
+        for (int i = 0; i < totalStars; i++)
+        {
+            if (i < rating)
+            {
+                stars += "<span style='color:yellow;font-size:25px;'>&#9733;</span>";
+            }
+            else
+            {
+                stars += "<span style='color:gray;font-size:25px;'>&#9733;</span>";
+            }
+        }
+        return stars;
+    }
+}

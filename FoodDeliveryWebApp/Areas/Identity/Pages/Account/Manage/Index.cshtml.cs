@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -17,13 +18,16 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly ISellerRepo _seller;
 
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            ISellerRepo seller)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _seller = seller;
         }
 
         /// <summary>
@@ -59,18 +63,29 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+            public byte[] ProfilePicture { get; set; } = new byte[256];
+
         }
 
         private async Task LoadAsync(AppUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            byte[] profilePicture = new byte[1];
+            var s = _seller.GetById(user.Id);
+            if (s != null)
+            {
+                profilePicture = _seller.GetById(user.Id).Logo; // Assuming the image data is stored as byte array in the user object
+            }
 
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                ProfilePicture = profilePicture
             };
         }
 
@@ -86,7 +101,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile formFile)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -107,6 +122,34 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set phone number.";
+                    return RedirectToPage();
+                }
+            }
+
+            // Handle image upload
+            if (Request.Form.Files != null && Request.Form.Files.Count > 0)
+            {
+                var file = Request.Form.Files[0];
+                if (file != null && file.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await file.CopyToAsync(ms);
+                        Input.ProfilePicture = ms.ToArray();
+                    }
+                }
+            }
+
+            // Update profile picture
+            if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
+            {
+                var seller = _seller.GetById(user.Id);
+                seller.Logo = Input.ProfilePicture;
+                var updateResult = await _userManager.UpdateAsync(user);
+                var updateSeller = _seller.TryUpdate(seller);
+                if (!updateResult.Succeeded && !updateSeller)
+                {
+                    StatusMessage = "Unexpected error when trying to update profile picture.";
                     return RedirectToPage();
                 }
             }

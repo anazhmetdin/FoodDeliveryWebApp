@@ -1,12 +1,12 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Enums;
+using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection.Emit;
-    using FoodDeliveryWebApp.ViewModels;
 using System.Reflection.Metadata;
 
 namespace FoodDeliveryWebApp.Data;
@@ -110,7 +110,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
         builder.Entity<Review>(b =>
         {
-            b.HasOne(r=>r.Seller)
+            b.HasOne(r => r.Seller)
             .WithMany(op => op.Reviews)
             .HasForeignKey(r => r.SellerId)
             .OnDelete(DeleteBehavior.Restrict);
@@ -121,7 +121,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.HasKey(o => new { o.ProductId, o.OrderId });
             b.Property(o => o.UnitPrice).HasColumnType("money");
         });
-    
+
         builder.Entity<PromoCode>(b =>
         {
             b.Property(p => p.MaximumDiscount).HasColumnType("money");

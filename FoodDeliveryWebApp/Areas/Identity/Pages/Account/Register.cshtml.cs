@@ -32,7 +32,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
         private readonly IUserStore<AppUser> _userStore;
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        //private readonly IEmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
@@ -40,8 +40,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
             RoleManager<IdentityRole> roleManager,
-            FoodDeliveryWebAppContext context
-            /*IEmailSender emailSender*/)
+            FoodDeliveryWebAppContext context,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -50,7 +50,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             _logger = logger;
             _roleManager = roleManager;
             _context = context;
-            //_emailSender = emailSender;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId, code, returnUrl },
                             protocol: Request.Scheme);
 
-                        //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
@@ -198,12 +198,12 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                                     StoreName = Input.StoreName
                                 });
                             }
-                            else
+                            else if (Input.Role == "Customer")
                             {
                                 await _context.Customers.AddAsync(new()
                                 {
                                     Id = user.Id,
-                                    User = user,
+                                    User = user
                                 });
                             }
 

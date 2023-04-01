@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    [Migration("20230401100553_added_quantity_to_OrderProducts")]
-    partial class added_quantity_to_OrderProducts
+    [Migration("20230330004824_MadeSomePropsNullable")]
+    partial class MadeSomePropsNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,6 +202,7 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ReviewId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("SellerId")
@@ -234,9 +235,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId", "OrderId");
@@ -571,7 +569,8 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasOne("FoodDeliveryWebApp.Models.Review", "Review")
                         .WithMany()
                         .HasForeignKey("ReviewId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FoodDeliveryWebApp.Models.Seller", "Seller")
                         .WithMany("Orders")

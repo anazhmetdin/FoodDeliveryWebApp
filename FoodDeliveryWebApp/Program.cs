@@ -1,13 +1,24 @@
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Contracts.Charts;
 using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Hubs;
+using FoodDeliveryWebApp.MiddlewareExtensions;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.RazorRenderer;
 using FoodDeliveryWebApp.Repositories;
+using FoodDeliveryWebApp.Repositories.Charts;
+using FoodDeliveryWebApp.SubscribeTableDependencies;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Stripe;
-
+using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace FoodDeliveryWebApp
 {
@@ -20,11 +31,28 @@ namespace FoodDeliveryWebApp
 
             #region Services
             builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddSignalR(o =>
+            {
+                o.EnableDetailedErrors = true;
+            })
+                .AddJsonProtocol(c =>
+            {
+                c.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
+            builder.Services.AddScoped<IRazorPartialToStringRenderer, RazorPartialToStringRenderer>();
+            builder.Services.AddSingleton<SellerOrdersIndexHub>();
+            builder.Services.AddSingleton<ISubscribeTableDependency, SubscribeOrderTableDependency>();
+            builder.Services.Configure<RazorViewEngineOptions>(o =>
+            {
+                o.ViewLocationExpanders.Add(new SubAreaViewLocationExpander());
+            });
+            builder.Services.AddScoped<ISellerDashboardRepo, SellerDashboardRepo>();
 
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders().AddDefaultUI();
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
@@ -60,7 +88,19 @@ namespace FoodDeliveryWebApp
                 options.SlidingExpiration = true;
             });
 
-            builder.Services.AddAuthentication();
+            builder.Services.AddAuthentication()
+                .AddGoogle(opt =>
+                {
+                    IConfigurationSection GoogleAuthSection = builder.Configuration.GetSection("Authentication:Google");
+                    opt.ClientId = GoogleAuthSection["GoogleId"];
+                    opt.ClientSecret = GoogleAuthSection["GoogleSecret"];
+                })
+                .AddFacebook(opt =>
+                {
+                    IConfigurationSection FacebookAuthSection = builder.Configuration.GetSection("Authentication:Facebook");
+                    opt.ClientId = FacebookAuthSection["FacebookId"];
+                    opt.ClientSecret = FacebookAuthSection["FacebookSecret"];
+                });
 
             builder.Services.AddAuthorization();
             #endregion
@@ -69,7 +109,10 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
-            builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
+            builder.Services.AddScoped<IModelRepo<Models.Review>, ReviewRepo>();
+            builder.Services.AddScoped<IModelRepo<Order>, OrderRepo>();
+            builder.Services.AddScoped<ModelRepo<Models.Product>, ProductRepo>();
+            builder.Services.AddScoped<ICustomerOrderRepo, CustomerOrderRepo>();
             #endregion
 
             builder.Services.AddRazorPages();
@@ -100,11 +143,18 @@ namespace FoodDeliveryWebApp
                 app.UseAuthorization();
             }
 
+            app.MapHub<SellerOrdersIndexHub>("/SellerOrdersIndexHub");
 
             app.MapRazorPages();
 
             app.MapRazorPages();
 
+
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{area=Customer}/{controller=Restaurants}/{action=Index}/{id?}"
+            );
 
             app.MapControllerRoute(
                 name: "defaultWithArea",
@@ -115,6 +165,7 @@ namespace FoodDeliveryWebApp
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.UseSqlTableDependency<ISubscribeTableDependency>(connectionString);
             app.Run();
         }
     }

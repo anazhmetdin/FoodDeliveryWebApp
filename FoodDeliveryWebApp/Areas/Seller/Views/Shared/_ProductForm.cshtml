@@ -1,5 +1,5 @@
 ﻿@using FoodDeliveryWebApp.Models.Enums;
-    using FoodDeliveryWebApp.Models;
+@*    using FoodDeliveryWebApp.Models;*@
 @model FoodDeliveryWebApp.Models.Product
 
 <div asp-validation-summary="All" class="text-danger"></div>
@@ -62,11 +62,3 @@
 <select asp-for="SellerId" class ="form-control" asp-items="ViewBag.SellerId"></select>
 </div>*@
 <input asp-for="SellerId" type="hidden" value="@ViewBag.sell" />
-
-<script>
-    document.getElementById("Sale").addEventListener("input") = () =>
-    {
-        this.nextElementSibling.value = this.value;
-        this.previousElementSibling.value = document.getElementById("Sale").value * (100 - this.value) / 100;
-    }
-</script>

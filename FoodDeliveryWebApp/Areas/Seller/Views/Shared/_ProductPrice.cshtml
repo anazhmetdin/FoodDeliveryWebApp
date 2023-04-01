@@ -1,19 +1,16 @@
 ﻿@model FoodDeliveryWebApp.Models.Product
-
+<td>
 @if (Model.HasSale)
 {
-    <td>
-        <span style="text-decoration:line-through; color:darkred">
-            @Html.DisplayFor(modelItem => Model.Price)
-        </span>
-        <span style="color:forestgreen;">
-            @Html.DisplayFor(modelItem => Model.SalePrice)
-        </span>
-    </td>
+    <span style="text-decoration:line-through; color:darkred">
+        @string.Format("{0:C}", Model.Price)
+    </span>
+    <span style="color:forestgreen;">
+        @string.Format("{0:C}", Model.SalePrice)
+    </span>
 }
 else
 {
-    <td>
-        @Html.DisplayFor(modelItem => Model.Price)
-    </td>
+    @string.Format("{0:C}", Model.Price)
 }
+</td>

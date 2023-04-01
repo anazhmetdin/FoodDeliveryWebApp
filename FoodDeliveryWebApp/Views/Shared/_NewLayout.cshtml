@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FoodDeliveryWebApp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FoodDeliveryWebApp.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color: #ff5a00">
+            <div class="container-fluid">
+                @if (User.IsInRole("Seller"))
+                {
+                    <a class="navbar-brand text-white fw-bolder mx-5" style="font-size: 2rem" asp-area="Seller" asp-controller="Products" asp-action="Index">Talabat</a>
+                }
+                else
+                {
+                    <a class="navbar-brand text-white fw-bolder mx-5" style="font-size: 2rem" asp-area="Customer" asp-controller="Restaurants" asp-action="Index">Talabat</a>
+                }  
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <partial name="_NavBarPartial" optional />
+
+                    </ul>
+                </div>
+
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        @*<div class="container-fluid">
+            <div class="row">
+                <nav class="sidebar sidebar-toggleable-sm sidebar-light border-bottom box-shadow mb-3">
+                    <div class="sidebar-sticky">
+                        @RenderSection("SideBar", required: false)
+                    </div>
+                </nav>
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    <button class="sidebar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar-collapse" aria-controls="sidebarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        Toggle Sidebar
+                    </button>
+                    @RenderBody()
+                </main>
+            </div>
+        </div>*@
+        <main role="main" class="pb-3">
+
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - FoodDeliveryWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

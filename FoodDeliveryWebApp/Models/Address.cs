@@ -27,6 +27,8 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual AppUser User { get; set; } = new();
 
+        public virtual ICollection<Order> Orders { get; set; }
+
         [NotMapped]
         public string FullAddress { get => $"{Region}, {City}, {StreetName}, {BuildingNumber}"; }
     }

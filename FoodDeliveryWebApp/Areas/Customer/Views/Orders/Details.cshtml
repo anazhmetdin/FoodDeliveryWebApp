@@ -1,0 +1,94 @@
+﻿@model FoodDeliveryWebApp.ViewModels.OrderViewModel
+
+@{
+    ViewData["Title"] = "Details";
+
+    string ConvertToStars(int rating)
+    {
+        string stars = "";
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < rating)
+            {
+                stars += "<span style='color:yellow;font-size:1.2rem;'>&#9733;</span>";
+            }
+            else
+            {
+                stars += "<span style='color:gray;font-size:1.2rem;'>&#9733;</span>";
+            }
+        }
+        return stars;
+    }
+}
+
+<h1>Order Overview</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DeliveryDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DeliveryDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CheckOutDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CheckOutDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Seller.StoreName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Seller.StoreName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Review.UserReview)
+        </dt>
+        <dd class="col-sm-10">
+            @{var uRev = Model.Review?.UserReview??"None";}
+            <p class="my-0">@uRev</p>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Review.Rate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.Raw(ConvertToStars(Model.Review == null? 0 : Model.Review.Rate))
+        </dd>
+    </dl>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
