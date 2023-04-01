@@ -12,13 +12,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-<<<<<<<< HEAD:FoodDeliveryWebApp/Migrations/20230401100553_added_quantity_to_OrderProducts.Designer.cs
-    [Migration("20230401100553_added_quantity_to_OrderProducts")]
-    partial class added_quantity_to_OrderProducts
-========
+
     [Migration("20230401201330_FINAL")]
     partial class FINAL
->>>>>>>> master:FoodDeliveryWebApp/Migrations/20230401201330_FINAL.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -261,12 +257,9 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-<<<<<<<< HEAD:FoodDeliveryWebApp/Migrations/20230401100553_added_quantity_to_OrderProducts.Designer.cs
-========
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("money");
 
->>>>>>>> master:FoodDeliveryWebApp/Migrations/20230401201330_FINAL.Designer.cs
                     b.HasKey("ProductId", "OrderId");
 
                     b.HasIndex("OrderId");
