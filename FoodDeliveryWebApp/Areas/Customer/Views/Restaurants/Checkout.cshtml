@@ -1,175 +1,263 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@section Head {
-    <style>
-        @@media (min-width: 1025px) {
-            .h-custom {height: 100vh !important;}
-            }
-    </style>
+@using Microsoft.AspNetCore.Identity
+@using FoodDeliveryWebApp.Areas.Identity.Data
+@model IEnumerable<FoodDeliveryWebApp.Models.OrderProduct>
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+
+@section Head{
+
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
+
 }
-
 @{
-    <section class="h-100 h-custom " style="background-color: #eee;">
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body p-4">
+    string specifier = "C";
 
-                            <div class="row">
+    System.Globalization.CultureInfo culture =
+        System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+    decimal total_price = 0;
+    int orderId = Model.First().OrderId;
+}
+<div class="col">
+    <div class="    ">
+        <div class="card-body p-4">
+            <div class="row">
+                <h5 class="mb-3">
+                    <a href="@Url.Action("Restaurant", "Restaurants", new { Area = "Customer" ,id = Model.First().Product.SellerId})"
+                       class="btn-secondary btn">
+                        <i class="bi bi-arrow-left"></i> Continue shopping
+                    </a>
+                </h5>
+                <hr>
 
-                                <div class="col-lg-7">
-                                    <h5 class="mb-3">
-                                        <a href="#!" class="text-body">
-                                            <i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping
-                                        </a>
-                                    </h5>
-                                    <hr>
-
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div>
-                                            <p class="mb-1">Shopping cart</p>
-                                            <p class="mb-0">You have 4 items in your cart</p>
-                                        </div>
-                                        <div>
-                                            <p class="mb-0">
-                                                <span class="text-muted">Sort by:</span> <a href="#!"
-                                                                                            class="text-body">price <i class="fas fa-angle-down mt-1"></i></a>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
-                                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp"
-                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5>Iphone 11 pro</h5>
-                                                        <p class="small mb-0">256GB, Navy Blue</p>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div style="width: 50px;">
-                                                        <h5 class="fw-normal mb-0">2</h5>
-                                                    </div>
-                                                    <div style="width: 80px;">
-                                                        <h5 class="mb-0">$900</h5>
-                                                    </div>
-                                                    <a href="#!" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
-                                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img2.webp"
-                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5>Samsung galaxy Note 10 </h5>
-                                                        <p class="small mb-0">256GB, Navy Blue</p>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div style="width: 50px;">
-                                                        <h5 class="fw-normal mb-0">2</h5>
-                                                    </div>
-                                                    <div style="width: 80px;">
-                                                        <h5 class="mb-0">$900</h5>
-                                                    </div>
-                                                    <a href="#!" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
-                                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img3.webp"
-                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5>Canon EOS M50</h5>
-                                                        <p class="small mb-0">Onyx Black</p>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div style="width: 50px;">
-                                                        <h5 class="fw-normal mb-0">1</h5>
-                                                    </div>
-                                                    <div style="width: 80px;">
-                                                        <h5 class="mb-0">$1199</h5>
-                                                    </div>
-                                                    <a href="#!" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    
-                                </div>
-                                <div class="col-lg-5">
-
-                                    <div class="card bg-primary text-white rounded-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                                <h5 class="mb-0">Order details</h5>
-
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                                                </svg>
-                                            </div>
-
-                                            <p class="small mb-2">Card type</p>
-                                            
-                                            <hr class="my-4">
-
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">Subtotal</p>
-                                                <p class="mb-2">$4798.00</p>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">Shipping</p>
-                                                <p class="mb-2">$20.00</p>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between mb-4">
-                                                <p class="mb-2">Total(Incl. taxes)</p>
-                                                <p class="mb-2">$4818.00</p>
-                                            </div>
-
-                                            <a href=@Url.Action("Create","Payment",new{Area = ""}) class="btn btn-info btn-block btn-lg">
-                                                <div class="d-flex justify-content-between">
-                                                    <span>
-                                                        Checkout <i class="bi bi-arrow-right"></i>
-                                                    </span>
-                                                </div>
-                                            </a>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
+                <div class="col-lg-7" style="height:590px">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <p class="mb-1">Shopping cart</p>
+                            <p class="mb-0">You have @Model.Count() items in your cart</p>
+                        </div>
+                        <div>
+                          @*  <p class="mb-0">
+                                <span class="text-muted">Sort by:</span>
+                                <a href="#!" class="text-body text-decoration-none">
+                                    price<i class="bi bi-chevron-down"></i>
+                                </a>
+                            </p>*@
                         </div>
                     </div>
+                    <ul class="list-group h-75 overflow-auto rounded-5 p-2">
+                        @{
+
+                            foreach (var item in Model)
+                            {
+                                <li class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div class="col-2">
+                                                    @{
+                                                        string pimg = $"data:image/png;base64,{Convert.ToBase64String(@item.Product.Image)}";
+                                                    }
+                                                    <img src="@pimg"
+                                                         class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h5>@item.Product.Name</h5>
+                                                    <p class="small mb-0 ">@item.Product.Description</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-row align-items-center ">
+                                                <div class="d-flex flex-row align-items-center ">
+                                                    @*<i class="bi bi-plus mx-1"></i>*@
+                                                    <h5 class="fw-normal my-0 mx-5">
+                                                        @item.Quantity
+                                                    </h5>
+                                                    @*<i class="bi bi-dash  mx-1"></i>*@
+                                                </div>
+
+                                                @{
+                                                    decimal tPrice = item.Quantity * item.Product.Price;
+                                                    total_price += tPrice;
+                                                    string tp = tPrice.ToString(specifier, culture);
+                                                }
+                                                <h5 class="w-auto mb-0">@tp</h5>
+                                                @* <a href="#!" class="mx-1 text-black mb-0"><i class="bi bi-trash3-fill"></i></a>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                            }
+                        }
+                    </ul>
+
                 </div>
+                <div class="col-lg-5">
+                    <form id="payment-form">
+                        <div id="link-authentication-element">
+                            <!--Stripe.js injects the Link Authentication Element-->
+                        </div>
+                        <div id="payment-element">
+                            <!--Stripe.js injects the Payment Element-->
+                        </div>
+                        <button id="submit">
+                            <div class="spinner hidden" id="spinner"></div>
+                            <span id="button-text">Pay now</span>
+                        </button>
+                        <div id="payment-message" class="hidden"></div>
+                    </form>
+                </div>
+                @*Hello*@
             </div>
+            @*<button onclick="initialize()">hha</button>*@
         </div>
-    </section>
+    </div>
+</div>
+@{
+    string mail = "";
+    if (SignInManager.IsSignedIn(User))
+    {
+        var userTask = UserManager.GetUserAsync(User);
+        var user = userTask.GetAwaiter().GetResult();
+        mail = user?.Email ?? "";
+    }
+
+}
+@section Scripts{
+    <script src="https://js.stripe.com/v3/"></script>
+    @*<script src="~/js/checkout.js" defer></script>*@
+    <script defer>
+        // This is a public sample test API key.
+        // Don’t submit any personally identifiable information in requests made with this key.
+        // Sign in to see your own test API key embedded in code samples.
+        const stripe = Stripe("pk_test_51Mq0DEDRs2d2XncXUz4PYsdzJmFpgfHrSetrfTWKRN1q3qKkiUUwSK2t7fBL1h6tDY9oWREgtcpKQzsBwZihtgmg00wgHkggZw");
+
+        // The items the customer wants to buy
+        const items = { total_price: @total_price , order_id : @orderId };
+        let elements;
+        initialize();
+        checkStatus();
+
+        document
+            .querySelector("#payment-form")
+            .addEventListener("submit", handleSubmit);
+
+            let   emailAddress = '@mail';
+        // Fetches a payment intent and captures the client secret
+        async function initialize(price) {
+            const response = await fetch("/Payment/Create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(items),
+            });
+            console.log(response);
+            const { clientSecret } = await response.json();
+
+            const appearance = {
+                theme: 'stripe',
+            };
+            elements = stripe.elements({ appearance, clientSecret });
+
+            const linkAuthenticationElement = elements.create("linkAuthentication");
+            linkAuthenticationElement.mount("#link-authentication-element");
+
+            linkAuthenticationElement.on('change', (event) => {
+                emailAddress = event.value.email;
+            });
+
+            const paymentElementOptions = {
+                layout: "tabs",
+            };
+
+            const paymentElement = elements.create("payment", paymentElementOptions);
+            paymentElement.mount("#payment-element");
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            setLoading(true);
+
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    // Make sure to change this to your payment completion page
+                    return_url: "https://localhost:7233/",
+                    receipt_email: emailAddress,
+                },
+            });
+
+            // This point will only be reached if there is an immediate error when
+            // confirming the payment. Otherwise, your customer will be redirected to
+            // your `return_url`. For some payment methods like iDEAL, your customer will
+            // be redirected to an intermediate site first to authorize the payment, then
+            // redirected to the `return_url`.
+            if (error.type === "card_error" || error.type === "validation_error") {
+                showMessage(error.message);
+            } else {
+                showMessage("An unexpected error occurred.");
+            }
+
+            setLoading(false);
+        }
+
+        // Fetches the payment intent status after payment submission
+        async function checkStatus() {
+            const clientSecret = new URLSearchParams(window.location.search).get(
+                "payment_intent_client_secret"
+            );
+
+            if (!clientSecret) {
+                return;
+            }
+
+            const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
+
+            switch (paymentIntent.status) {
+                case "succeeded":
+                    sessionStorage.removeItem('cart');
+                    showMessage("Payment succeeded!");
+                    break;
+                case "processing":
+                    showMessage("Your payment is processing.");
+                    break;
+                case "requires_payment_method":
+                    showMessage("Your payment was not successful, please try again.");
+                    break;
+                default:
+                    showMessage("Something went wrong.");
+                    break;
+            }
+        }
+
+        // ------- UI helpers -------
+
+        function showMessage(messageText) {
+            const messageContainer = document.querySelector("#payment-message");
+
+            messageContainer.classList.remove("hidden");
+            messageContainer.textContent = messageText;
+
+            setTimeout(function () {
+                messageContainer.classList.add("hidden");
+                messageText.textContent = "";
+            }, 4000);
+        }
+
+        // Show a spinner on payment submission
+        function setLoading(isLoading) {
+            if (isLoading) {
+                // Disable the button and show a spinner
+                document.querySelector("#submit").disabled = true;
+                document.querySelector("#spinner").classList.remove("hidden");
+                document.querySelector("#button-text").classList.add("hidden");
+            } else {
+                document.querySelector("#submit").disabled = false;
+                document.querySelector("#spinner").classList.add("hidden");
+                document.querySelector("#button-text").classList.remove("hidden");
+            }
+        }
+    </script>
 }

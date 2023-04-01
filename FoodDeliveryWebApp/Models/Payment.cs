@@ -5,8 +5,8 @@ namespace FoodDeliveryWebApp.Models
     public class Payment
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-
+        public int Id { get; set; }
+        public string? StripeId { get; set; }
         public string Status { get; set; } = string.Empty;
 
         [DataType(DataType.Currency)]

@@ -31,11 +31,19 @@ namespace FoodDeliveryWebApp.Repositories
             _context.SaveChanges();
             return order;
         }
+        public int GetPaymentIdByStripeId(string stripeId)
+        {
+            return _context.Payments.FirstOrDefault(p => p.StripeId == stripeId)?.Id ?? -1;
+        }
+
         public Order GetOrder(int orderId)
         {
             return _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.Id == orderId);
         }
-
+        public Order GetOrderByPaymentId(int paymentId)
+        {
+            return _context.Orders.FirstOrDefault(o => o.PaymentId == paymentId);
+        }
         public bool UpdateOrder(Order o)
         {
             try

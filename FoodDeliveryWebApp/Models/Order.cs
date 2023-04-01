@@ -20,6 +20,10 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual Customer Customer { get; set; } = new();
 
+        [ForeignKey("Payment")]
+        public int? PaymentId { get; set; }
+        public Payment? Payment { get; set; }
+
         [ForeignKey("Review")]
         public int? ReviewId { get; set; }
 
