@@ -98,13 +98,12 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
             foreach (ProductViewModel product in products)
             {
                 // update price
+                OrderProduct orderProduct = _customerRestaurantRepo
+                    .CreateOrderProduct(order.Id, product.Id, (items
+                    .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 0));
+                order.OrderProducts.Add(orderProduct);
                 order.TotalPrice += product.Price * (items
                     .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 1);
-                order.OrderProducts.Add(
-                    _customerRestaurantRepo
-                    .CreateOrderProduct(order.Id, product.Id, (items
-                    .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 0))
-                    );
                 Console.WriteLine(product.Id);
             }
             _customerRestaurantRepo.UpdateOrder(order);
