@@ -57,14 +57,6 @@
             </div>
         </div>*@
         <main role="main" class="pb-3">
-           @* @if (User.IsInRole("Seller"))
-                {
-                RenderBody("Index", "Products", new { area = "Seller" });
-            }
-            @if (User.IsInRole("Seller"))
-            {
-                Html.RenderPartial("Index", new { area = "Seller", controller = "Products" });
-            }*@
 
             @RenderBody()
         </main>

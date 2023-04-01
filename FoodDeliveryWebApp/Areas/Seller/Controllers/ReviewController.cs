@@ -1,10 +1,13 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
+    [Authorize(Roles = "Seller")]
+    [Area("Seller")]
     public class ReviewController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
