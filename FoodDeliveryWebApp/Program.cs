@@ -140,13 +140,28 @@ namespace FoodDeliveryWebApp
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.UseSqlTableDependency<ISubscribeTableDependency>(connectionString);
-            app.Run();
 
+
+            #region Seeding Roles and Create Admin User
+            // when app run create the roles [ADMIN, SELLER, CUSTOMER] and make user called "admin@gmail.com", password "1234Admin."
+            // and assign this admin with the role ADMIN
             using (var scope = app.Services.CreateScope())
             {
-                await FoodDeliveryWebAppContextSeedData.SeedRolesAndAdminAsync(scope.ServiceProvider);
+                var services = scope.ServiceProvider;
+                try
+                {
+                    //  Initialize Roles and Users. This one will create a user with an Admin-role aswell as a separate User-role. See UserRoleInitializer.cs in Areas/Identity/Data
+                       UserRoleInitializer.InitializeAsync(services).Wait();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occured while attempting to seed the database");
+                }
             }
-          //  FoodDeliveryWebAppContextSeedData.Initialize(app.ApplicationServices);
+            #endregion
+
+            app.Run();
         }
     }
 }

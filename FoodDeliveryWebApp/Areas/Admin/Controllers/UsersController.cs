@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
-   // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
