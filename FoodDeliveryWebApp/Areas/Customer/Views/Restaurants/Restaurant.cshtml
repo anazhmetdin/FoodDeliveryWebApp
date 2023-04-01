@@ -129,9 +129,8 @@
                     data: jsonData,
                     contentType: "application/json; charset=utf-8",
                     success: function (response) {
-                        let id = response.body.id;
-                        console.log(id);
-                        window.location.href = `https://localhost:7233/@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })/`
+                        let id =  response.id   ;
+                        window.location.href = `https://localhost:7233`+"@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })" +`/${id}`
                     },
                     error: function (xhr, status, error) {
                         console.log('Error:', error);

@@ -90,16 +90,18 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
                     .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 1);
                 order.OrderProducts.Add(
                     _customerRestaurantRepo
-                    .CreateOrderProduct(order.Id, product.Id)
+                    .CreateOrderProduct(order.Id, product.Id, (items
+                    .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 0))
                     );
                 Console.WriteLine(product.Id);
             }
             _customerRestaurantRepo.UpdateOrder(order);
             return Ok(new { id = order.Id });
         }
-        public IActionResult Checkout(Order order)
+        [HttpGet]
+        public IActionResult Checkout(int id)
         {
-            return View(order);
+            return View(_customerRestaurantRepo.GetOrderProduct(id));
         }
     }
 }

@@ -31,6 +31,11 @@ namespace FoodDeliveryWebApp.Repositories
             _context.SaveChanges();
             return order;
         }
+        public Order GetOrder(int orderId)
+        {
+            return _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.Id == orderId);
+        }
+
         public bool UpdateOrder(Order o)
         {
             try
@@ -47,13 +52,17 @@ namespace FoodDeliveryWebApp.Repositories
 
         }
 
-        public OrderProduct CreateOrderProduct(int orderId, int prodId)
+        public OrderProduct CreateOrderProduct(int orderId, int prodId, int quantity)
         {
             OrderProduct orderProduct = new OrderProduct()
-            { OrderId = orderId, ProductId = prodId };
+            { OrderId = orderId, ProductId = prodId, Quantity = quantity };
             _context.OrderProducts.Add(orderProduct);
             _context.SaveChanges();
             return orderProduct;
+        }
+        public IEnumerable<OrderProduct> GetOrderProduct(int orderId)
+        {
+            return _context.OrderProducts.Include(op => op.Product).Where(op => op.OrderId == orderId);
         }
         public string GetProductSellerID(int productId)
         {
