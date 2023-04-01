@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
@@ -10,12 +11,12 @@ namespace FoodDeliveryWebApp.Models
         [ForeignKey("Order")]
         public int OrderId { get; set; }
 
-        public int Quantity { get; set; }
-
-        public decimal UnitPrice { get; set; }
-
         public Product Product { get; set; } = new();
 
         public Order Order { get; set; } = new();
+        [Range(0, int.MaxValue)]
+        public int Quantity { get; set; }
+        [Range(0, int.MaxValue)]
+        public decimal UnitPrice { get; set; }
     }
 }

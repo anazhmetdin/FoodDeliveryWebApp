@@ -1,0 +1,51 @@
+﻿@model FoodDeliveryWebApp.ViewModels.SellerOrderArchiveViewModel
+
+@{
+    ViewData["Title"] = "Orders Archive";
+}
+
+<h1>Orders Archive</h1>
+
+<a asp-action="Index" class="btn btn-primary">Active Orders</a>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active btn btn-outline-warning"
+                id="@Html.IdFor(model => model.DeliveredOrders)-tab"
+                data-bs-toggle="tab" data-bs-target="#@Html.IdFor(model => model.DeliveredOrders)"
+                type="button" role="tab" aria-controls="@Html.IdFor(model => model.DeliveredOrders)"
+                aria-selected="true">
+
+            @Html.DisplayNameFor(model => model.DeliveredOrders)
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="profile-tab"
+                id="@Html.IdFor(model => model.RejectedOrders)-tab"
+                data-bs-toggle="tab" data-bs-target="#@Html.IdFor(model => model.RejectedOrders)"
+                type="button" role="tab" aria-controls="@Html.IdFor(model => model.RejectedOrders)"
+                aria-selected="false">
+
+            @Html.DisplayNameFor(model => model.RejectedOrders)
+        </button>
+    </li>
+</ul>
+<div id="Orders-tab" class="tab-content">
+
+    <div class="tab-pane fade show active"
+         id="@Html.IdFor(model => model.DeliveredOrders)"
+         role="tabpanel" aria-labelledby="@Html.DisplayNameFor(model => model.DeliveredOrders)-tab">
+
+        <partial name="_SellerOrderArchive" model="Model.DeliveredOrders" />
+
+    </div>
+
+    <div class="tab-pane fade"
+         id="@Html.IdFor(model => model.RejectedOrders)"
+         role="tabpanel" aria-labelledby="@Html.DisplayNameFor(model => model.RejectedOrders)-tab">
+
+        <partial name="_SellerOrderArchive" model="Model.RejectedOrders"/>
+
+    </div>
+
+</div>

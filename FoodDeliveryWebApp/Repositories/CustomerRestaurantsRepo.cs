@@ -68,24 +68,38 @@ namespace FoodDeliveryWebApp.Repositories
             return restaurants;
         }
 
-        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories)
+        public ICollection<SellerViewModel> GetSellersFiltered(List<Category> categories, bool hasPromo, bool orderAlpha, bool orderRate)
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
+            var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews).AsEnumerable();
+            
+            if (categories.Count > 0)
+                sellers = sellers.Where(s => s.Categories.Any(cat => categories.Contains(cat)));
+            
+            if (hasPromo)
+            {
+                var promosCats = _context.PromoCodes.Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
+                sellers = sellers.Where(s => s.Categories.Any(c => promosCats.Contains(c)));
+            }
 
-            var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews)
-                .Where(s => s.Categories.Any(cat => categories.Contains(cat)))
-                .Select(s => new
-                {
-                    s.Id,
-                    s.Logo,
-                    Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
-                    s.StoreName,
-                    Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
-                });
+            if (orderAlpha)
+                sellers = sellers.OrderBy(s => s.StoreName);
+
+            if (orderRate)
+                sellers = sellers.OrderByDescending(s => s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate));
+
+            var filtered = sellers.Select(s => new
+             {
+                 s.Id,
+                 s.Logo,
+                 Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                 s.StoreName,
+                 Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+             });
 
             List<SellerViewModel> restaurants = new();
 
-            foreach (var seller in sellers)
+            foreach (var seller in filtered)
             {
                 restaurants.Add(new()
                 {

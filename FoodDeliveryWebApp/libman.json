@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/js/microsoft/signalr/",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.min.js"
+      ]
+    },
+    {
+      "library": "chartjs@0.3.24",
+      "destination": "wwwroot/chartjs/",
+      "files": [
+        "chart.js"
+      ]
+    },
+    {
+      "library": "moment@2.29.4",
+      "destination": "wwwroot/js/moment/",
+      "files": [
+        "min/moment-with-locales.min.js"
+      ]
+    },
+    {
+      "library": "chartjs-adapter-moment@1.0.1",
+      "destination": "wwwroot/js/chartjs-adapter-moment/",
+      "files": [
+        "dist/chartjs-adapter-moment.min.js"
+      ]
+    }
+  ]
+}

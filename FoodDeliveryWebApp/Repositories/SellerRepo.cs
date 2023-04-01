@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using FoodDeliveryWebApp.Models.Enums;
 
 namespace FoodDeliveryWebApp.Repositories
 {
@@ -12,15 +13,20 @@ namespace FoodDeliveryWebApp.Repositories
         private readonly ModelRepo<Product> _productRepo;
         private readonly UserManager<AppUser> _userManager;
         private readonly IModelRepo<Review> _reviewRepo;
+        private readonly IModelRepo<Order> _orderRepo;
 
         public SellerRepo(FoodDeliveryWebAppContext context,
             ModelRepo<Product> productRepo,
             UserManager<AppUser> userManager,
-            IModelRepo<Review> reviewRepo) : base(context)
+            IModelRepo<Review> reviewRepo,
+            IModelRepo<Order> orderRepo) : base(context)
         {
             _productRepo = productRepo;
             _userManager = userManager;
             _reviewRepo = reviewRepo;
+            _orderRepo = orderRepo;
+
+            _productRepo.Query = _productRepo.Query.Include(p => p.Category);
         }
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
@@ -130,6 +136,71 @@ namespace FoodDeliveryWebApp.Repositories
             var reviews = _reviewRepo.Where(p => p.SellerId == sellerId);
 
             return reviews;
+        }
+
+        public List<Order> GetOrders(string? sellerId, OrderStatus orderStatus)
+        {
+            if (sellerId == null) { return new List<Order>(); }
+
+            var orders = _orderRepo.Where(p => p.SellerId == sellerId
+                                          && p.Status == orderStatus);
+
+            return orders;
+        }
+
+        public Order? GetOrder(int? id, string? sellerId)
+        {
+            if (sellerId == null || id == null) { return null; }
+
+            var order = _orderRepo.GetById(id);
+
+            if (order == null || order.SellerId != sellerId)
+                order = null;
+
+            return order;
+        }
+
+        public bool ChangeOrderStatus(int? id, string? sellerId, OrderStatus? status)
+        {
+            if (sellerId == null || id == null || status == null) { return false; }
+
+            var order = _orderRepo.GetById(id);
+
+            if (order == null || order.SellerId != sellerId)
+                return false;
+
+            if (status == OrderStatus.Delivered)
+                order.DeliveryDate = DateTime.Now;
+
+            order.Status = (OrderStatus)status;
+            return Context.SaveChanges() > 0;
+        }
+
+        public List<int> GetSalesYears(string sellerId)
+        {
+            return Context.Orders
+                .Where(o => o.SellerId == sellerId && o.Status == OrderStatus.Delivered)
+                .Select(o => o.DeliveryDate)
+                .ToList()
+                .Select(d => d.GetValueOrDefault().Year)
+                .GroupBy(y => y)
+                .Select(g => g.Key)
+                .OrderByDescending(y => y)
+                .ToList();
+        }
+
+        public List<Order> GetSalesPerYear(string sellerId, int year)
+        {
+            _orderRepo.Query = _orderRepo.Query
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .ThenInclude(p => p.Category);
+
+            return _orderRepo
+                .Where(o => o.SellerId == sellerId
+                    && o.Status == OrderStatus.Delivered)
+                .Where(o => o.DeliveryDate.GetValueOrDefault().Year == year)
+                .ToList();
         }
     }
 }

@@ -41,8 +41,13 @@
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Review" asp-route-id="@item.Id">Review</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    @{
+                        if (item.Review == null)
+                        {
+                            <> | <a asp-action="Review" asp-route-id="@item.Id">Review</a></>
+                        }
+                    }
                 </td>
             </tr>
         }

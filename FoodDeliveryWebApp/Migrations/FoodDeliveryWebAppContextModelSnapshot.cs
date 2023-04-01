@@ -227,7 +227,10 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasTrigger("SellerOrderIndex");
+                        });
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.OrderProduct", b =>
@@ -309,6 +312,11 @@ namespace FoodDeliveryWebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
                     b.Property<double>("Discount")
                         .HasColumnType("float");
 
@@ -322,6 +330,9 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.ToTable("PromoCodes");
                 });
@@ -724,6 +735,11 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Areas.Identity.Data.AppUser", b =>
                 {
                     b.Navigation("Addresses");
+                });
+
+            modelBuilder.Entity("FoodDeliveryWebApp.Models.Address", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Category", b =>

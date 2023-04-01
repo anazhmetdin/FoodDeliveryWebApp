@@ -31,10 +31,13 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
     <PackageReference Include="Stripe.net" Version="41.11.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\js\moment\min\" />
     <None Include="wwwroot\css\checkout.css" />
     <None Include="wwwroot\js\checkout.js" />
   </ItemGroup>
