@@ -7,5 +7,8 @@ namespace FoodDeliveryWebApp.Contracts
         public ICollection<OrderViewModel> GetOrders(string id);
         
         public OrderViewModel GetOrder(int id);
+
+        public bool AddReview(ReviewViewModel review, int orderId);
+
     }
 }
