@@ -16,6 +16,8 @@ using FoodDeliveryWebApp.RazorRenderer;
 using Microsoft.AspNetCore.Mvc.Razor;
 using FoodDeliveryWebApp.Contracts.Charts;
 using FoodDeliveryWebApp.Repositories.Charts;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoodDeliveryWebApp
 {
@@ -31,7 +33,8 @@ namespace FoodDeliveryWebApp
             builder.Services.AddSignalR(o =>
             {
                 o.EnableDetailedErrors = true;
-            }).AddJsonProtocol(c =>
+            })
+                .AddJsonProtocol(c =>
             {
                 c.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
@@ -47,7 +50,8 @@ namespace FoodDeliveryWebApp
             #region Authentication Services
             //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders().AddDefaultUI();
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
@@ -83,7 +87,19 @@ namespace FoodDeliveryWebApp
                 options.SlidingExpiration = true;
             });
 
-            builder.Services.AddAuthentication();
+            builder.Services.AddAuthentication()
+                .AddGoogle(opt =>
+                {
+                    IConfigurationSection GoogleAuthSection = builder.Configuration.GetSection("Authentication:Google");
+                    opt.ClientId = GoogleAuthSection["GoogleId"];
+                    opt.ClientSecret = GoogleAuthSection["GoogleSecret"];
+                })
+                .AddFacebook(opt =>
+                {
+                    IConfigurationSection FacebookAuthSection = builder.Configuration.GetSection("Authentication:Facebook");
+                    opt.ClientId = FacebookAuthSection["FacebookId"];
+                    opt.ClientSecret = FacebookAuthSection["FacebookSecret"];
+                });
 
             builder.Services.AddAuthorization();
             #endregion
@@ -94,7 +110,7 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
             builder.Services.AddScoped<IModelRepo<Models.Review>, ReviewRepo>();
             builder.Services.AddScoped<IModelRepo<Order>, OrderRepo>();
-            builder.Services.AddScoped<ModelRepo<FoodDeliveryWebApp.Models.Product>, ProductRepo>();
+            builder.Services.AddScoped<ModelRepo<Models.Product>, ProductRepo>();
             builder.Services.AddScoped<ICustomerOrderRepo, CustomerOrderRepo>();
             #endregion
 

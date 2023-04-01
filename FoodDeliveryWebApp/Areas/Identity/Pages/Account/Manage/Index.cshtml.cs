@@ -73,7 +73,12 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            var profilePicture = _seller.GetById(user.Id).Logo; // Assuming the image data is stored as byte array in the user object
+            byte[] profilePicture = new byte[1];
+            var s = _seller.GetById(user.Id);
+            if (s != null)
+            {
+                profilePicture = _seller.GetById(user.Id).Logo; // Assuming the image data is stored as byte array in the user object
+            }
 
             Username = userName;
 
