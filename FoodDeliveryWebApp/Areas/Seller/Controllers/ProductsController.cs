@@ -92,7 +92,9 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             ViewBag.sell = sellerId;
 
             var Model = _sellerRepo.GetSellerProduct(id, sellerId);
-            
+
+            ViewBag.CategoryName = _categryRepo.GetById(Model?.CategoryId)?.Name??"";
+
             if (Model == null)
                 return NotFound();
             

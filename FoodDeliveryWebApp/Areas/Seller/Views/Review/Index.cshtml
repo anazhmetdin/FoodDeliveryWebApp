@@ -5,11 +5,7 @@
 
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Reviews</h1>
 
 <form method="get" asp-action="Index">
     <label for="ratingFilter">Filter by rating:</label>
@@ -22,7 +18,7 @@
         <option value="4">4 stars</option>
         <option value="5">5 stars</option>
     </select>
-    <button type="submit">Filter</button>
+    <button class="btn btn-dark" type="submit">Filter</button>
 </form>
 
 <table class="table">
