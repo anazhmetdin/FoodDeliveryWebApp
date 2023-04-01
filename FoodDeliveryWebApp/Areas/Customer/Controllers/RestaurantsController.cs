@@ -74,7 +74,7 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
             string userId = _userManger.GetUserId(User) ?? string.Empty;
 
             // crazy code  start
-            Order o = _customerRestaurantRepo.CreateOrder(sellerId, userId);
+            Order order = _customerRestaurantRepo.CreateOrder(sellerId, userId);
             // crazy code  eend
 
 
@@ -82,16 +82,16 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
             foreach (ProductViewModel product in products)
             {
                 // update price
-                o.TotalPrice += product.Price * (items
+                order.TotalPrice += product.Price * (items
                     .FirstOrDefault(i => i.Id == product.Id)?.Count ?? 1);
-                o.OrderProducts.Add(
+                order.OrderProducts.Add(
                     _customerRestaurantRepo
-                    .CreateOrderProduct(o.Id, product.Id)
+                    .CreateOrderProduct(order.Id, product.Id)
                     );
                 Console.WriteLine(product.Id);
             }
-            _customerRestaurantRepo.UpdateOrder(o);
-            return RedirectToAction("Checkout", new { order = o });
+            _customerRestaurantRepo.UpdateOrder(order);
+            return Ok(new { id = order.Id });
         }
         public IActionResult Checkout(Order order)
         {

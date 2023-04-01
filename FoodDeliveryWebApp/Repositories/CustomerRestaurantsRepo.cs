@@ -19,25 +19,17 @@ namespace FoodDeliveryWebApp.Repositories
         }
         public Order CreateOrder(string sellerId, string customerId)
         {
-            /*   Order order = new Order()
-               {
-                   TotalPrice = 0,
-                   DeliveryDate = DateTime.Now,
-                   CheckOutDate = DateTime.Now,
-                   SellerId = sellerId,
-                   CustomerId = customerId,    
-               };*/
-            _context.Orders.Add(new Order()
+            Order order = new Order()
             {
                 TotalPrice = 0,
                 DeliveryDate = DateTime.Now,
                 CheckOutDate = DateTime.Now,
                 SellerId = sellerId,
                 CustomerId = customerId,
-            });
-            //Console.WriteLine("This the empty CustomerId: " + _context.Orders.ToList().LastOrDefault()?.CustomerId ?? "HMM");
-            _context.SaveChanges();// why you do this to me ?
-            return _context.Orders.ToList().LastOrDefault() ?? new Order();
+            };
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
         }
         public bool UpdateOrder(Order o)
         {
