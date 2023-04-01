@@ -22,6 +22,10 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            if (User.IsInRole("Seller"))
+            {
+                return RedirectToAction("Index", "Products", new { area = "Seller" });
+            }
             ICollection<SellerViewModel> sellers;
             if (Request.Query.Count > 0)
             {

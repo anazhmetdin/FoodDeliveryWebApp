@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Seller\Controllers\" />
     <Folder Include="wwwroot\images\" />
     <None Include="wwwroot\css\checkout.css" />
     <None Include="wwwroot\js\checkout.js" />

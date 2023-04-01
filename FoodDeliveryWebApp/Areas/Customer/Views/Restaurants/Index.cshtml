@@ -86,7 +86,14 @@
 
                                     <div class="col">
                                         <div class="card accordion-body">
-                                            <img src="@Model[j].Logo">
+                                            @if (@Model[j] != null && @Model[j].Logo != null)
+                                            {
+                                                <img src="@Model[j].Logo">
+                                            }
+                                            else
+                                            {
+                                                <img alt="product Img" class="productImg" src="~/images/user.png" />
+                                            }
                                             <div class="card-body">
                                                 <div class="row">
                                                     <h5 class="card-title col-md d-inline">@Model[j].StoreName</h5>

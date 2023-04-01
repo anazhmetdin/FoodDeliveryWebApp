@@ -1,11 +1,9 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
-using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FoodDeliveryWebApp.Controllers
+namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
     public class ReviewController : Controller
     {
@@ -29,7 +27,5 @@ namespace FoodDeliveryWebApp.Controllers
 
             return View(reviews);
         }
-
-
     }
 }

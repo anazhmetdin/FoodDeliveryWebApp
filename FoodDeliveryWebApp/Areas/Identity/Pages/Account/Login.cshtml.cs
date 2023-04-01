@@ -22,11 +22,14 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<AppUser> _userManager;
 
-        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger)
+
+        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -115,8 +118,25 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (await _userManager.IsInRoleAsync(user, "Seller"))
+                    {
+                        _logger.LogInformation("Seller logged in.");
+                        return RedirectToAction("Index", "Products" , new {area = "Seller"});
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "Customer"))
+                    {
+                        _logger.LogInformation("Customer logged in.");
+                        return RedirectToAction("Index", "Restaurants" , new { area = "Customer" });
+                    }
+                    else
+                    {
+                        //_logger.LogInformation("Unknown user logged in.");
+                        //return LocalRedirect(returnUrl);
+                        _logger.LogInformation("Unknown logged in.");
+                        return RedirectToAction("Index", "Restaurants", new { area = "Customer" });                        
+
+                    }
                 }
                 if (result.RequiresTwoFactor)
                 {
