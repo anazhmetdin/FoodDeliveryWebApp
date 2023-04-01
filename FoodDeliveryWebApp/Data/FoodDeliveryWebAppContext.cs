@@ -37,12 +37,19 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
         {
             b.HasIndex(s => s.StoreName).IsUnique();
 
+            b.Property(s => s.Logo).IsRequired(false);
+
             b.HasMany(s => s.Reviews)
             .WithOne(op => op.Seller)
             .HasForeignKey(r => r.SellerId);
 
             b.HasMany(s => s.Categories)
            .WithMany(op => op.Sellers);
+        });
+
+        builder.Entity<Customer>(b =>
+        {
+            b.Property(c => c.ProfilePicture).IsRequired(false);
         });
 
         builder.Entity<Category>(b =>

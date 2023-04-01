@@ -19,7 +19,7 @@ namespace FoodDeliveryWebApp.Models
         public int BranchesNumber { get => User.Addresses.Count; }
         
         [Required]
-        public byte[] Logo { get; set; } = new byte[256];
+        public byte[]? Logo { get; set; }
 
         public virtual AppUser User { get; set; } = new();
 

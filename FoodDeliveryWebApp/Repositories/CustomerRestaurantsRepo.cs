@@ -60,7 +60,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}",
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? new byte[1])}",
                     Rate = (int)seller.Rate
                 });
             }
