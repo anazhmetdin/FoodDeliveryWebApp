@@ -219,7 +219,7 @@ namespace FoodDeliveryWebApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -238,7 +238,7 @@ namespace FoodDeliveryWebApp.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StoreName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

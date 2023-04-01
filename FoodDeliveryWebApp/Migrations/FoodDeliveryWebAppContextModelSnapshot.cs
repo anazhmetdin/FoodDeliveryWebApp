@@ -173,7 +173,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("ProfilePicture")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
@@ -411,7 +410,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("Logo")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Status")

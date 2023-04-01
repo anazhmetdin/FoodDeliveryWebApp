@@ -16,6 +16,6 @@ namespace FoodDeliveryWebApp.Models
         [NotMapped]
         public string FullName { get => User.FirstName + " " + User.LastName; }
 
-        public byte[] ProfilePicture { get; set; } = new byte[1];
+        public byte[]? ProfilePicture { get; set; }
     }
 }

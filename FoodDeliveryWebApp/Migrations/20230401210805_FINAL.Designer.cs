@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDeliveryWebApp.Migrations
 {
     [DbContext(typeof(FoodDeliveryWebAppContext))]
-    [Migration("20230401201330_FINAL")]
+    [Migration("20230401210805_FINAL")]
     partial class FINAL
     {
         /// <inheritdoc />
@@ -176,7 +176,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("ProfilePicture")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
@@ -414,7 +413,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("Logo")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Status")
