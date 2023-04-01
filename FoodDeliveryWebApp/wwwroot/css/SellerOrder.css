@@ -34,3 +34,7 @@
 #prdcts-table .sticky-top {
     background-color: white;
 }
+
+.btn-group.fs-6>a {
+    font-size: x-small !important;
+}
