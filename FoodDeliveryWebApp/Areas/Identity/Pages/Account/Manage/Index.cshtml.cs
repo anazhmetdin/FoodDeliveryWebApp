@@ -65,8 +65,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
             [Display(Name = "Address")]
             public string Address { get; set; }
-            public byte[] ProfilePicture { get; set; } = new byte[256];
-
+            public byte[] ProfilePicture { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
@@ -144,7 +143,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
             {
                 var seller = _seller.GetById(user.Id);
-                seller.Logo = Input.ProfilePicture;
+                seller.Logo = Input?.ProfilePicture?? null;
                 var updateResult = await _userManager.UpdateAsync(user);
                 var updateSeller = _seller.TryUpdate(seller);
                 if (!updateResult.Succeeded && !updateSeller)
