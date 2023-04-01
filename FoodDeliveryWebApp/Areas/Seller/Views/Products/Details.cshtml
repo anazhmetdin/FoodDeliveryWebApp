@@ -60,9 +60,9 @@
         </div>
         <div class="col">
             <div>
-                <h5>@Html.DisplayNameFor(model => model.Category) : @ViewBag.CategoryName</h5>
+                <h5>@Html.DisplayNameFor(model => model.Category) : @Model.Category?.Name</h5>
                 <h5 class="card-text text-truncate">Description : @Model.Description</h5>
-                <h5 class="card-text">Price : @string.Format("{0:C}", @Model.Price)</h5>
+                <h5 class="card-text">Price : <partial name="_ProductPrice" model="Model" /></h5>
                 <h5>@Html.DisplayNameFor(model =>model.InStock) : @Html.DisplayFor(model => model.InStock)</h5>
                 @*@Html.DisplayFor(model => model.Category)*@
             </div>

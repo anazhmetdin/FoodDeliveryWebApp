@@ -33,6 +33,8 @@ namespace FoodDeliveryWebApp.Repositories
         {
             if (sellerId == null ) { return new List<Product>(); }
 
+            _productRepo.Query = _productRepo.Query.Include(p => p.Category);
+
             var products = _productRepo.Where(p => p.SellerId == sellerId);
 
             return products;
@@ -40,6 +42,8 @@ namespace FoodDeliveryWebApp.Repositories
         public Product? GetSellerProduct(int pid, string? sellerId)
         {
             if (sellerId == null) { return null; }
+
+            _productRepo.Query = _productRepo.Query.Include(p => p.Category);
 
             var products = _productRepo.Where(p => p.Id == pid && p.SellerId == sellerId);
 

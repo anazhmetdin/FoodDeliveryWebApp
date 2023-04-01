@@ -1,121 +1,193 @@
-﻿@model IEnumerable<FoodDeliveryWebApp.Models.Product>
+﻿@model IEnumerable<IGrouping<string, FoodDeliveryWebApp.Models.Product>>?
 @using Microsoft.AspNetCore.Http.Extensions;
 @{
     ViewData["Title"] = "Our Menu";
 }
 
-<h1>Our Menu</h1>
+@section Head {
+    <link rel="stylesheet" type="text/css" href="~/css/SellerOrder.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+}
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1 class="text-center">
+    <a asp-action="Create" class="btn" style="margin-bottom: 0.5rem;">
+        <i class="bi bi-plus-square-fill text-success fs-1"></i>
+    </a>Our Menu
+</h1>
 
-<form method="get">
-    <select class="form-control" asp-items="@ViewBag.CategoryList" name="category">
-        <option disabled="disabled" selected="selected">Select Category</option>
-        <option value="0">All</option>
-    </select>
+<div id="forms"></div>
+
+<form method="get" class="col-md-3 row gy-3 sticky-md-top" id="filter-form">
     
-    <label for="hasSale">Sale</label>
-    <select class="form-control" asp-items="@ViewBag.hasSale" name="hasSale" id="hasSale">
-        <option disabled="disabled" selected="selected">Select value</option>
-    </select>
+    <div class="col-12 col-sm-4 col-md-12 ">
+        <label for="Category">Category</label>
+        <select class="form-select" asp-items="@ViewBag.CategoryList" name="category">
+            <option disabled="disabled" selected="selected">Select Category</option>
+            <option value="0">All</option>
+        </select>
+    </div>
 
-    <input type="submit" value="Filter" asp-action="Index"
-           class="btn btn-primary" />
+    <div class="col-12 col-sm-4 col-md-12 ">
+        <label for="hasSale">Sale</label>
+        <select class="form-control form-select" asp-items="@ViewBag.hasSale" name="hasSale" id="hasSale">
+            <option disabled="disabled" selected="selected">Select value</option>
+        </select>
+    </div>  
+
+    <div class="col-12 col-sm-4 col-md-12 ">
+        <label for="inStock">In Stock</label>
+        <select class="form-control form-select" asp-items="@ViewBag.inStock" name="inStock" id="inStock">
+            <option disabled="disabled" selected="selected">Select availability</option>
+        </select>
+    </div>  
+    
+    <div class="col-12">
+        
+        <div class="mx-auto" style="width:fit-content">
+            <input type="submit" value="Filter" asp-action="Index"
+                   class="btn btn-talabat" />
+
+
+            <button type="button" class="btn p-0 btn-talabat-secondary">
+                <a asp-action="Index" class="btn p-auto">
+                        Clear
+                </a>
+            </button>
+        </div>
+
+    </div>
+    
+    <hr class="bg-warning border-2 border-top btn-talabat-secondary">
 </form>
 
-<a asp-action="Index">Reset Filters</a>
 
-<form method="post">
+<form method="post" class="row">
 
-    <div class="form-group">
-        <div>
-            <input type="range" min="0" max="100" value="0" name="sale"
-                   oninput="this.nextElementSibling.value = this.value"/>
-            <output>0</output>
-            <input type="submit" value="Apply Sale" asp-action="ApplySale"
-                   class="btn btn-primary" />
+    <div class="form-group col-md-3">
+        <div class="sticky-md-top top-50 row">
+            
+            <div class="d-flex flex-column text-center col-6 col-md-12">
+                <label for="sale">Sale Value</label>
 
-            <input type="submit" value="Restocked" asp-action="Restock"
-                   class="btn btn-primary" />
-            <input type="submit" value="Out of Stock" asp-action="Destock"
-                   class="btn btn-primary" />
+                <div>
+                    <input type="range" min="0" max="100" value="0" name="sale"
+                           oninput="this.nextElementSibling.value = this.value"/>
+                    <output>0</output>
+                </div>
+                <button type="submit" asp-action="ApplySale"
+                       class="btn btn-talabat" >
+                       <i class="bi bi-percent"></i> Apply Sale
+                </button>
+            </div>
+
+            <hr class="bg-warning border-2 border-top btn-talabat-secondary gt-2 d-none d-md-block">
+
+            <div class="d-flex flex-column gap-2 col-6 col-md-12">
+                <button type="submit" asp-action="Restock"
+                       class="btn btn-talabat" >
+                       <i class="bi bi-bag-check"></i> Restocked
+                </button>
+                <button type="submit" asp-action="Destock"
+                       class="btn btn-talabat-secondary" >
+                       <i class="bi bi-bag-x"></i> Out of Stock
+                </button>
+            </div>
         </div>
     </div>
     @Html.Hidden("returnUrl",Context.Request.GetEncodedPathAndQuery())
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <input id="all" type="checkbox" class="form-check-input"/>
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InStock)
-            </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Seller)
-            </th>
-            <th></th>*@
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <input type="checkbox" name="selected" value="@item.Id"
-                    class="form-check-input"/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-                <partial name="_ProductPrice" model="item"/>
-            <td>
-                @Html.DisplayFor(modelItem => item.InStock)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>*@
-            <td>
-                <img id="productImg" alt="productImg" class="img-thumbnail" src="data:image/*;base64,@(Convert.ToBase64String(item.Image))" />
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Seller.Id)
-            </td>*@
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="col-md-9" id="prdcts-table">
+    <div class="sticky-top">
+        <nav>
+            <div class="nav nav-tabs">
+            @foreach (var group in Model!)
+            {
+                @if (group.Key != Model!.FirstOrDefault()!.Key)
+                {
+                    <a class="nav-link talabat-tab"
+                       href="#@group.Key-section">
+                        @group.Key
+                    </a>                       
+                }
+                else
+                {
+                    <a class="nav-link talabat-tab active"
+                       href="#@group.Key-section">
+                        @group.Key
+                    </a>   
+                }
+            }
+            </div>
+        </nav>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <input id="all" type="checkbox" class="form-check-input"/>
+                </th>
+                <th>
+                        @Html.DisplayNameFor(model => model!.FirstOrDefault()!.FirstOrDefault()!.Name)
+                </th>
+                <th>
+                        @Html.DisplayNameFor(model => model!.FirstOrDefault()!.FirstOrDefault()!.Price)
+                </th>
+                <th>
+                        @Html.DisplayNameFor(model => model!.FirstOrDefault()!.FirstOrDefault()!.InStock)
+                </th>
+                <th>
+                        @Html.DisplayNameFor(model => model!.FirstOrDefault()!.FirstOrDefault()!.Image)
+                </th>
+                @*<th>
+                    @Html.DisplayNameFor(model => model.Seller)
+                </th>
+                <th></th>*@
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var group in Model!)
+        {
+            <tr>
+                <td id="@group.Key-section" colspan="10" class="fw-bolder btn-talabat">
+                    @group.Key
+                </td>
+            </tr>
+            @foreach (var item in group)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selected" value="@item.Id"
+                                class="form-check-input"/>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                        <partial name="_ProductPrice" model="item"/>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InStock)
+                    </td>
+                    <td>
+                        <img id="productImg" alt="productImg" class="img-thumbnail" src="data:image/*;base64,@(Convert.ToBase64String(item.Image))" />
+                    </td>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.Seller.Id)
+                    </td>*@
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
 
 </form>
 
 @section Scripts
     {
-    <script>
-        document.getElementById("all").onchange = () => {
-            const ref = document.getElementById("all").checked;
-
-            document.querySelectorAll(".form-check-input").forEach((item)=>{
-                item.checked = ref;
-            })
-        }
+    <script src="~/js/SellerProductsIndex.js">
+        
     </script>
 }

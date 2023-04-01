@@ -33,23 +33,36 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         }
 
         // GET: Seller/Products
-        public ActionResult Index(int? category, string? hasSale)
+        public ActionResult Index(int? category, string? hasSale, string? inStock)
         {
             ViewBag.hasSale = new SelectList(new List<string>() { "All", "Yes", "No" }, hasSale);
-            
-            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", category);
+            ViewBag.inStock = new SelectList(new List<string>() { "All", "In Stock", "Out of Stock" }, inStock);
+
             var sellerId = _userManager.GetUserId(User);
 
             bool sale = hasSale?.ToLower() == "yes";
             hasSale = hasSale?.ToLower() == "all" ? null : hasSale;
 
+            bool stock = inStock?.ToLower() == "in stock";
+            inStock = inStock?.ToLower() == "all" ? null : inStock;
+
             category = category == 0 ? null : category;
 
             var products = _sellerRepo.GetSellerProducts(sellerId)
                 .Where(s => (s.CategoryId == category || category == null) 
-                    && (s.HasSale == sale || hasSale == null) ).ToList();
-            
-            return View(products);
+                    && (s.HasSale == sale || hasSale == null)
+                    && (s.InStock == stock || inStock == null)).ToList();
+
+            var productsGroups = products
+                .OrderByDescending(o => o.InStock)
+                .ThenByDescending(o => o.HasSale)
+                .ThenByDescending (o => o.Sale)
+                .GroupBy(o => o.Category!.Name)
+                .OrderBy(g => g.Key);
+
+            ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", category);
+
+            return View(productsGroups);
         }
 
         // POST: Seller/Products
@@ -92,8 +105,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             ViewBag.sell = sellerId;
 
             var Model = _sellerRepo.GetSellerProduct(id, sellerId);
-
-            ViewBag.CategoryName = _categryRepo.GetById(Model?.CategoryId)?.Name??"";
 
             if (Model == null)
                 return NotFound();
@@ -189,47 +200,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             return View(product);
         }
 
-        // GET: SellerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var sellerId = _userManager.GetUserId(User);
-            ViewBag.sell = sellerId;
-
-            var Model = _sellerRepo.GetSellerProduct(id, sellerId);
-            if (Model == null)
-            {
-                return NotFound();
-            }
-
-            return View(Model);
-        }
-
-        // POST: SellerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                var sellerId = _userManager.GetUserId(User);
-                ViewBag.sell = sellerId;
-
-                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
-                if (Model == null)
-                {
-                    return NotFound();
-                }
-
-                if (_productRepo.TryDelete(id))
-                    return RedirectToAction(nameof(Index));
-
-                return View(Model);
-            }
-            catch
-            {
-                return View();
-            }
-        }
         ActionResult RedirectToIndex(string? returnUrl)
         {
             if (returnUrl != null)

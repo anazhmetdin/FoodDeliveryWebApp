@@ -1,0 +1,36 @@
+﻿@media (min-width: 768px)
+{
+    #prdcts-table {
+        margin-top: -20rem;
+    }
+}
+
+.btn-talabat {
+    background-color: rgb(255, 90, 0) !important;
+    color: white;
+}
+
+.btn-talabat:hover {
+    color: white;
+}
+
+.btn-talabat-secondary {
+    border-color: rgb(255, 90, 0) !important;
+}
+
+#filter-form {
+    top: 5%;
+}
+
+.talabat-tab {
+    color: black;
+}
+
+.talabat-tab.active {
+    border-color: rgb(255, 90, 0) !important;
+    color: rgb(255, 90, 0) !important;
+}
+
+#prdcts-table .sticky-top {
+    background-color: white;
+}
