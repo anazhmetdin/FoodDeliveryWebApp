@@ -118,24 +118,26 @@
                     Count: cart[key]
                 });
             }
-            var jsonData = JSON.stringify(sessionData);
 
-            console.log(jsonData);
-
-            $.ajax({
-                url: '/Customer/Restaurants/Checkout',
-                type: 'POST',
-                data: jsonData,
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    let id = response.body.id;
-                    console.log(id);
-                    window.location.href = `https://localhost:7233/@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })/`
-                },
-                error: function (xhr, status, error) {
-                    console.log('Error:', error);
-                }
-            });
+            console.log(sessionData);
+            if (sessionData.length ){
+                console.log("Ajax Data", sessionData.length);
+                var jsonData = JSON.stringify(sessionData);
+                $.ajax({
+                    url: '/Customer/Restaurants/Checkout',
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        let id = response.body.id;
+                        console.log(id);
+                        window.location.href = `https://localhost:7233/@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })/`
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }
         });
     </script>
 }
