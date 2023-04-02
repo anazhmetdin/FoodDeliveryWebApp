@@ -40,18 +40,29 @@
     </div>
     <hr />
     <h6>Roles</h6>
-    @for (int i = 0; i < Model.Roles.Count; i++)
+
+  @*      <div class="form-check m-1">
+            <input type="hidden" asp-for="@Model.Roles[1].RoleName" />
+            <input asp-for="@Model.Roles[1].IsSelected" class="form-check-input" />
+            <label class="form-check-label" asp-for="@Model.Roles[1].IsSelected">
+                @Model.Roles[1].RoleName
+            </label>
+        </div>*@
+   @for (int i = 0; i < Model.Roles.Count; i++)
     {
-        <div class="form-check m-1">
-            <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
+        if (Model.Roles[i].RoleName == "Admin")
+        {
+            <div class="form-check m-1">
+                <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
             <input asp-for="@Model.Roles[i].IsSelected" class="form-check-input" />
             <label class="form-check-label" asp-for="@Model.Roles[i].IsSelected">
                 @Model.Roles[i].RoleName
             </label>
         </div>
+        }
     }
     <span asp-validation-for="Roles" class="text-danger"></span>
-    <button  type="submit" class="btn btn-primary d-block mt-4">Save</button>
+    <button type="submit" class="btn btn-primary d-block mt-4">Save</button>
     @*asp-area="Admin" asp-action="Index"*@
 </form>
 

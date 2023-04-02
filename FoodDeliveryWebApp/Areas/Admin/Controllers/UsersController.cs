@@ -40,7 +40,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
         public async Task<IActionResult> Add()
         {
             var roles = await _roleManager.Roles.Select(r => new RoleViewModel { RoleId = r.Id, RoleName = r.Name }).ToListAsync();
-
+          //  var adminRole = await _roleManager.FindByNameAsync(roles[2].RoleName);
             var viewModel = new AddUserViewModel
             {
                 Roles = roles
