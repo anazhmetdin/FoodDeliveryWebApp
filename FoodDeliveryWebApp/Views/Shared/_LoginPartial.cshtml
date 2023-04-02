@@ -5,6 +5,7 @@
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 @inject ISellerRepo _seller
+@inject ICustomerRestaurantsRepo _customer
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
@@ -30,6 +31,25 @@
             }
             <img id="sellerImg" src="@imgSrc" />
         }
+
+        else if (User.IsInRole("Customer"))
+        {
+            string imgSrc = "";
+            var _user = _customer.GetCustomer(user.Id);
+            if (_user.ProfilePicture == null)
+            {
+                FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+            }
+            else
+            {
+                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(_user.ProfilePicture)}";
+            }
+            <img id="sellerImg" src="@imgSrc" />
+        }
+
         <li class="nav-item">
             <a id="manage" class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @firstName @lasttName</a>
         </li>
