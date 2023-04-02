@@ -34,7 +34,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellersId");
 
-                    b.ToTable("CategorySeller");
+                    b.ToTable("CategorySeller", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Areas.Identity.Data.AppUser", b =>
@@ -142,7 +142,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Category", b =>
@@ -164,7 +164,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("PromoCodeId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Customer", b =>
@@ -177,7 +177,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Order", b =>
@@ -235,7 +235,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Orders", t =>
+                    b.ToTable("Orders", null, t =>
                         {
                             t.HasTrigger("SellerOrderIndex");
                         });
@@ -259,7 +259,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderProducts");
+                    b.ToTable("OrderProducts", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Payment", b =>
@@ -285,7 +285,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>
@@ -335,7 +335,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.PromoCode", b =>
@@ -368,7 +368,7 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("PromoCodes");
+                    b.ToTable("PromoCodes", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Review", b =>
@@ -401,7 +401,7 @@ namespace FoodDeliveryWebApp.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Seller", b =>
@@ -425,7 +425,7 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("StoreName")
                         .IsUnique();
 
-                    b.ToTable("Sellers");
+                    b.ToTable("Sellers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

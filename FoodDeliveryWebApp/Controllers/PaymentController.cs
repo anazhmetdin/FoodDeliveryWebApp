@@ -1,6 +1,10 @@
-﻿using FoodDeliveryWebApp.Models;
+﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Models.Authorization;
+using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNet.WebHooks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
@@ -9,6 +13,12 @@ namespace FoodDeliveryWebApp.Controllers
     [DenySeller]
     public class PaymentController : Controller
     {
+        private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;
+
+        public PaymentController(ICustomerRestaurantsRepo customerRestaurantRepo)
+        {
+            _customerRestaurantRepo = customerRestaurantRepo;
+        }
         // GET: PaymentController
         public ActionResult Index()
         {
@@ -22,32 +32,14 @@ namespace FoodDeliveryWebApp.Controllers
         }
 
         // GET: PaymentController/Create
+        [HttpGet]
         public ActionResult Create()
         {
 
             return View();
         }
 
-        // POST: PaymentController/Create
-        [HttpPost]
-        public ActionResult Create(PaymentIntentCreateRequest request)
-        {
-            var paymentIntentService = new PaymentIntentService();
-            var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
-            {
-                Amount = CalculateOrderAmount(request.Items),
-                Currency = "usd",
-                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-                {
-                    
-                    Enabled = true,
-                },
-            });
-
-            return Json(new { clientSecret = paymentIntent.ClientSecret });
-
-        }
-
+        // /Payment/Webhok
         [HttpPost]
         public async Task<IActionResult> Webhook()
         {
@@ -66,14 +58,12 @@ namespace FoodDeliveryWebApp.Controllers
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     Console.WriteLine("A successful payment for {0} was made.", paymentIntent.Amount);
+                    Order o = _customerRestaurantRepo.GetOrderStripeByPaymentId(paymentIntent.Id);
+                    o.Status = Models.Enums.OrderStatus.Posted;
+                    await Console.Out.WriteLineAsync(paymentIntent.Id);
+                    _customerRestaurantRepo.UpdateOrder(o);
                     // Then define and call a method to handle the successful payment intent.
                     // handlePaymentIntentSucceeded(paymentIntent);
-                }
-                else if (stripeEvent.Type == Events.PaymentMethodAttached)
-                {
-                    var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
-                    // Then define and call a method to handle the successful attachment of a PaymentMethod.
-                    // handlePaymentMethodAttached(paymentMethod);
                 }
                 else
                 {
@@ -91,13 +81,36 @@ namespace FoodDeliveryWebApp.Controllers
                 return StatusCode(500);
             }
         }
-
-        private int CalculateOrderAmount(Item[] items)
+        // POST: PaymentController/Create
+        [HttpPost]
+        public ActionResult Create([FromBody] TotalPrice items)
         {
-            // Replace this constant with a calculation of the order's amount
-            // Calculate the order total on the server to prevent
-            // people from directly manipulating the amount on the client
-            return 1400;
+            var paymentIntentService = new PaymentIntentService();
+            var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
+            {
+                Amount = (long)(items.total_price * 1000),
+                Currency = "usd",
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                },
+            });
+            Order o = _customerRestaurantRepo.GetOrder(items.order_id);
+            o.Payment = new Payment()
+            {
+                StripeId = paymentIntent.Id,
+                Amount = paymentIntent.Amount,
+                AmountReceived = paymentIntent.AmountReceived
+            };
+            _customerRestaurantRepo.UpdateOrder(o);
+            return Json(new { clientSecret = paymentIntent.ClientSecret, OrderId = o.Id });
+
         }
+
+    }
+    public class TotalPrice
+    {
+        public decimal total_price { get; set; }
+        public int order_id { get; set; }
     }
 }

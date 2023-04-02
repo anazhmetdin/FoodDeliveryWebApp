@@ -6,17 +6,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Order:BaseModel
+    public class Order : BaseModel
     {
         [DisplayName("Total")]
         [Range(0, (double)decimal.MaxValue)]
-        public decimal TotalPrice { get; set;}
+        public decimal TotalPrice { get; set; }
 
         [DisplayName("Delivery Time")]
-        public DateTime? DeliveryDate { get; set;}
+        public DateTime? DeliveryDate { get; set; }
         [DisplayName("Order Time")]
-        public DateTime? CheckOutDate { get; set;}
-        
+        public DateTime? CheckOutDate { get; set; }
+
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         [ForeignKey("Customer")]
@@ -24,15 +24,19 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual Customer Customer { get; set; } = new();
 
+        [ForeignKey("Payment")]
+        public int? PaymentId { get; set; }
+        public Payment? Payment { get; set; }
+
         [ForeignKey("Review")]
         public int? ReviewId { get; set; }
 
-        public virtual Review Review { get; set; } = new();
+        public virtual Review? Review { get; set; }
 
         [ForeignKey("Seller")]
         public string SellerId { get; set; } = string.Empty;
 
-        public virtual Seller Seller { get; set; } = new();
+        public virtual Seller? Seller { get; set; }
 
         [ForeignKey("Address")]
         public int AddressId { get; set; }
@@ -44,10 +48,6 @@ namespace FoodDeliveryWebApp.Models
 
         public virtual PromoCode? PromoCode { get; set; }
 
-        [ForeignKey("Payment")]
-        public int? PaymentId { get; set; }
-
-        public Payment? Payment { get; set; }
 
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }

@@ -21,7 +21,7 @@ namespace FoodDeliveryWebApp.Models
         [Required]
         public bool InStock { get; set; }
 
-        public byte[] Image { get; set; } = new byte[256];
+        public byte[]? Image { get; set; } = new byte[256];
 
         [Range(0, 100)]
         public int Sale { get; set; } = 0;

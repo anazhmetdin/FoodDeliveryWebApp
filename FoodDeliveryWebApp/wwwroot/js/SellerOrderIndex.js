@@ -1,19 +1,22 @@
 ﻿"use strict";
 
 (() => {
-	const connection = new signalR.HubConnectionBuilder().withUrl("/SellerOrdersIndexHub").build();
 	const notification = new Audio("/audio/magical_pop.mp3");
 	const postedTab = $('#PostedOrders-tab');
-	let first = true, OrdersCount = 0;
+	let OrdersCount = 0;
+
+	BindAcceptButtons();
 
 	$(function () {
-		connection.start()
-			.then(function () {
-				InvokeOrders();
-			})
+		connection.start();
+			//.then(function () {
+			//	InvokeOrders();
+			//})
 			//.catch(function (err) {
 			//	return console.error(err.toString());
 			//})
+
+		OrdersCount = $(".accept").length;
 	});
 
 	postedTab.click((e) => { postedTab.addClass('nav-link') });
@@ -22,10 +25,7 @@
 		BindOrdersToGrid(PostedOrders, InprogressOrders);
 		BindAcceptButtons();
 
-		if (first || OrdersCount >= PostedCount) {
-			first = false;
-		}
-		else {
+		if (OrdersCount < PostedCount) {
 			postedTab.removeClass('nav-link');
 			notification.play();
 		}
@@ -60,4 +60,8 @@
 
 		})
 	};
+
+	window.onunload = function () {
+		connection.stop();
+	}
 })();
