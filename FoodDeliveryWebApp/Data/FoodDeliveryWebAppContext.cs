@@ -23,6 +23,7 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
     public DbSet<Category> Categories { get; set; }
     public DbSet<PromoCode> PromoCodes { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<TrendingSeller> TrendingSellers { get; set; }
 
     public FoodDeliveryWebAppContext(DbContextOptions<FoodDeliveryWebAppContext> options) : base(options) { }
 
@@ -141,6 +142,13 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             b.Property(p => p.MaximumDiscount).HasColumnType("money");
 
             b.HasIndex(s => s.Code).IsUnique();
+        });
+
+        builder.Entity<TrendingSeller>(b =>
+        {
+            b.HasKey(ts => ts.Id);
+
+            b.HasOne(ts => ts.Seller);
         });
     }
 }

@@ -7,22 +7,11 @@
     bool orderAlpha = ViewBag.OrderAlpha;
     bool orderRate = ViewBag.OrderRate;
 
-    string ConvertToStars(int rating)
-    {
-        string stars = "";
-        for (int i = 0; i < 5; i++)
-        {
-            if (i < rating)
-            {
-                stars += "<span style='color:yellow;font-size:1.2rem;'>&#9733;</span>";
-            }
-            else
-            {
-                stars += "<span style='color:gray;font-size:1.2rem;'>&#9733;</span>";
-            }
-        }
-        return stars;
-    }
+    IEnumerable<FoodDeliveryWebApp.ViewModels.SellerViewModel>? TrendingSellers = ViewBag.TrendingSellers;
+}
+
+@section Head {
+    <link rel="stylesheet" type="text/css" href="~/css/SquareImage.css" />
 }
 
 <div class="container">
@@ -82,6 +71,23 @@
                 </div>
             </div>
 
+            @if (TrendingSellers != null && TrendingSellers.Count() > 0)
+            {
+                <div class="row m-2 d-flex flex-fill flex-grow-1">
+
+                    <h3 class="mt-2">Trending Restaurants</h3>
+
+                    <ul class="list-group list-group-horizontal overflow-auto position-relative m-3">
+                    @foreach (var seller in TrendingSellers)
+                    {
+                        <li class="list-group-item">
+                            <partial name="_SellerCardPartial" model="seller" />
+                        </li>
+                    }
+                    </ul>
+                </div>                
+            }
+
             <div class="row">
                 @{
                     for (int i = 0; i < Model.Count; i += 3)
@@ -92,30 +98,7 @@
                                 {
                                     if (j == Model.Count) break;
 
-                                    <div class="col">
-                                        <div class="card accordion-body">
-                                            @if (@Model[j] != null && @Model[j].Logo != null)
-                                            {
-                                                <img src="@Model[j].Logo">
-                                            }
-                                            else
-                                            {
-                                                <img alt="Restaurnt Img" src="~/images/user.jpg">
-                                            }
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <h5 class="card-title col-md d-inline">@Model[j].StoreName</h5>
-                                                    <div class="col-md text-md-right d-flex justify-content-end">
-                                                        @Html.Raw(ConvertToStars(Model[j].Rate))
-                                                    </div>
-                                                </div>
-                                                <p class="card-text text-truncate">Categories: @Model[j].Categories</p>
-                                                <div class="d-flex justify-content-center align-items-center">
-                                                    <button seller-id="@Model[j].Id" type="button" class="details-btn btn btn-success">Order now</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <partial name="_SellerCardPartial" model="Model[j]" />
                                 }
                             }
                         </div>

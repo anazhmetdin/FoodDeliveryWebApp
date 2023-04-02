@@ -2,6 +2,7 @@ using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Contracts.Charts;
 using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.HostedServices;
 using FoodDeliveryWebApp.Hubs;
 using FoodDeliveryWebApp.MiddlewareExtensions;
 using FoodDeliveryWebApp.Models;
@@ -31,6 +32,7 @@ namespace FoodDeliveryWebApp
 
             #region Services
             builder.Services.AddDbContext<FoodDeliveryWebAppContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddHostedService<TrendingSellersTimedHostedService>();
             builder.Services.AddSignalR(o =>
             {
                 o.EnableDetailedErrors = true;
@@ -109,6 +111,7 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
             builder.Services.AddScoped<IModelRepo<Models.Review>, ReviewRepo>();
+            builder.Services.AddScoped<ITrendingSellerRepo, TrendingSellerRepo>();
             builder.Services.AddScoped<IModelRepo<Order>, OrderRepo>();
             builder.Services.AddScoped<ModelRepo<Models.Product>, ProductRepo>();
             builder.Services.AddScoped<ICustomerOrderRepo, CustomerOrderRepo>();
