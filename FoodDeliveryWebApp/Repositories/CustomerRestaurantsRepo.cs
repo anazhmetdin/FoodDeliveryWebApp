@@ -26,6 +26,8 @@ namespace FoodDeliveryWebApp.Repositories
                 CheckOutDate = DateTime.Now,
                 SellerId = sellerId,
                 CustomerId = customerId,
+                Customer = null,
+                Seller = null
             };
             _context.Orders.Add(order);
             _context.SaveChanges();
@@ -63,7 +65,7 @@ namespace FoodDeliveryWebApp.Repositories
         public OrderProduct CreateOrderProduct(int orderId, int prodId, int quantity)
         {
             OrderProduct orderProduct = new OrderProduct()
-            { OrderId = orderId, ProductId = prodId, Quantity = quantity };
+            { OrderId = orderId, ProductId = prodId, Quantity = quantity,Order = null,Product = null };
             _context.OrderProducts.Add(orderProduct);
             _context.SaveChanges();
             return orderProduct;
