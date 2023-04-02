@@ -172,6 +172,9 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("varbinary(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
@@ -198,6 +201,9 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PromoCodeId")
                         .HasColumnType("int");
 
@@ -220,6 +226,8 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("AddressId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("PromoCodeId");
 
@@ -252,6 +260,32 @@ namespace FoodDeliveryWebApp.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderProducts");
+                });
+
+            modelBuilder.Entity("FoodDeliveryWebApp.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long?>("Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("AmountReceived")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Product", b =>
@@ -376,7 +410,6 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("Logo")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Status")
@@ -575,7 +608,7 @@ namespace FoodDeliveryWebApp.Migrations
             modelBuilder.Entity("FoodDeliveryWebApp.Models.Order", b =>
                 {
                     b.HasOne("FoodDeliveryWebApp.Models.Address", "Address")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -585,6 +618,10 @@ namespace FoodDeliveryWebApp.Migrations
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FoodDeliveryWebApp.Models.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId");
 
                     b.HasOne("FoodDeliveryWebApp.Models.PromoCode", "PromoCode")
                         .WithMany("Orders")
@@ -605,6 +642,8 @@ namespace FoodDeliveryWebApp.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Payment");
 
                     b.Navigation("PromoCode");
 

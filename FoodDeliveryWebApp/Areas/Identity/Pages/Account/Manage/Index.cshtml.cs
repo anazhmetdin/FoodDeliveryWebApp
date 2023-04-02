@@ -19,15 +19,18 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ISellerRepo _seller;
+        private readonly ICustomerRestaurantsRepo _customer;
 
         public IndexModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ISellerRepo seller)
+            ISellerRepo seller,
+            ICustomerRestaurantsRepo customer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _seller = seller;
+            _customer = customer;
         }
 
         /// <summary>
@@ -65,15 +68,31 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
             [Display(Name = "Address")]
             public string Address { get; set; }
-            public byte[] ProfilePicture { get; set; } = new byte[256];
-
+            public byte[] ProfilePicture { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            var profilePicture = _seller.GetById(user.Id).Logo; // Assuming the image data is stored as byte array in the user object
+            byte[] profilePicture;
+            
+            var seller = _seller.GetById(user.Id);
+            
+            if (seller != null)
+            {
+                FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                profilePicture = seller.Logo ?? imageBytes;
+            }
+            else
+            {
+                FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                profilePicture = _customer.GetCustomer(user.Id).ProfilePicture ?? imageBytes;
+            }
 
             Username = userName;
 
@@ -139,7 +158,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
             {
                 var seller = _seller.GetById(user.Id);
-                seller.Logo = Input.ProfilePicture;
+                seller.Logo = Input?.ProfilePicture?? null;
                 var updateResult = await _userManager.UpdateAsync(user);
                 var updateSeller = _seller.TryUpdate(seller);
                 if (!updateResult.Succeeded && !updateSeller)
