@@ -9,8 +9,8 @@
 {
     var userTask = UserManager.GetUserAsync(User);
     var user = userTask.GetAwaiter().GetResult();
-        var firstName = user.FirstName;
-        var lasttName = user.LastName;
+        var firstName = user?.FirstName?? "USER";
+        var lasttName = user?.LastName?? "USER";
         <li class="nav-item">
             <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @firstName @lasttName !</a>
     </li>

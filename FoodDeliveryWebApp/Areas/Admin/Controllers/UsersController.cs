@@ -1,5 +1,6 @@
 ﻿using FoodDeliveryWebApp.Areas.Admin.ViewModels;
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
                 LastName = user.LastName,
                 UserName = user.UserName,
                 Email = user.Email,
-                Roles = _userManager.GetRolesAsync(user).Result
+                Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult()
             }).ToListAsync();
 
             return View(users);
@@ -172,7 +173,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
                 {
                     RoleId = role.Id,
                     RoleName = role.Name,
-                    IsSelected = _userManager.IsInRoleAsync(user, role.Name).Result
+                    IsSelected = _userManager.IsInRoleAsync(user, role.Name).GetAwaiter().GetResult()
                 }).ToList()
             };
 

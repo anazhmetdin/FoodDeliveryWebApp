@@ -8,7 +8,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers.Api
 {
         [Route("api/[controller]")]
         [ApiController]
-      //  [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public class UsersController : ControllerBase
         {
             private readonly UserManager<AppUser> _userManager;
