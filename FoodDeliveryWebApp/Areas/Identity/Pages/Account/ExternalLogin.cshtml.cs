@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using FoodDeliveryWebApp.Data;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 {
@@ -30,13 +32,17 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly FoodDeliveryWebAppContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public ExternalLoginModel(
             SignInManager<AppUser> signInManager,
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            FoodDeliveryWebAppContext context,
+            RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -44,6 +50,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -85,6 +93,18 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            public string StoreName { get; set; } = "";
+
+            [Required]
+            [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Name can only contain alphabetic letters.")]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Name can only contain alphabetic letters.")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -92,7 +112,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
         public IActionResult OnPost(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
+            
+            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl, IsCustomer = Request.Query["IsCustomer"] });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
@@ -135,6 +156,10 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         Email = info.Principal.FindFirstValue(ClaimTypes.Email)
                     };
                 }
+
+                if (Request.Query.ContainsKey("IsCustomer"))
+                    ViewData["IsCustomer"] = Request.Query["IsCustomer"][0];
+                else ViewData["IsCustomer"] = "True";
                 return Page();
             }
         }
@@ -150,12 +175,24 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
+            if (!_roleManager.Roles.Any(r => r.Name == "Customer"))
+                _ = await _roleManager.CreateAsync(new IdentityRole("Customer"));
+            if (!_roleManager.Roles.Any(r => r.Name == "Seller"))
+                _ = await _roleManager.CreateAsync(new IdentityRole("Seller"));
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetNormalizedUserNameAsync(user, Input.Email.Normalize(), CancellationToken.None);
+
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetNormalizedEmailAsync(user, Input.Email.Normalize(), CancellationToken.None);
+                await _emailStore.SetEmailConfirmedAsync(user, false, CancellationToken.None);
+
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -182,6 +219,28 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         {
                             return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
                         }
+
+                        if (Request.Query["IsCustomer"][0] == "False")
+                        {
+                            await _userManager.AddToRoleAsync(user, "Seller");
+                            await _context.Sellers.AddAsync(new()
+                            {
+                                Id = user.Id,
+                                User = user,
+                                StoreName = Input.StoreName
+                            });
+                        }
+                        else
+                        {
+                            await _userManager.AddToRoleAsync(user, "Customer");
+                            await _context.Customers.AddAsync(new()
+                            {
+                                Id = user.Id,
+                                User = user
+                            });
+                        }
+
+                        _context.SaveChanges();
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                         return LocalRedirect(returnUrl);

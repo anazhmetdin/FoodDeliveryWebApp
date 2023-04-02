@@ -2,9 +2,10 @@
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using FoodDeliveryWebApp.Models.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Web.Http.ModelBinding;
 
 namespace FoodDeliveryWebApp.Repositories
 {
@@ -31,7 +32,7 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
         {
-            if (sellerId == null ) { return new List<Product>(); }
+            if (sellerId == null) { return new List<Product>(); }
 
             _productRepo.Query = _productRepo.Query.Include(p => p.Category);
 
@@ -50,19 +51,15 @@ namespace FoodDeliveryWebApp.Repositories
             return products.FirstOrDefault();
         }
 
-        public void CreateProduct(Product product)
-        {
-            Context.Products.Add(product);
-
-            Context.SaveChanges();
-        }
-
-
         public ICollection<Category> GetSellerCategories(string sellerId)
         {
-            var seller = Context.Sellers.Where( s => s.Id == sellerId)
+            var seller = Context.Sellers.Where(s => s.Id == sellerId)
                 .Include(s => s.Categories)
                 .FirstOrDefault();
+
+            if (seller == null)
+                return new List<Category>();
+
             return seller.Categories.ToList();
         }
 
@@ -82,11 +79,13 @@ namespace FoodDeliveryWebApp.Repositories
                     }
                 }
 
+                UpdateSellerCategories(sellerId);
+
                 Context.SaveChanges();
             }
         }
 
-        public void Restock(int id, string? sellerId, bool stock)
+        private void Restock(int id, string? sellerId, bool stock)
         {
             if (sellerId == null) { return; }
 
@@ -205,6 +204,70 @@ namespace FoodDeliveryWebApp.Repositories
                     && o.Status == OrderStatus.Delivered)
                 .Where(o => o.DeliveryDate.GetValueOrDefault().Year == year)
                 .ToList();
+        }
+
+        public bool TryAddProduct(string? sellerId, Product product, IFormFile Image)
+        {
+            if (sellerId == null || sellerId != product.SellerId)
+                return false;
+
+            var res = _productRepo.TryInsert(product, Image);
+
+            if (res)
+                UpdateSellerCategories(sellerId);
+
+            return res;
+        }
+
+        public bool TryUpdateProduct(string? sellerId, Product product, IFormFile? Image)
+        {
+            if (sellerId == null || product.SellerId != sellerId)
+                return false;
+
+            var originalProduct = _productRepo.GetById(product.Id);
+
+            if (originalProduct == null)
+                return false;
+
+            if (Image == null)
+            {
+                product.Image = originalProduct.Image;
+            }
+
+            var res = _productRepo.TryUpdate(product, Image);
+
+            if (res)
+                UpdateSellerCategories(sellerId);
+
+            return res;
+        }
+
+        public void UpdateSellerCategories(string? sellerId)
+        {
+            if (sellerId == null)
+                return;
+            Query = Query.Include(s => s.Products)
+                .ThenInclude(p => p.Category)
+                .Include(s => s.Categories);
+
+            var seller = GetById(sellerId);
+
+            if (seller == null) return;
+
+            var newCategories = seller.Products
+                .Where(p => p.InStock)
+                .GroupBy(p => p.CategoryId)
+                .Select(g => g.First().Category!)
+                .ToList();
+
+            seller.Categories = newCategories;
+
+            Context.SaveChanges();
+        }
+
+        public bool DeleteReview(int id)
+        {
+            return _reviewRepo.TryDelete(id);
         }
     }
 }
