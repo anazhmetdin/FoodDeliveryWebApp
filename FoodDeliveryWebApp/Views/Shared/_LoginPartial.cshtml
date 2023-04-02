@@ -12,42 +12,48 @@
     {
         var userTask = UserManager.GetUserAsync(User);
         var user = userTask.GetAwaiter().GetResult();
-        var firstName = user.FirstName;
-        var lasttName = user.LastName;
-        if (User.IsInRole("Seller"))
+        var firstName = "";
+        var lasttName = "";
+        if (user != null)
         {
-            string imgSrc = "";
-            var _user = _seller.GetById(user.Id);
-            if (_user.Logo == null)
+             firstName = user.FirstName;
+             lasttName = user.LastName;
+            if (User.IsInRole("Seller"))
             {
-                FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
-                BinaryReader br = new(fs);
-                byte[] imageBytes = br.ReadBytes((int)fs.Length);
-                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
-            }
-            else
-            {
-                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(_user.Logo)}";
-            }
-            <img id="sellerImg" src="@imgSrc" />
-        }
+                string imgSrc = "";
+                var _user = _seller.GetById(user.Id);
 
-        else if (User.IsInRole("Customer"))
-        {
-            string imgSrc = "";
-            var _user = _customer.GetCustomer(user.Id);
-            if (_user.ProfilePicture == null)
-            {
-                FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
-                BinaryReader br = new(fs);
-                byte[] imageBytes = br.ReadBytes((int)fs.Length);
-                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+                if ((_user?.Logo ??null) == null)
+                {
+                    FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new(fs);
+                    byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                    imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+                }
+                else
+                {
+                    imgSrc = $"data:image/png;base64,{Convert.ToBase64String(_user.Logo)}";
+                }
+                <img id="sellerImg" src="@imgSrc" />
             }
-            else
+
+            else if (User.IsInRole("Customer"))
             {
-                imgSrc = $"data:image/png;base64,{Convert.ToBase64String(_user.ProfilePicture)}";
+                string imgSrc = "";
+                var _user = _customer.GetCustomer(user.Id);
+                if ((_user?.ProfilePicture ?? null) == null)
+                {
+                    FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new(fs);
+                    byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                    imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+                }
+                else
+                {
+                    imgSrc = $"data:image/png;base64,{Convert.ToBase64String(_user.ProfilePicture)}";
+                }
+                <img id="sellerImg" src="@imgSrc" />
             }
-            <img id="sellerImg" src="@imgSrc" />
         }
 
         <li class="nav-item">

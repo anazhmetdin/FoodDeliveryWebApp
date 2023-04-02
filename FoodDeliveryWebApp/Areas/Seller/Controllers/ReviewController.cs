@@ -30,5 +30,13 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
             return View(reviews);
         }
+
+        public IActionResult Delete(int id)
+        {
+            _sellerRepo.DeleteReview(id);
+            return Redirect("/review/index");
+        }
+
+
     }
 }

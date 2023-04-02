@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace FoodDeliveryWebApp.Contracts
 {
-    public interface ISellerRepo: IModelRepo<Seller>
+    public interface ISellerRepo : IModelRepo<Seller>
     {
         public ICollection<Category> GetSellerCategories(string sellerId);
 
@@ -25,5 +25,6 @@ namespace FoodDeliveryWebApp.Contracts
         public List<Order> GetSalesPerYear(string sellerId, int year);
 
         public void UpdateSellerCategories(string? sellerId);
+        bool DeleteReview(int id);
     }
 }
