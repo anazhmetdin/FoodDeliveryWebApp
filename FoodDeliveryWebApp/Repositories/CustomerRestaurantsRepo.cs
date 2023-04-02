@@ -113,7 +113,7 @@ namespace FoodDeliveryWebApp.Repositories
                     s.Logo,
                     Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
                     s.StoreName,
-                    Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+                    s.Rate
                 }).ToList();
 
 
@@ -131,7 +131,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
                     Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? imageBytes)}",
-                    Rate = (int)seller.Rate
+                    Rate = seller.Rate
                 });
             }
 
@@ -157,7 +157,7 @@ namespace FoodDeliveryWebApp.Repositories
                 sellers = sellers.OrderBy(s => s.StoreName);
 
             if (orderRate)
-                sellers = sellers.OrderByDescending(s => s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate));
+                sellers = sellers.OrderByDescending(s => s.Rate);
 
             var filtered = sellers.Select(s => new
             {
@@ -165,7 +165,7 @@ namespace FoodDeliveryWebApp.Repositories
                 s.Logo,
                 Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
                 s.StoreName,
-                Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+                Rate = s.Rate
             });
 
             List<SellerViewModel> restaurants = new();
@@ -178,7 +178,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
                     Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}",
-                    Rate = (int)seller.Rate
+                    Rate = seller.Rate
                 });
             }
 
@@ -200,7 +200,7 @@ namespace FoodDeliveryWebApp.Repositories
                            Categories = string.Join(", ", s.Categories.Select(c => c.Name)),
                            StoreName = s.StoreName,
                            Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo?? imageBytes)}",
-                           Rate = s.Reviews.Count == 0 ? 0 : (int)s.Reviews.Average(r => r.Rate)
+                           Rate = s.Rate
                        }).ToList();
         }
     }

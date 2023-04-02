@@ -1,0 +1,48 @@
+﻿@model FoodDeliveryWebApp.ViewModels.SellerViewModel
+@{
+    string ConvertToStars(int rating)
+    {
+        string stars = "";
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < rating)
+            {
+                stars += "<span style='color:yellow;font-size:1.2rem;'>&#9733;</span>";
+            }
+            else
+            {
+                stars += "<span style='color:gray;font-size:1.2rem;'>&#9733;</span>";
+            }
+        }
+        return stars;
+    }
+}
+
+<div class="col">
+    <div class="card accordion-body" style="width:20rem;">
+
+        <div class="image">
+            @if (@Model != null && @Model.Logo != null)
+            {
+                <img src="@Model.Logo">
+            }
+            else
+            {
+                <img alt="Restaurnt Img" src="~/images/user.jpg">
+            }
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <h5 class="card-title col-md d-inline">@Model.StoreName</h5>
+                <div class="col-md text-md-right d-flex justify-content-end">
+                    @Html.Raw(ConvertToStars(Model.Rate))
+                </div>
+            </div>
+            <p class="card-text text-truncate">Categories: @Model.Categories</p>
+            <div class="d-flex justify-content-center align-items-center">
+                <button seller-id="@Model.Id" type="button" class="details-btn btn btn-success">Order now</button>
+            </div>
+        </div>
+    </div>
+</div>

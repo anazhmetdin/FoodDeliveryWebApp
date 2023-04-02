@@ -6,7 +6,7 @@
 }
 
 .btn-talabat {
-    background-color: rgb(255, 90, 0) !important;
+    background-color: var(--talabat-color) !important;
     color: white;
 }
 
@@ -15,7 +15,7 @@
 }
 
 .btn-talabat-secondary {
-    border-color: rgb(255, 90, 0) !important;
+    border-color: var(--talabat-color) !important;
 }
 
 #filter-form {
@@ -27,8 +27,8 @@
 }
 
 .talabat-tab.active {
-    border-color: rgb(255, 90, 0) !important;
-    color: rgb(255, 90, 0) !important;
+    border-color: var(--talabat-color) !important;
+    color: var(--talabat-color) !important;
 }
 
 #prdcts-table .sticky-top {
@@ -45,12 +45,12 @@
 
 .nav.nav-tabs button.active {
     font-weight: bold;
-    border-color: rgb(255, 90, 0);
+    border-color: var(--talabat-color);
 }
 
 .card-header button {
     font-weight: bold;
-    color: rgb(255, 90, 0);
+    color: var(--talabat-color);
 }
 
 .card-header button:focus {
@@ -59,11 +59,11 @@
 
 .card-header button[aria-expanded=true] {
     color: white;
-    background-color: rgb(255, 90, 0);
+    background-color: var(--talabat-color);
 }
 
 
 .card:has(.show) {
-    border-color: rgb(255, 90, 0);
+    border-color: var(--talabat-color);
     border-width: 2px;
 }

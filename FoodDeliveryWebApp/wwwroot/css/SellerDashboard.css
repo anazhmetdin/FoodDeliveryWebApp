@@ -1,0 +1,9 @@
+﻿.card-header, .collapse, .card {
+    border-radius: 1rem !important;
+}
+
+.card-header[aria-expanded=true] {
+    background-color: var(--talabat-color);
+    font-weight: bold;
+    color: white;
+}

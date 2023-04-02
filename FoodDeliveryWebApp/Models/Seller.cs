@@ -1,5 +1,6 @@
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,5 +33,8 @@ namespace FoodDeliveryWebApp.Models
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
         public SellerStatus Status { get; set; } = SellerStatus.UnderReview;
+
+        [Range(0,5)]
+        public int Rate { get; set; } = 0;
     }
 }

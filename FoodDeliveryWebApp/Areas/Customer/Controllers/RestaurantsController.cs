@@ -7,6 +7,7 @@ using FoodDeliveryWebApp.Repositories;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Primitives;
 
 namespace FoodDeliveryWebApp.Areas.Customer.Controllers
@@ -18,11 +19,16 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
         private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;
         private readonly IModelRepo<Category> _categoryRepo;
         private readonly UserManager<AppUser> _userManger;
-        public RestaurantsController(ICustomerRestaurantsRepo customerRestaurantRepo, IModelRepo<Category> categoryRepo, UserManager<AppUser> userManager)
+        private readonly ITrendingSellerRepo _trendingSeller;
+        public RestaurantsController(ICustomerRestaurantsRepo customerRestaurantRepo,
+            IModelRepo<Category> categoryRepo,
+            UserManager<AppUser> userManager,
+            ITrendingSellerRepo trendingSeller)
         {
             _customerRestaurantRepo = customerRestaurantRepo;
             _categoryRepo = categoryRepo;
             _userManger = userManager;
+            _trendingSeller = trendingSeller;
         }
 
         public async Task<IActionResult> Index()
@@ -64,6 +70,14 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
                 ViewBag.Categories = _categoryRepo.GetAll().Select(c => (c.Name, c.Id, false)).ToList();
                 sellers = _customerRestaurantRepo.GetSellers().ToList();
             }
+
+            #region trending sellers
+            var AllTrending = _trendingSeller.GetAll();
+
+            var trendingSellers = sellers.Where(s => AllTrending.Any(ts => ts.Id == s.Id));
+
+            ViewBag.TrendingSellers = trendingSellers;
+            #endregion
 
             return View(sellers);
         }

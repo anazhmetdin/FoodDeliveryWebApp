@@ -3,36 +3,75 @@
     ViewData["Title"] = "Seller Dashboard";
 }
 
-<div class="text-center">
-    <p>
-        <h4>
-            Sales and Income Per Year
-        </h4>
-    </p>
+@section Head {
+    <link rel="stylesheet" type="text/css" href="~/css/SellerDashboard.css" />
+}
+
+<div class="text-center" >
+    <h4> Restaurant Dashboard </h4>
+    
+    <select id="filterByYear" class="form-select form-select-lg mb-3 text-center">
+        <option disabled selected value="">Select Year</option>
+    </select>
+
     <div class="flex-d-column">
-        <select id="filterByYear">
-            <option disabled selected value="">Select Year</option>
-        </select>
 
         <div class="container-fluid">
 
             <div class="col-12 col-md-10 col-xl-8 mx-auto">
-                <canvas id="sales-per-year-chart"></canvas>
+                <div class="card mb-3">
+                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapse-sales-per-year" aria-expanded="true" aria-controls="collapse-sales-per-year">
+                        Sales Per Year
+                    </div>
+                    <div class="collapse show" id="collapse-sales-per-year">
+                        <div class="card-body">
+                            <canvas id="sales-per-year-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="col-12 col-md-10 col-xl-8 mx-auto">
-                <canvas id="income-per-year-chart"></canvas>
+                <div class="card mb-3">
+                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapse-income-per-year" aria-expanded="false" aria-controls="collapse-income-per-year">
+                        Income Per Year
+                    </div>
+                    <div class="collapse" id="collapse-income-per-year">
+                        <div class="card-body">
+                            <canvas id="income-per-year-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row mx-auto col-12 col-md-10 col-xl-8">
-                <div class="mx-auto col-10 col-md-6">
-                    <canvas id="sales-per-category"></canvas>
+                <div class="col-12 col-md-10 col-xl-8 mx-auto">
+                    <div class="card mb-3">
+                        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapse-sales-per-category" aria-expanded="false" aria-controls="collapse-income-per-year">
+                            Sales Per Category
+                        </div>
+                        <div class="collapse" id="collapse-sales-per-category">
+                            <div class="card-body">
+                                <canvas id="sales-per-category"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mx-auto col-10 col-md-6">
-                    <canvas id="sales-per-product"></canvas>
+
+                <div class="col-12 col-md-10 col-xl-8 mx-auto">
+                    <div class="card mb-3">
+                        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapse-sales-per-product" aria-expanded="false" aria-controls="collapse-sales-per-product">
+                            Sales Per Product
+                        </div>
+                        <div class="collapse" id="collapse-sales-per-product">
+                            <div class="card-body">
+                                <canvas id="sales-per-product"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
