@@ -1,3 +1,20 @@
-﻿@{
-    Layout = "/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+﻿@inject UserManager<AppUser> _userManager
+@{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+    }
+    else
+    {
+        var role = await _userManager.GetRolesAsync(user);
+
+        switch (role[0])
+        {
+            case "Seller": Layout = "~/Views/Shared/_NewLayout.cshtml"; break;
+            case "Admin": Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; break;
+            case "Customer":
+            default: Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml"; break;
+        }
+    }
 }
