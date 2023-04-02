@@ -4,6 +4,10 @@
     ViewData["Title"] = "Restaurant";
 }
 
+@section Head {
+    <link rel="stylesheet" type="text/css" href="~/css/SquareImage.css" />
+}
+
 <h1>Restaurant</h1>
 
 <div class="container">
@@ -17,8 +21,12 @@
                         if (j == Model.Count) break;
 
                         <div class="col">
-                            <div class="card accordion-body">
-                                <img src="@Model[j].Image">
+                            <div class="card accordion-body" style="width:20rem;">
+
+                                <div class="image">
+                                    <img src="@Model[j].Image">
+                                </div>
+
                                 <div class="card-body">
                                     <h5 class="card-title">@Model[j].Name</h5>
                                     <p class="card-text text-truncate">@Model[j].Description</p>
