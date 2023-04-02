@@ -156,7 +156,7 @@ namespace FoodDeliveryWebApp
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=Customer}/{controller=Restaurants}/{action=Index}/{id?}"
+                pattern: "{area:exists=Customer}/{controller=Restaurants}/{action=Index}/{id?}"
             );
 
             //app.MapControllerRoute(
@@ -164,9 +164,9 @@ namespace FoodDeliveryWebApp
             //    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             //);
 
-            //app.MapControllerRoute(
-            //    name: "default",
-            //    pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.UseSqlTableDependency<ISubscribeTableDependency>(connectionString);
 

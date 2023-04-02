@@ -66,8 +66,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-            [Display(Name = "Address")]
-            public string Address { get; set; }
+            //[Display(Name = "Address")]
+            //public string Address { get; set; }
             public byte[] ProfilePicture { get; set; }
         }
 
