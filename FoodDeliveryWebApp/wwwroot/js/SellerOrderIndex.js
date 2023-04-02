@@ -1,16 +1,15 @@
 ﻿"use strict";
 
 (() => {
-	const connection = new signalR.HubConnectionBuilder().withUrl("/SellerOrdersIndexHub").build();
 	const notification = new Audio("/audio/magical_pop.mp3");
 	const postedTab = $('#PostedOrders-tab');
 	let first = true, OrdersCount = 0;
 
 	$(function () {
 		connection.start()
-			.then(function () {
-				InvokeOrders();
-			})
+			//.then(function () {
+			//	InvokeOrders();
+			//})
 			//.catch(function (err) {
 			//	return console.error(err.toString());
 			//})

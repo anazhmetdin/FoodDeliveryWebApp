@@ -25,6 +25,11 @@ namespace FoodDeliveryWebApp.Hubs
         }
         public async Task SendOrders()
         {
+            if (Context == null)
+            {
+                return;
+            }
+
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _SellerRepo = scope.ServiceProvider.GetRequiredService<ISellerRepo>();
