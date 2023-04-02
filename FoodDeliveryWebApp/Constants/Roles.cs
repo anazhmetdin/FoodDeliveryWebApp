@@ -2,9 +2,8 @@
 {
     public static class Roles
     {
-        public static string ADMIN = "Admin";
-        public static string SELLER = "Seller";
-        public static string CUSTOMER = "Customer";
-
+        public static string Admin = "Admin";
+        public static string Seller = "Seller";
+        public static string Customer = "Customer";
     }
 }

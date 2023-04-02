@@ -10,7 +10,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Data
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            string[] roleNames = { Roles.ADMIN, Roles.SELLER, Roles.CUSTOMER };
+            string[] roleNames = { Roles.Admin, Roles.Seller, Roles.Customer };
 
             IdentityResult roleResult;
 
@@ -43,7 +43,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Data
 
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, Roles.ADMIN).Wait();
+                    userManager.AddToRoleAsync(user, Roles.Admin).Wait();
                 }
             }
 
