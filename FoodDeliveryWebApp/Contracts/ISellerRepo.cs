@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace FoodDeliveryWebApp.Contracts
 {
-    public interface ISellerRepo: IModelRepo<Seller>
+    public interface ISellerRepo : IModelRepo<Seller>
     {
         public ICollection<Category> GetSellerCategories(string sellerId);
 
@@ -26,5 +26,6 @@ namespace FoodDeliveryWebApp.Contracts
 
         public void UpdateSellerCategories(string? sellerId);
         public bool CalculateRates();
+        bool DeleteReview(int id);
     }
 }

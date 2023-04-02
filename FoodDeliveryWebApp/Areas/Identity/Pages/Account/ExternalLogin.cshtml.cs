@@ -157,8 +157,9 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                     };
                 }
 
-                ViewData["IsCustomer"] = Request.Query["IsCustomer"][0];
-
+                if (Request.Query.ContainsKey("IsCustomer"))
+                    ViewData["IsCustomer"] = Request.Query["IsCustomer"][0];
+                else ViewData["IsCustomer"] = "True";
                 return Page();
             }
         }

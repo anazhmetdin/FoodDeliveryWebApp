@@ -1,0 +1,57 @@
+﻿@using FoodDeliveryWebApp.Areas.Admin.ViewModels;
+@using FoodDeliveryWebApp.Models.Enums;
+@model SellerIndexViewModel
+
+@{
+    ViewData["Title"] = "Sellers";
+}
+
+<h1>Sellers</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <label asp-for="SelectedStatus">Status:</label>
+        <select asp-for="SelectedStatus" asp-items="Html.GetEnumSelectList<SellerStatus>()">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Sort By:</label>
+        <a asp-aria ="Admin" asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="id">Id</a> |
+        <a asp-aria="Admin" asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="storename">Store Name</a> |
+        <a asp-aria="Admin" asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="status">Status</a>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="id">Id</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="storename">Store Name</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-sort="status">Status</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var seller in Model.Sellers)
+        {
+            <tr>
+                <td>@seller.Id</td>
+                <td>@seller.StoreName</td>
+                <td>@seller.Status</td>
+                <td>
+                    <a asp-aria="Admin" asp-action="Edit" asp-route-Id="@seller.Id">Edit</a> |
+                    <a asp-aria ="Admin" asp-action="Details" asp-route-Id="@seller.Id">Details</a> |
+                    <a asp-aria="Admin" asp-action="Delete" asp-route-Id="@seller.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

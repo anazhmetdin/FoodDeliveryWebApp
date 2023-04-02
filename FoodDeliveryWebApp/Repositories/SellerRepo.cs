@@ -2,9 +2,9 @@
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using FoodDeliveryWebApp.Models.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Web.Http.ModelBinding;
 
 namespace FoodDeliveryWebApp.Repositories
@@ -32,7 +32,7 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<Product> GetSellerProducts(string? sellerId)
         {
-            if (sellerId == null ) { return new List<Product>(); }
+            if (sellerId == null) { return new List<Product>(); }
 
             _productRepo.Query = _productRepo.Query.Include(p => p.Category);
 
@@ -53,7 +53,7 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<Category> GetSellerCategories(string sellerId)
         {
-            var seller = Context.Sellers.Where( s => s.Id == sellerId)
+            var seller = Context.Sellers.Where(s => s.Id == sellerId)
                 .Include(s => s.Categories)
                 .FirstOrDefault();
 
@@ -233,7 +233,7 @@ namespace FoodDeliveryWebApp.Repositories
             {
                 product.Image = originalProduct.Image;
             }
-            
+
             var res = _productRepo.TryUpdate(product, Image);
 
             if (res)
@@ -282,6 +282,11 @@ namespace FoodDeliveryWebApp.Repositories
             {
                 return false;
             }
+        }
+
+        public bool DeleteReview(int id)
+        {
+            return _reviewRepo.TryDelete(id);
         }
     }
 }

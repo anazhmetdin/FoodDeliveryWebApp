@@ -75,10 +75,11 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            byte[] profilePicture;
+            byte[] profilePicture = null;
             
             var seller = _seller.GetById(user.Id);
-            
+            var customer = _customer.GetCustomer(user.Id);
+
             if (seller != null)
             {
                 FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
@@ -86,12 +87,12 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
                 byte[] imageBytes = br.ReadBytes((int)fs.Length);
                 profilePicture = seller.Logo ?? imageBytes;
             }
-            else
+            else if(customer != null)
             {
                 FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
                 BinaryReader br = new(fs);
                 byte[] imageBytes = br.ReadBytes((int)fs.Length);
-                profilePicture = _customer.GetCustomer(user.Id).ProfilePicture ?? imageBytes;
+                profilePicture = customer.ProfilePicture ?? imageBytes;
             }
 
             Username = userName;

@@ -11,14 +11,10 @@
 <div class="row">
     <div class="col-md-4">
         <form id="registerForm" asp-route-IsCustomer="@isCust" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
             <input hidden asp-for="Input.Role" class="form-control" aria-required="true" value="@role" />
-
-            @*TESTING ONLY*@
-            <h1>@role</h1>
 
             <div class="form-floating mb-3">
                 <input asp-for="Input.FirstName" class="form-control" autocomplete="name" aria-required="true" placeholder="John" />
@@ -68,9 +64,8 @@
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-4 col-md-offset-2 ml-5">
         <section>
-            <h3>Use another service to register.</h3>
             <hr />
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
@@ -87,13 +82,23 @@
                 else
                 {
                     <form id="external-account" asp-page="./ExternalLogin" asp-route-IsCustomer="@isCust" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
+                        @*<div>
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
                                     <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
                                 }
                             </p>
+                        </div>*@
+
+                        <div class="row mx-2">
+                            <button type="submit" name="provider" value="Facebook" class="btn btn-primary btn-block"><i class="bi bi-facebook"></i> Sign up Facebook</button>
+                        </div>
+
+                        <br />
+
+                        <div class="row mx-2">
+                            <button type="submit" name="provider" value="Google" class="btn btn-danger btn-block"><i class="bi bi-google"></i> Sign up with Google</button>
                         </div>
                     </form>
                 }
