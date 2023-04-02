@@ -17,6 +17,67 @@ namespace FoodDeliveryWebApp.Repositories
         {
             _context = context;
         }
+        public Order CreateOrder(string sellerId, string customerId)
+        {
+            Order order = new Order()
+            {
+                TotalPrice = 0,
+                DeliveryDate = DateTime.Now,
+                CheckOutDate = DateTime.Now,
+                SellerId = sellerId,
+                CustomerId = customerId,
+            };
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
+        }
+        public int GetPaymentIdByStripeId(string stripeId)
+        {
+            return _context.Payments.FirstOrDefault(p => p.StripeId == stripeId)?.Id ?? -1;
+        }
+
+        public Order GetOrder(int orderId)
+        {
+            return _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.Id == orderId);
+        }
+        public Order GetOrderStripeByPaymentId(string stripePaymentId)
+        {
+            return _context.Orders.Include(o => o.Payment).FirstOrDefault(o => o.Payment.StripeId == stripePaymentId);
+        }
+        public bool UpdateOrder(Order o)
+        {
+            try
+            {
+                _context.Update(o);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+        }
+
+        public OrderProduct CreateOrderProduct(int orderId, int prodId, int quantity)
+        {
+            OrderProduct orderProduct = new OrderProduct()
+            { OrderId = orderId, ProductId = prodId, Quantity = quantity };
+            _context.OrderProducts.Add(orderProduct);
+            _context.SaveChanges();
+            return orderProduct;
+        }
+        public IEnumerable<OrderProduct> GetOrderProduct(int orderId)
+        {
+            return _context.OrderProducts.Include(op => op.Product).Where(op => op.OrderId == orderId);
+        }
+        public string GetProductSellerID(int productId)
+        {
+            //new ProductViewModel() { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description, Image = p.Image };
+
+            return _context.Products.FirstOrDefault(p => p.Id == productId)?.SellerId ?? string.Empty;
+        }
 
         public Customer? GetCustomer(string customerId)
         {
@@ -36,7 +97,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
-                    Price = p.HasSale? p.SalePrice : p.Price,
+                    Price = p.HasSale ? p.SalePrice : p.Price,
                     Image = $"data:image/png;base64,{Convert.ToBase64String(p.Image)}"
                 }).ToList();
         }
@@ -52,7 +113,7 @@ namespace FoodDeliveryWebApp.Repositories
                     s.Logo,
                     Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
                     s.StoreName,
-                    Rate = s.Reviews.Count == 0? 0 : s.Reviews.Average(r => r.Rate)
+                    Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
                 }).ToList();
 
 
@@ -81,10 +142,10 @@ namespace FoodDeliveryWebApp.Repositories
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
             var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews).AsEnumerable();
-            
+
             if (categories.Count > 0)
                 sellers = sellers.Where(s => s.Categories.Any(cat => categories.Contains(cat)));
-            
+
             if (hasPromo)
             {
                 var promosCats = _context.PromoCodes.Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
@@ -98,13 +159,13 @@ namespace FoodDeliveryWebApp.Repositories
                 sellers = sellers.OrderByDescending(s => s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate));
 
             var filtered = sellers.Select(s => new
-             {
-                 s.Id,
-                 s.Logo,
-                 Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
-                 s.StoreName,
-                 Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
-             });
+            {
+                s.Id,
+                s.Logo,
+                Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                s.StoreName,
+                Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+            });
 
             List<SellerViewModel> restaurants = new();
 

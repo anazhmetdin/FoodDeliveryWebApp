@@ -45,51 +45,23 @@
 <div class="row-cols-1">
     <button id="submit" class="btn btn-success col-12">Checkout</button>
 </div>
+@section Scripts{
 
+    <script>
+        // Get all the "Add to cart" and "Remove from cart" buttons
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
 
-<script>
-    // Get all the "Add to cart" and "Remove from cart" buttons
-    const addToCartButtons = document.querySelectorAll('.add-to-cart');
-    const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
+        // Add event listeners to each button
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', event => {
+                // Get the product ID and current count from the label
+                const productId = $(event.target).attr('product-id');
+                const countLabel = document.querySelector(`#count-${productId}`);
+                let count = parseInt(countLabel.textContent)
 
-    // Add event listeners to each button
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', event => {
-            // Get the product ID and current count from the label
-            const productId = $(event.target).attr('product-id');
-            const countLabel = document.querySelector(`#count-${productId}`);
-            let count = parseInt(countLabel.textContent)
-
-            // Increment the count and update the label
-            count++;
-            countLabel.textContent = count;
-
-            // Get the user's cart object from session storage
-            let cart = sessionStorage.getItem('cart');
-            if (cart) {
-                cart = JSON.parse(cart);
-            } else {
-                cart = {};
-            }
-
-            // Add the current product and count to the cart object
-            cart[productId] = count;
-
-            // Save the cart object back to session storage
-            sessionStorage.setItem('cart', JSON.stringify(cart));
-        });
-    });
-
-    removeFromCartButtons.forEach(button => {
-        button.addEventListener('click', event => {
-            // Get the product ID and current count from the label
-            const productId = $(event.target).attr('product-id');
-            const countLabel = document.querySelector(`#count-${productId}`);
-            let count = parseInt(countLabel.textContent);
-
-            // Decrement the count (if it's greater than zero) and update the label
-            if (count > 0) {
-                count--;
+                // Increment the count and update the label
+                count++;
                 countLabel.textContent = count;
 
                 // Get the user's cart object from session storage
@@ -100,40 +72,72 @@
                     cart = {};
                 }
 
-                // Remove the current product from the cart object (if it exists)
-                delete cart[productId];
+                // Add the current product and count to the cart object
+                cart[productId] = count;
 
                 // Save the cart object back to session storage
                 sessionStorage.setItem('cart', JSON.stringify(cart));
-            }
-        });
-    });
-
-    document.getElementById("submit").addEventListener('click', event => {
-        var sessionData = [];
-        var cart = JSON.parse(sessionStorage.getItem('cart'));
-        for (key in cart) {
-            sessionData.push({
-                Id: Number(key),
-                Count: cart[key]
             });
-        }
-        var jsonData = JSON.stringify(sessionData);
+        });
 
-        console.log(jsonData);
+        removeFromCartButtons.forEach(button => {
+            button.addEventListener('click', event => {
+                // Get the product ID and current count from the label
+                const productId = $(event.target).attr('product-id');
+                const countLabel = document.querySelector(`#count-${productId}`);
+                let count = parseInt(countLabel.textContent);
 
-        $.ajax({
-            url: '/Customer/Restaurants/Checkout',
-            type: 'POST',
-            data: jsonData,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                console.log(response);
-            },
-            error: function (xhr, status, error) {
-                console.log('Error:', error);
+                // Decrement the count (if it's greater than zero) and update the label
+                if (count > 0) {
+                    count--;
+                    countLabel.textContent = count;
+
+                    // Get the user's cart object from session storage
+                    let cart = sessionStorage.getItem('cart');
+                    if (cart) {
+                        cart = JSON.parse(cart);
+                    } else {
+                        cart = {};
+                    }
+
+                    // Remove the current product from the cart object (if it exists)
+                    delete cart[productId];
+
+                    // Save the cart object back to session storage
+                    sessionStorage.setItem('cart', JSON.stringify(cart));
+                }
+            });
+        });
+
+        document.getElementById("submit").addEventListener('click', event => {
+            var sessionData = [];
+            var cart = JSON.parse(sessionStorage.getItem('cart'));
+            for (key in cart) {
+                sessionData.push({
+                    Id: Number(key),
+                    Count: cart[key]
+                });
+            }
+
+            console.log(sessionData);
+            if (sessionData.length ){
+                console.log("Ajax Data", sessionData.length);
+                var jsonData = JSON.stringify(sessionData);
+                $.ajax({
+                    url: '/Customer/Restaurants/Checkout',
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        let id =  response.id   ;
+                        window.location.href = `https://localhost:7233`+"@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })" +`/${id}`
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
             }
         });
-    });
-</script>
+    </script>
+}
+
