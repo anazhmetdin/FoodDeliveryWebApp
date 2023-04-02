@@ -31,8 +31,15 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
             _trendingSeller = trendingSeller;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await _userManger.GetUserAsync(User);
+            if (user is not null)
+            {
+                var userRole = await _userManger.GetRolesAsync(user);
+                if (userRole[0] == "Admin") return RedirectToAction("Index", "Users", new { area = "Admin" });
+                if (userRole[0] == "Seller") return RedirectToAction("Index", "Dashboard", new { area = "Seller" });
+            }
             ICollection<SellerViewModel> sellers;
             ViewBag.Promo = ViewBag.OrderAlpha = ViewBag.OrderRate = false;
 

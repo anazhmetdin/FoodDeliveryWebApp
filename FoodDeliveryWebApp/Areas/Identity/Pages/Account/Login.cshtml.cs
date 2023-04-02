@@ -133,8 +133,8 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                     {
                         //_logger.LogInformation("Unknown user logged in.");
                         //return LocalRedirect(returnUrl);
-                        _logger.LogInformation("Unknown logged in.");
-                        return RedirectToAction("Index", "Restaurants", new { area = "Customer" });                        
+                        _logger.LogInformation("Admin logged in.");
+                        return RedirectToAction("Index", "Users", new { area = "Admin" });                        
 
                     }
                 }
