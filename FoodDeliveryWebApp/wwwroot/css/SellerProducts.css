@@ -38,3 +38,32 @@
 .btn-group.fs-6>a {
     font-size: x-small !important;
 }
+
+.nav.nav-tabs button:not(.active) {
+    color: gray;
+}
+
+.nav.nav-tabs button.active {
+    font-weight: bold;
+    border-color: rgb(255, 90, 0);
+}
+
+.card-header button {
+    font-weight: bold;
+    color: rgb(255, 90, 0);
+}
+
+.card-header button:focus {
+    box-shadow: none;
+}
+
+.card-header button[aria-expanded=true] {
+    color: white;
+    background-color: rgb(255, 90, 0);
+}
+
+
+.card:has(.show) {
+    border-color: rgb(255, 90, 0);
+    border-width: 2px;
+}

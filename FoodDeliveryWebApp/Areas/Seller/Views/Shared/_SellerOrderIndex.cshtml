@@ -49,9 +49,10 @@
                     @Html.DisplayFor(modelItem => item.Address.FullAddress)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-area="Seller"
-                   asp-route-id="@item.Id" asp-controller="Orders">
-                        Details
+                    <a class="btn btn-outline-success" asp-action="Details"
+                    asp-area="Seller" asp-route-id="@item.Id"
+                    asp-controller="Orders">
+                        <i class="bi bi-card-text"></i> Details
                     </a>
                 </td>
             </tr>
