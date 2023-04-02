@@ -15,6 +15,6 @@ namespace FoodDeliveryWebApp.Contracts
 
         public ICollection<SellerViewModel> GetSellersSearched(string text);
     
-        public Customer GetCustomer(string customerId);
+        public Customer? GetCustomer(string customerId);
     }
 }
