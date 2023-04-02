@@ -1,5 +1,6 @@
 ﻿using FoodDeliveryWebApp.Areas.Admin.ViewModels;
 using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Constants;
 using FoodDeliveryWebApp.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -56,19 +57,13 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            if (!model.Roles.Any(r => r.IsSelected))
-            {
-                ModelState.AddModelError("Roles", "Please select at least one role");
-                return View(model);
-            }
-
             if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
                 ModelState.AddModelError("Email", "Email is already exists");
                 return View(model);
             }
 
-            if (await _userManager.FindByNameAsync(model.UserName) != null)
+            if (await _userManager.FindByNameAsync(model.Email) != null)
             {
                 ModelState.AddModelError("UserName", "Username is already exists");
                 return View(model);
@@ -76,10 +71,12 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 
             var user = new AppUser
             {
-                UserName = model.UserName,
+                UserName = model.Email,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -93,9 +90,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 
                 return View(model);
             }
-
-            await _userManager.AddToRolesAsync(user, model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName));
-
+            _userManager.AddToRoleAsync(user, Roles.Admin).Wait();
             return RedirectToAction(nameof(Index));
         }
 
