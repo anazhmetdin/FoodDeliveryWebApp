@@ -14,10 +14,11 @@ namespace FoodDeliveryWebApp.Controllers
     public class PaymentController : Controller
     {
         private readonly ICustomerRestaurantsRepo _customerRestaurantRepo;
-
-        public PaymentController(ICustomerRestaurantsRepo customerRestaurantRepo)
+        private readonly IConfiguration _configuration;
+        public PaymentController(ICustomerRestaurantsRepo customerRestaurantRepo, IConfiguration configuration)
         {
             _customerRestaurantRepo = customerRestaurantRepo;
+            _configuration = configuration;
         }
         // GET: PaymentController
         public ActionResult Index()
@@ -44,7 +45,7 @@ namespace FoodDeliveryWebApp.Controllers
         public async Task<IActionResult> Webhook()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            const string endpointSecret = "whsec_26839dec5f0f476ef9b48676d3fb0fbff6953e35133eb5e20b6eab9d9e310e54";
+            string endpointSecret = _configuration["Stripe:WebHook_Sec"];
             try
             {
                 var stripeEvent = EventUtility.ParseEvent(json);

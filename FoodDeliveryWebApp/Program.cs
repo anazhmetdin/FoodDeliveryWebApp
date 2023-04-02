@@ -125,7 +125,7 @@ namespace FoodDeliveryWebApp
 
             var app = builder.Build();
 
-            StripeConfiguration.ApiKey = "sk_test_51Mq0DEDRs2d2XncX3l5gLODG0on2gtdtEiPEXSsyB2m2TUfGwZwlanLbn5ZBZGP3LJbOjDXlsx1f5j0eTcKbKKJI00mPVX4uAc";
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:Secret_key"];
 
 
             // Configure the HTTP request pipeline.
