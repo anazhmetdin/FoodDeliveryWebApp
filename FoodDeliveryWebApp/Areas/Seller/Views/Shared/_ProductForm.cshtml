@@ -51,7 +51,7 @@
                 accept="image/*"
                 asp-for="Image"
                 value="@null"
-                class="custom-file-input"
+                class="custom-file-input ignore"
                onchange="document.querySelector('.productImg').src = window.URL.createObjectURL(this.files[0])" />
         <label class="custom-file-label" asp-for="Image">Choose picture...</label>
         <span asp-validation-for="Image" class="text-danger"></span>

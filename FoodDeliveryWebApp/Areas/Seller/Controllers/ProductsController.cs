@@ -14,6 +14,11 @@ using System.Data;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
+    public class ProductViewModel : Product
+    {
+        public new byte[]? Image { get; set; }
+    }
+
     [Authorize(Roles = "Seller")]
     [Area("Seller")]
     [AutoValidateAntiforgeryToken]
@@ -129,19 +134,11 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
             ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(), "Id", "Name", product.CategoryId);
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    if (product.SellerId == sellerId && _productRepo.TryInsert(product, Image))
-                        return RedirectToAction(nameof(Index));
-                }
+
+            if (_sellerRepo.TryAddProduct(sellerId, product, Image))
+                return RedirectToAction(nameof(Index));
+            else
                 return View(product);
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         // GET: Seller/Edit/5
@@ -156,7 +153,6 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
                 return NotFound();
             }
 
-
             ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(),
                 "Id", "Name", Model.CategoryId);
                 
@@ -166,38 +162,18 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         // POST: SellerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,Sale,CategoryId")] Product product, IFormFile? Image)
+        public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,Sale,CategoryId")] ProductViewModel product, IFormFile? Image)
         {
-            try
-            {
-                var sellerId = _userManager.GetUserId(User);
-                ViewBag.sell = sellerId;
-
-                var Model = _sellerRepo.GetSellerProduct(id, sellerId);
-                if (Model == null)
-                {
-                    return NotFound();
-                }
-
-                product.Id = id;
-
-                if (Image == null)
-                {
-                    ModelState.Remove("Image");
-                    product.Image = Model.Image;
-                }
-
-                if (ModelState.IsValid)
-                {
-                    if (_productRepo.TryUpdate(product, Image))
-                        return RedirectToAction(nameof(Index));
-                }
-            }
-            catch
-            {
-            }
             
-            return View(product);
+            var sellerId = _userManager.GetUserId(User);
+            ViewBag.sell = sellerId;
+
+            product.Id = id;
+
+            if (_sellerRepo.TryUpdateProduct(sellerId, product, Image))
+                return RedirectToAction(nameof(Index));
+            else
+                return View(product);
         }
 
         ActionResult RedirectToIndex(string? returnUrl)

@@ -43,6 +43,10 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .WithOne(op => op.Seller)
             .HasForeignKey(r => r.SellerId);
 
+            b.HasMany(s => s.Products)
+            .WithOne(op => op.Seller)
+            .HasForeignKey(r => r.SellerId);
+
             b.HasMany(s => s.Categories)
            .WithMany(op => op.Sellers);
         });
@@ -70,8 +74,11 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
             .HasForeignKey(op => op.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
+            b.HasOne(p => p.Seller)
+            .WithMany(op => op.Products);
+
             b.Property(p => p.Price).HasColumnType("money");
-            b.Property(p => p.Image).HasColumnType("image");
+            b.Property(p => p.Image).HasColumnType("image").IsRequired();
         });
 
         builder.Entity<Order>()
