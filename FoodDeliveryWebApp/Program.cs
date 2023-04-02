@@ -107,6 +107,7 @@ namespace FoodDeliveryWebApp
             #region Repository Services
             builder.Services.AddScoped<ICustomerRestaurantsRepo, CustomerRestaurantsRepo>();
             builder.Services.AddScoped<ISellerRepo, SellerRepo>();
+            builder.Services.AddScoped<IPromoCodeRepo, PromoCodeRepo>();
             builder.Services.AddScoped<IModelRepo<Category>, CategoryRepo>();
             builder.Services.AddScoped<IModelRepo<Models.Review>, ReviewRepo>();
             builder.Services.AddScoped<IModelRepo<Order>, OrderRepo>();
