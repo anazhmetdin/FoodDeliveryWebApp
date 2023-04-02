@@ -1,5 +1,5 @@
-﻿@model IEnumerable<FoodDeliveryWebApp.Areas.Admin.ViewModels.SellerViewModel>
-
+﻿@using FoodDeliveryWebApp.Models.Enums;
+@model IEnumerable<FoodDeliveryWebApp.Areas.Admin.ViewModels.SellerViewModel>
 @{
     ViewData["Title"] = "Index";
 }
@@ -21,33 +21,38 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
+
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StoreName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.StoreName)
+                </td>
+                <td>
+                <form id="stat" method="post" asp-action="ChangeStatus">
+                    <input hidden value="@item.Id" name="SellerId" />
+                    <select onchange="handleForm()" asp-for="@item.Status" class="form-control"
+                        asp-items="@Html.GetEnumSelectList<SellerStatus>()"
+                        name="SellerStatus">
+                    </select>
+                </form>
+
+                </td>
+ 
+
+            </tr>
+        }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+
+    </script>
+}
