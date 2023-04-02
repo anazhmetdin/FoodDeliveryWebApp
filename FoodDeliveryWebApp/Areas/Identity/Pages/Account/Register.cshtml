@@ -83,22 +83,22 @@
                 {
                     <form id="external-account" asp-page="./ExternalLogin" asp-route-IsCustomer="@isCust" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
                         @*<div>
-                <p>
-                @foreach (var provider in Model.ExternalLogins!)
-                {
-                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                }
-                </p>
-                </div>*@
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>*@
 
                         <div class="row mx-2">
-                            <button type="submit" value="Facebook" class="btn btn-primary btn-block"><i class="bi bi-facebook"></i> Sign up Facebook</button>
+                            <button type="submit" name="provider" value="Facebook" class="btn btn-primary btn-block"><i class="bi bi-facebook"></i> Sign up Facebook</button>
                         </div>
 
                         <br />
 
                         <div class="row mx-2">
-                            <button type="submit" value="Google" class="btn btn-danger btn-block"><i class="bi bi-google"></i> Sign up with Google</button>
+                            <button type="submit" name="provider" value="Google" class="btn btn-danger btn-block"><i class="bi bi-google"></i> Sign up with Google</button>
                         </div>
                     </form>
                 }
