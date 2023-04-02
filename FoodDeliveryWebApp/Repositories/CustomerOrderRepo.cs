@@ -14,6 +14,22 @@ namespace FoodDeliveryWebApp.Repositories
         {
             _context = context;
         }
+        public bool DeleteOrderById(int orderId)
+        {
+            try
+            {
+                Order order = _context.Orders.FirstOrDefault(o => o.Id == orderId);
+                _context.Remove(order);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+        }
 
         public bool AddReview(ReviewViewModel review, int orderId)
         {

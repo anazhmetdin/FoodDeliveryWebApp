@@ -1,7 +1,7 @@
-﻿using FoodDeliveryWebApp.Models.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Enums;
 using System.ComponentModel.DataAnnotations;
-using FoodDeliveryWebApp.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.ViewModels
 {

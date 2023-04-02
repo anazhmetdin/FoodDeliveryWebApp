@@ -185,28 +185,28 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                         //}
                         //else
                         //{
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            if (Input.Role == "Seller")
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        if (Input.Role == "Seller")
+                        {
+                            await _context.Sellers.AddAsync(new()
                             {
-                                await _context.Sellers.AddAsync(new()
-                                {
-                                    Id = user.Id,
-                                    User = user,
-                                    StoreName = Input.StoreName
-                                });
-                            }
-                            else if (Input.Role == "Customer")
+                                Id = user.Id,
+                                User = user,
+                                StoreName = Input.StoreName
+                            });
+                        }
+                        else if (Input.Role == "Customer")
+                        {
+                            await _context.Customers.AddAsync(new()
                             {
-                                await _context.Customers.AddAsync(new()
-                                {
-                                    Id = user.Id,
-                                    User = user
-                                });
-                            }
+                                Id = user.Id,
+                                User = user
+                            });
+                        }
 
-                            _context.SaveChanges();
+                        _context.SaveChanges();
 
-                            return LocalRedirect(returnUrl);
+                        return LocalRedirect(returnUrl);
                         //}
                     }
                     else

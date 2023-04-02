@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FoodDeliveryWebApp.Constants;
+using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FoodDeliveryWebApp.Data;
-using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Constants;
-using FoodDeliveryWebApp.Repositories;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 {
@@ -93,8 +93,8 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
             {
                 //try
                 //{
-                    _repo.TryUpdate(promoCode);
-                    return RedirectToAction("Index");
+                _repo.TryUpdate(promoCode);
+                return RedirectToAction("Index");
                 //}
                 //catch (DbUpdateConcurrencyException)
                 //{
@@ -114,7 +114,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
         // GET: Admin/PromoCodes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            
+
             //if (id == null || _context.PromoCodes == null)
             //{
             //    return NotFound();
@@ -144,7 +144,7 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
         //    {
         //        _context.PromoCodes.Remove(promoCode);
         //    }
-            
+
         //    await _context.SaveChangesAsync();
         //    return RedirectToAction(nameof(Index));
         //}

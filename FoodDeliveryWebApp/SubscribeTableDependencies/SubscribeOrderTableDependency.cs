@@ -19,8 +19,7 @@ namespace FoodDeliveryWebApp.SubscribeTableDependencies
 
         public void SubscribeTableDependency(string connectionString)
         {
-            tableDependency = new SqlTableDependency<Order>(connectionString, "Orders", "dbo");
-            tableDependency.OnChanged += TableDependency_OnChangedAsync;
+            tableDependency = new SqlTableDependency<Order>(connectionString, "Orders", "dbo", executeUserPermissionCheck: false); tableDependency.OnChanged += TableDependency_OnChangedAsync;
             tableDependency.OnError += TableDependency_OnError;
             tableDependency.Start();
         }

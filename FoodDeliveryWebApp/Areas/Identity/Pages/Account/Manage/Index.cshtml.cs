@@ -2,15 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -76,7 +76,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             byte[] profilePicture = null;
-            
+
             var seller = _seller.GetById(user.Id);
             var customer = _customer.GetCustomer(user.Id);
 
@@ -87,7 +87,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
                 byte[] imageBytes = br.ReadBytes((int)fs.Length);
                 profilePicture = seller.Logo ?? imageBytes;
             }
-            else if(customer != null)
+            else if (customer != null)
             {
                 FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
                 BinaryReader br = new(fs);
@@ -159,7 +159,7 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
             if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
             {
                 var seller = _seller.GetById(user.Id);
-                seller.Logo = Input?.ProfilePicture?? null;
+                seller.Logo = Input?.ProfilePicture ?? null;
                 var updateResult = await _userManager.UpdateAsync(user);
                 var updateSeller = _seller.TryUpdate(seller);
                 if (!updateResult.Succeeded && !updateSeller)

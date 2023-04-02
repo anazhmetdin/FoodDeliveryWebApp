@@ -1,6 +1,6 @@
 ﻿namespace FoodDeliveryWebApp.ViewModels.Charts
 {
-    public class LineChartData<T,U>
+    public class LineChartData<T, U>
     {
         public T X { get; set; }
         public U Y { get; set; }

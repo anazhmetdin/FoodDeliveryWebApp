@@ -29,7 +29,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
         public IActionResult Data(int? year)
         {
-           var sellerId = _userManager.GetUserId(User);
+            var sellerId = _userManager.GetUserId(User);
             return Ok(_sellerDashboardRepo.GetSellerDashboard(sellerId!, year));
         }
     }

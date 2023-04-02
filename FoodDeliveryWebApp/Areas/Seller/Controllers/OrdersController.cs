@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FoodDeliveryWebApp.Areas.Identity.Data;
+using FoodDeliveryWebApp.Areas.Seller.Hubs;
+using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Enums;
+using FoodDeliveryWebApp.Repositories;
+using FoodDeliveryWebApp.SubscribeTableDependencies;
+using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FoodDeliveryWebApp.Data;
-using FoodDeliveryWebApp.Contracts;
-using Microsoft.AspNetCore.Identity;
-using FoodDeliveryWebApp.Areas.Identity.Data;
-using Microsoft.AspNetCore.Authorization;
-using FoodDeliveryWebApp.ViewModels;
-using FoodDeliveryWebApp.SubscribeTableDependencies;
-using FoodDeliveryWebApp.Models.Enums;
+using System;
+using System.Collections.Generic;
 using System.Composition;
-using FoodDeliveryWebApp.Models;
-using FoodDeliveryWebApp.Repositories;
-using FoodDeliveryWebApp.Areas.Seller.Hubs;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 {
@@ -39,7 +39,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         {
             var SellerId = _userManager.GetUserId(User);
 
-            var Model = SellerOrdersHelper.GetActiveOrders(SellerId??"", _sellerRepo);
+            var Model = SellerOrdersHelper.GetActiveOrders(SellerId ?? "", _sellerRepo);
 
             return View(Model);
         }
@@ -52,7 +52,8 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             var DeliveredOrders = _sellerRepo.GetOrders(SellerId, OrderStatus.Delivered);
             var RejectedOrders = _sellerRepo.GetOrders(SellerId, OrderStatus.Rejected);
 
-            SellerOrderArchiveViewModel Model = new SellerOrderArchiveViewModel() {
+            SellerOrderArchiveViewModel Model = new SellerOrderArchiveViewModel()
+            {
                 DeliveredOrders = DeliveredOrders,
                 RejectedOrders = RejectedOrders
             };

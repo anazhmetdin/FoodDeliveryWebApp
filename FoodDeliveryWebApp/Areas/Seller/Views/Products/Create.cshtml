@@ -2,16 +2,20 @@
 @{
     ViewData["Title"] = "Create";
 }
+@section Head {
+    <link rel="stylesheet" type="text/css" href="~/css/SellerProducts.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+}
 
 <h1>Add Product</h1>
 
 <hr />
-<div class="row">
+<div class="row align-items-center">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <partial name="_ProductForm" model="Model" />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-talabat" />
             </div>
         </form>
     </div>

@@ -54,14 +54,14 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
             category = category == 0 ? null : category;
 
             var products = _sellerRepo.GetSellerProducts(sellerId)
-                .Where(s => (s.CategoryId == category || category == null) 
+                .Where(s => (s.CategoryId == category || category == null)
                     && (s.HasSale == sale || hasSale == null)
                     && (s.InStock == stock || inStock == null)).ToList();
 
             var productsGroups = products
                 .OrderByDescending(o => o.InStock)
                 .ThenByDescending(o => o.HasSale)
-                .ThenByDescending (o => o.Sale)
+                .ThenByDescending(o => o.Sale)
                 .GroupBy(o => o.Category!.Name)
                 .OrderBy(g => g.Key);
 
@@ -113,7 +113,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
             if (Model == null)
                 return NotFound();
-            
+
             return View(Model);
         }
 
@@ -155,7 +155,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
 
             ViewBag.CategoryList = new SelectList(_categryRepo.GetAll(),
                 "Id", "Name", Model.CategoryId);
-                
+
             return View(Model);
         }
 
@@ -164,7 +164,7 @@ namespace FoodDeliveryWebApp.Areas.Seller.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, [Bind("Name,Description,Price,InStock,SellerId,Sale,CategoryId")] ProductViewModel product, IFormFile? Image)
         {
-            
+
             var sellerId = _userManager.GetUserId(User);
             ViewBag.sell = sellerId;
 

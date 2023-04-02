@@ -137,6 +137,7 @@
                     data: jsonData,
                     contentType: "application/json; charset=utf-8",
                     success: function (response) {
+                        sessionStorage.removeItem('cart')
                         let id =  response.id   ;
                         window.location.href = `https://localhost:7233`+"@Url.Action("Checkout", "Restaurants", new { Area = "Customer" })" +`/${id}`
                     },

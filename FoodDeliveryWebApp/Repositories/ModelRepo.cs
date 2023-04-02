@@ -67,7 +67,7 @@ namespace FoodDeliveryWebApp.Repositories
             try
             {
                 var local = Context.Set<T>().Local.FirstOrDefault(s => s.Id == t.Id);
-                
+
                 if (local != null)
                     Context.Entry(local).State = EntityState.Detached;
 
