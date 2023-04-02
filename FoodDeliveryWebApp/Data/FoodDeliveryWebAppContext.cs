@@ -50,6 +50,9 @@ public class FoodDeliveryWebAppContext : IdentityDbContext<AppUser>
 
             b.HasMany(s => s.Categories)
            .WithMany(op => op.Sellers);
+
+            b.Property(s => s.Rate)
+            .HasDefaultValue(0);
         });
 
         builder.Entity<Customer>(b =>

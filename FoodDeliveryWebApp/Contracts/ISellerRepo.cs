@@ -25,5 +25,6 @@ namespace FoodDeliveryWebApp.Contracts
         public List<Order> GetSalesPerYear(string sellerId, int year);
 
         public void UpdateSellerCategories(string? sellerId);
+        public bool CalculateRates();
     }
 }

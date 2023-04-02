@@ -264,5 +264,24 @@ namespace FoodDeliveryWebApp.Repositories
 
             Context.SaveChanges();
         }
+
+        public bool CalculateRates()
+        {
+            try
+            {
+                Context.Sellers
+                    .Include(s=>s.Reviews)
+                    .ToList()
+                    .ForEach(s => s.Rate = s.Reviews.Count == 0 ? 0 : (int) Math.Round(s.Reviews.Average(r => r.Rate), 0));
+
+                Context.SaveChanges();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

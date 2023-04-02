@@ -34,13 +34,15 @@ namespace FoodDeliveryWebApp.HostedServices
             _logger.LogInformation(
                 "Trending Seller Timed Hosted Service is working. Count: {Count}", count);
 
-            bool result = false;
+            bool result_trending = false;
+            bool result_rates = false;
 
             using (var scope = _serviceProvider.CreateScope())
             {
 
                 var _trendingSeller = scope.ServiceProvider.GetRequiredService<ITrendingSellerRepo>();
                 var _ordersRepo = scope.ServiceProvider.GetRequiredService<IModelRepo<Order>>();
+                var _sellerRepo = scope.ServiceProvider.GetRequiredService<ISellerRepo>();
 
                 var lastThreeDays = DateTime.UtcNow.AddDays(-3);
 
@@ -52,12 +54,16 @@ namespace FoodDeliveryWebApp.HostedServices
                     .Take(10)
                     .ToList();
 
-                result = _trendingSeller.TryUpdateAll(sellers);
+                result_trending = _trendingSeller.TryUpdateAll(sellers);
+
+                result_rates = _sellerRepo.CalculateRates();
             }
 
+            _logger.LogInformation(
+                "Trending Seller Timed Hosted Service Result: {Result}", result_trending);
 
             _logger.LogInformation(
-                "Trending Seller Timed Hosted Service Result: {Result}", result);
+                "Trending Seller Timed Hosted Service Result: {Result}", result_rates);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
