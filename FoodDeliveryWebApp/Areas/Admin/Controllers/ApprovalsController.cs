@@ -1,6 +1,7 @@
 ﻿using FoodDeliveryWebApp.Areas.Admin.ViewModels;
 using FoodDeliveryWebApp.Constants;
 using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,57 +33,74 @@ namespace FoodDeliveryWebApp.Areas.Admin.Controllers
             return View(sellers);
         }
 
-        public async Task<IActionResult> Edit(string id)
+        //public async Task<IActionResult> Edit(string id)
+        //{
+        //    var seller = await _context.Sellers
+        //        .Include(s => s.User)
+        //        .FirstOrDefaultAsync(s => s.Id == id);
+
+        //    if (seller == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var viewModel = new SellerViewModel
+        //    {
+        //        Id = seller.Id,
+        //        StoreName = seller.StoreName,
+        //        Status = seller.Status,
+        //        UserId = seller.User.Id,
+        //    };
+
+        //    return View(viewModel);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(string id, SellerViewModel viewModel)
+        //{
+        //    if (id != viewModel.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var seller = await _context.Sellers
+        //            .Include(s => s.User)
+        //            .FirstOrDefaultAsync(s => s.Id == id);
+
+        //        if (seller == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        seller.StoreName = viewModel.StoreName;
+        //        seller.Status = viewModel.Status;
+
+        //        _context.Update(seller);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    return View(viewModel);
+        //}
+    
+        public async Task<IActionResult> Approve(string id)
         {
-            var seller = await _context.Sellers
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.Id == id);
-
-            if (seller == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new SellerViewModel
-            {
-                Id = seller.Id,
-                StoreName = seller.StoreName,
-                Status = seller.Status,
-                UserId = seller.User.Id,
-            };
-
-            return View(viewModel);
+            var seller = await _context.Sellers.FindAsync(id);
+            seller.Status = SellerStatus.Accepted;
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, SellerViewModel viewModel)
+        public async Task<IActionResult> Reject(string id)
         {
-            if (id != viewModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                var seller = await _context.Sellers
-                    .Include(s => s.User)
-                    .FirstOrDefaultAsync(s => s.Id == id);
-
-                if (seller == null)
-                {
-                    return NotFound();
-                }
-
-                seller.StoreName = viewModel.StoreName;
-                seller.Status = viewModel.Status;
-
-                _context.Update(seller);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(viewModel);
+            var seller = await _context.Sellers.FindAsync(id);
+            seller.Status = SellerStatus.Rejected;
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
+
     }
 }

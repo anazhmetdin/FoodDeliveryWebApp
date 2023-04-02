@@ -4,22 +4,19 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Manage Restaurants</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.StoreName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                Actions
             </th>
 
         </tr>
@@ -29,23 +26,27 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-
-                <td>
                     @Html.DisplayFor(modelItem => item.StoreName)
                 </td>
                 <td>
-                <form id="stat" method="post" asp-action="ChangeStatus">
-                    <input hidden value="@item.Id" name="SellerId" />
-                    <select onchange="handleForm()" asp-for="@item.Status" class="form-control"
-                        asp-items="@Html.GetEnumSelectList<SellerStatus>()"
-                        name="SellerStatus">
-                    </select>
-                </form>
-
+                    @Html.DisplayFor(modelItem => item.Status)
                 </td>
- 
+                <td>
+                    <input hidden value="@item.Id" name="SellerId" />
+                    @*<select onchange="handleForm()" asp-for="@item.Status" class="form-control"
+                asp-items="@Html.GetEnumSelectList<SellerStatus>()"
+                name="SellerStatus">
+                </select>*@
+                    @if (item.Status != SellerStatus.Accepted)
+                    {
+                        <a class="btn btn-success" asp-action="Approve" asp-area="Admin" asp-controller="Approvals" asp-route-id="@item.Id">Approve</a>
+                    }
+
+                    @if (item.Status != SellerStatus.Rejected)
+                    {
+                        <a class="btn btn-danger" asp-action="Reject" asp-area="Admin" asp-controller="Approvals" asp-route-id="@item.Id">Reject</a>
+                    }
+                </td>
 
             </tr>
         }
