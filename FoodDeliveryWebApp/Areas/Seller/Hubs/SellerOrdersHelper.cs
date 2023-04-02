@@ -1,7 +1,7 @@
-﻿using FoodDeliveryWebApp.Models.Enums;
+﻿using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.ViewModels;
-using FoodDeliveryWebApp.Contracts;
 
 namespace FoodDeliveryWebApp.Areas.Seller.Hubs
 {

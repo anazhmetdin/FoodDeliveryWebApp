@@ -89,7 +89,7 @@ namespace FoodDeliveryWebApp.Controllers
             var paymentIntentService = new PaymentIntentService();
             var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
             {
-                Amount = (long)(items.total_price * 1000),
+                Amount = (long)(items.total_price * 100),
                 Currency = "usd",
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 {

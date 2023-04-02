@@ -5,7 +5,7 @@ using FoodDeliveryWebApp.ViewModels.Charts;
 
 namespace FoodDeliveryWebApp.Repositories.Charts
 {
-    public class SellerDashboardRepo: ISellerDashboardRepo
+    public class SellerDashboardRepo : ISellerDashboardRepo
     {
         private ISellerRepo _sellerRepo;
         public SellerDashboardRepo(ISellerRepo sellerRepo)
@@ -41,7 +41,7 @@ namespace FoodDeliveryWebApp.Repositories.Charts
                       SalesPerYear.GroupBy(g => g.DeliveryDate.GetValueOrDefault().Month)
                       .Select(g => new LineChartData<DateTime, int>(
                               g.FirstOrDefault()!.DeliveryDate.GetValueOrDefault().Date,
-                              g.Sum(o=>o.OrderProducts.Sum(op=>op.Quantity))
+                              g.Sum(o => o.OrderProducts.Sum(op => op.Quantity))
                           )
                       )
                       .ToList();
@@ -54,13 +54,13 @@ namespace FoodDeliveryWebApp.Repositories.Charts
                       ).ToList();
 
             var allOrderProducts = SalesPerYear.SelectMany(o => o.OrderProducts);
-            var totalCount = allOrderProducts.Sum(op=>op.Quantity);
+            var totalCount = allOrderProducts.Sum(op => op.Quantity);
 
             dashBoard.SalesPerCategory = allOrderProducts
                 .GroupBy(g => g.Product.Category!.Name)
                 .Select(g => new PieChartData<decimal>(
                     g.Key,
-                    g.Sum(op=>op.Quantity) * 100 / (decimal)totalCount)
+                    g.Sum(op => op.Quantity) * 100 / (decimal)totalCount)
                 )
                 .OrderByDescending(pc => pc.Value)
                 .Take(5)
@@ -68,7 +68,7 @@ namespace FoodDeliveryWebApp.Repositories.Charts
 
             dashBoard.SalesPerProduct = allOrderProducts
                       .GroupBy(g => g.Product.Name)
-                      .Select (g => new PieChartData<decimal>(
+                      .Select(g => new PieChartData<decimal>(
                           g.Key,
                           g.Sum(op => op.Quantity) * 100 / (decimal)totalCount)
                       )

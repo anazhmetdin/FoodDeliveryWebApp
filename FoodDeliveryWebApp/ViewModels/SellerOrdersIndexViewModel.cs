@@ -13,7 +13,7 @@ namespace FoodDeliveryWebApp.ViewModels
 
     public class SellerOrderButtons
     {
-        public static SellerOrderButton Accept = new () { ClassList = "btn-success accept", Content = "Accept", Status = OrderStatus.InProgress };
+        public static SellerOrderButton Accept = new() { ClassList = "btn-success accept", Content = "Accept", Status = OrderStatus.InProgress };
         public static SellerOrderButton Delivered = new() { ClassList = "btn-info delivered", Content = "Delivered", Status = OrderStatus.Delivered };
         public static SellerOrderButton Cancel = new() { ClassList = "btn-danger cancel", Content = "Cancel", Status = OrderStatus.Rejected };
     }

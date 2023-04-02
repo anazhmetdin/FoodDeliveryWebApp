@@ -180,7 +180,7 @@ namespace FoodDeliveryWebApp
                 try
                 {
                     //  Initialize Roles and Users. This one will create a user with an Admin-role aswell as a separate User-role. See UserRoleInitializer.cs in Areas/Identity/Data
-                       UserRoleInitializer.InitializeAsync(services).Wait();
+                    UserRoleInitializer.InitializeAsync(services).Wait();
                 }
                 catch (Exception ex)
                 {

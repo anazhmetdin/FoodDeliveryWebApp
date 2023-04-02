@@ -6,7 +6,7 @@ namespace FoodDeliveryWebApp.Repositories
 {
     public class PromoCodeRepo : ModelRepo<PromoCode>, IPromoCodeRepo
     {
-        public PromoCodeRepo(FoodDeliveryWebAppContext context) : base (context)
+        public PromoCodeRepo(FoodDeliveryWebAppContext context) : base(context)
         {
         }
     }

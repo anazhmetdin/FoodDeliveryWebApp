@@ -2,19 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using FoodDeliveryWebApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
 {
@@ -122,19 +122,19 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account
                     if (await _userManager.IsInRoleAsync(user, "Seller"))
                     {
                         _logger.LogInformation("Seller logged in.");
-                        return RedirectToAction("Index", "Products" , new {area = "Seller"});
+                        return RedirectToAction("Index", "Products", new { area = "Seller" });
                     }
                     else if (await _userManager.IsInRoleAsync(user, "Customer"))
                     {
                         _logger.LogInformation("Customer logged in.");
-                        return RedirectToAction("Index", "Restaurants" , new { area = "Customer" });
+                        return RedirectToAction("Index", "Restaurants", new { area = "Customer" });
                     }
                     else
                     {
                         //_logger.LogInformation("Unknown user logged in.");
                         //return LocalRedirect(returnUrl);
                         _logger.LogInformation("Admin logged in.");
-                        return RedirectToAction("Index", "Users", new { area = "Admin" });                        
+                        return RedirectToAction("Index", "Users", new { area = "Admin" });
 
                     }
                 }

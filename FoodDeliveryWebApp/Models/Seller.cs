@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class Seller:BaseModel
+    public class Seller : BaseModel
     {
         [Key]
         [ForeignKey("User")]
@@ -18,7 +18,7 @@ namespace FoodDeliveryWebApp.Models
 
         [NotMapped]
         public int BranchesNumber { get => User.Addresses.Count; }
-        
+
         [Required]
         public byte[]? Logo { get; set; }
 
@@ -34,7 +34,7 @@ namespace FoodDeliveryWebApp.Models
 
         public SellerStatus Status { get; set; } = SellerStatus.UnderReview;
 
-        [Range(0,5)]
+        [Range(0, 5)]
         public int Rate { get; set; } = 0;
     }
 }

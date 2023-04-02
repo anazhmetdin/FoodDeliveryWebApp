@@ -5,6 +5,7 @@ using FoodDeliveryWebApp.Models.Authorization;
 using FoodDeliveryWebApp.Models.Enums;
 using FoodDeliveryWebApp.Repositories;
 using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -95,7 +96,9 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
             return View(prds);
         }
 
+
         [HttpPost]
+        [Authorize(Roles = "Customer")]
         public IActionResult Checkout([FromBody] List<CheckoutViewModel> items)
         {
             if (items.Count < 1)

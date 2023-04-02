@@ -2,7 +2,7 @@
 
 namespace FoodDeliveryWebApp.Models
 {
-    public class TrendingSeller: BaseModel
+    public class TrendingSeller : BaseModel
     {
         [ForeignKey("Seller")]
         public new string Id { get; set; }

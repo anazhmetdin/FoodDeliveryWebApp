@@ -1,5 +1,6 @@
 ﻿using FoodDeliveryWebApp.Areas.Identity.Data;
 using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Repositories;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,8 +26,8 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var orders = _customerOrderRepo.GetOrders(user?.Id??"");
-            
+            var orders = _customerOrderRepo.GetOrders(user?.Id ?? "");
+
             return View(orders);
         }
 
@@ -52,6 +53,12 @@ namespace FoodDeliveryWebApp.Areas.Customer.Controllers
 
             _customerOrderRepo.AddReview(review, orderId);
 
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            _customerOrderRepo.DeleteOrderById(id);
             return RedirectToAction("Index");
         }
     }

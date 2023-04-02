@@ -43,11 +43,18 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @{
-                        if (item.Review == null)
+                        if (item.Review == null && item.Status == FoodDeliveryWebApp.Models.Enums.OrderStatus.Delivered)
                         {
-                            <> | <a asp-action="Review" asp-route-id="@item.Id">Review</a></>
+                            <a asp-action="Review" asp-route-id="@item.Id">Review</a>
+                        }
+                        if (item.Status == FoodDeliveryWebApp.Models.Enums.OrderStatus.Pending)
+                        {
+                            <a asp-area="Customer" asp-controller="Restaurants" asp-action="Checkout" asp-route-id ="@item.Id">Checkout</a>
+                            //<a asp-area="Customer" asp-controller="Orders" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         }
                     }
+                    
+                   
                 </td>
             </tr>
         }

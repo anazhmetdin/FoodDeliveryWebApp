@@ -1,12 +1,12 @@
+using FoodDeliveryWebApp.Areas.Identity.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FoodDeliveryWebApp.Areas.Identity.Data;
 
 namespace FoodDeliveryWebApp.Models
 {
     public class PromoCode : BaseModel
     {
-        [Range(0,1)]
+        [Range(0, 1)]
         public double Discount { get; set; }
 
         [DataType(DataType.Date)]
@@ -18,9 +18,9 @@ namespace FoodDeliveryWebApp.Models
         public decimal MaximumDiscount { get; set; }
 
         public virtual ICollection<Category>? AppliedTo { get; set; } = new List<Category>();
-        
+
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-        
+
         [MaxLength(16)]
         public string Code { get; set; }
     }

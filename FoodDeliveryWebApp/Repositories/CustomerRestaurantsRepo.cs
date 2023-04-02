@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using NuGet.Protocol.Plugins;
 using System.Linq;
 
@@ -17,6 +18,7 @@ namespace FoodDeliveryWebApp.Repositories
         {
             _context = context;
         }
+
         public Order CreateOrder(string sellerId, string customerId)
         {
             Order order = new Order()
@@ -61,11 +63,25 @@ namespace FoodDeliveryWebApp.Repositories
             }
 
         }
+        public bool DeleteOrderById(int orderId)
+        {
+            try
+            {
+                _context.Remove(_context.Orders.Find(orderId));
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
 
+        }
         public OrderProduct CreateOrderProduct(int orderId, int prodId, int quantity)
         {
             OrderProduct orderProduct = new OrderProduct()
-            { OrderId = orderId, ProductId = prodId, Quantity = quantity,Order = null,Product = null };
+            { OrderId = orderId, ProductId = prodId, Quantity = quantity, Order = null, Product = null };
             _context.OrderProducts.Add(orderProduct);
             _context.SaveChanges();
             return orderProduct;
@@ -120,7 +136,7 @@ namespace FoodDeliveryWebApp.Repositories
 
 
             List<SellerViewModel> restaurants = new();
-            
+
             FileStream fs = new FileStream("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fs);
             byte[] imageBytes = br.ReadBytes((int)fs.Length);
@@ -132,7 +148,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? imageBytes)}",
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo ?? imageBytes)}",
                     Rate = seller.Rate
                 });
             }
@@ -171,15 +187,18 @@ namespace FoodDeliveryWebApp.Repositories
             });
 
             List<SellerViewModel> restaurants = new();
-
+            FileStream fs = new FileStream("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] imageBytes = br.ReadBytes((int)fs.Length);
             foreach (var seller in filtered)
             {
+
                 restaurants.Add(new()
                 {
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo)}",
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller?.Logo ?? imageBytes)}",
                     Rate = seller.Rate
                 });
             }
@@ -201,7 +220,7 @@ namespace FoodDeliveryWebApp.Repositories
                            Id = s.Id,
                            Categories = string.Join(", ", s.Categories.Select(c => c.Name)),
                            StoreName = s.StoreName,
-                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo?? imageBytes)}",
+                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo ?? imageBytes)}",
                            Rate = s.Rate
                        }).ToList();
         }
