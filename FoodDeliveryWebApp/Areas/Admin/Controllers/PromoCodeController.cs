@@ -3,12 +3,13 @@ using FoodDeliveryWebApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FoodDeliveryWebApp.Controllers
+namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class PromoCodeController : Controller
     {
-        
+
         private readonly IPromoCodeRepo _repo;
 
         public PromoCodeController(IPromoCodeRepo repo)
@@ -19,15 +20,15 @@ namespace FoodDeliveryWebApp.Controllers
         public IActionResult Index()
         {
             var promocodes = _repo.GetAll();
-            
+
             return View(promocodes);
         }
         public IActionResult Create()
         {
             return View();
         }
-        public IActionResult Add(PromoCode code) 
-        { 
+        public IActionResult Add(PromoCode code)
+        {
             _repo.TryInsert(code);
             return Redirect("/promocode/index");
         }

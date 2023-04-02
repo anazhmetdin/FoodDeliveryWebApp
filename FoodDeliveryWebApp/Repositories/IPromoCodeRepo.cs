@@ -1,4 +1,5 @@
-﻿using FoodDeliveryWebApp.Models;
+﻿using FoodDeliveryWebApp.Contracts;
+using FoodDeliveryWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Repositories

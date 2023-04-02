@@ -2,11 +2,14 @@
 using FoodDeliveryWebApp.Contracts;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FoodDeliveryWebApp.Controllers
+namespace FoodDeliveryWebApp.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class ReviewController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
