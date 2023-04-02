@@ -15,7 +15,7 @@ using static System.Net.WebRequestMethods;
 
 namespace FoodDeliveryWebApp.Hubs
 {
-    //[Authorize(Roles = "Seller")]
+    [Authorize(Roles = "Seller")]
     public class SellerOrdersIndexHub : Hub
     {
         private readonly IServiceProvider _serviceProvider;
@@ -37,25 +37,25 @@ namespace FoodDeliveryWebApp.Hubs
                 var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
                 var _renderer = scope.ServiceProvider.GetRequiredService<IRazorPartialToStringRenderer>();
                 var httpContext = Context.GetHttpContext();
-            //    if (Context.User != null && httpContext != null)
-            //    {
-            //        var SellerId = _userManager.GetUserId(Context.User);
-            //        if (SellerId != null)
-            //        {
-            //            var partial = "_SellerOrderIndex";
+               if (Context.User != null && httpContext != null)
+               {
+                   var SellerId = _userManager.GetUserId(Context.User);
+                   if (SellerId != null)
+                   {
+                       var partial = "_SellerOrderIndex";
 
-            //            var Model = SellerOrdersHelper.GetActiveOrders(SellerId, _SellerRepo);
+                       var Model = SellerOrdersHelper.GetActiveOrders(SellerId, _SellerRepo);
 
-            //            string PostedProducts = await _renderer.RenderPartialToStringAsync(partial,
-            //                Model.PostedOrders, httpContext);
+                       string PostedProducts = await _renderer.RenderPartialToStringAsync(partial,
+                           Model.PostedOrders, httpContext);
 
-            //            string InProgressProducts = await _renderer.RenderPartialToStringAsync(partial,
-            //                Model.InProgressOrders, httpContext);
+                       string InProgressProducts = await _renderer.RenderPartialToStringAsync(partial,
+                           Model.InProgressOrders, httpContext);
 
-            //            await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts,
-            //                InProgressProducts, Model.PostedOrders.Oders.Count());
-            //        }
-            //    }
+                       await Clients.User(SellerId).SendAsync("ReceivedOrders", PostedProducts,
+                           InProgressProducts, Model.PostedOrders.Oders.Count());
+                   }
+               }
             }
         }
     }
