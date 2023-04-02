@@ -40,9 +40,9 @@ namespace FoodDeliveryWebApp.Repositories
         {
             return _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.Id == orderId);
         }
-        public Order GetOrderByPaymentId(int paymentId)
+        public Order GetOrderStripeByPaymentId(string stripePaymentId)
         {
-            return _context.Orders.FirstOrDefault(o => o.PaymentId == paymentId);
+            return _context.Orders.Include(o => o.Payment).FirstOrDefault(o => o.Payment.StripeId == stripePaymentId);
         }
         public bool UpdateOrder(Order o)
         {
@@ -92,7 +92,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
-                    Price = p.HasSale? p.SalePrice : p.Price,
+                    Price = p.HasSale ? p.SalePrice : p.Price,
                     Image = $"data:image/png;base64,{Convert.ToBase64String(p.Image)}"
                 }).ToList();
         }
@@ -108,7 +108,7 @@ namespace FoodDeliveryWebApp.Repositories
                     s.Logo,
                     Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
                     s.StoreName,
-                    Rate = s.Reviews.Count == 0? 0 : s.Reviews.Average(r => r.Rate)
+                    Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
                 }).ToList();
 
 
@@ -121,7 +121,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? new byte[1])}",
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo ?? new byte[1])}",
                     Rate = (int)seller.Rate
                 });
             }
@@ -133,10 +133,10 @@ namespace FoodDeliveryWebApp.Repositories
         {
             var roleId = _context.Roles.Where(r => r.Name == "Seller").Select(s => s.Id).FirstOrDefault();
             var sellers = _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews).AsEnumerable();
-            
+
             if (categories.Count > 0)
                 sellers = sellers.Where(s => s.Categories.Any(cat => categories.Contains(cat)));
-            
+
             if (hasPromo)
             {
                 var promosCats = _context.PromoCodes.Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
@@ -150,13 +150,13 @@ namespace FoodDeliveryWebApp.Repositories
                 sellers = sellers.OrderByDescending(s => s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate));
 
             var filtered = sellers.Select(s => new
-             {
-                 s.Id,
-                 s.Logo,
-                 Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
-                 s.StoreName,
-                 Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
-             });
+            {
+                s.Id,
+                s.Logo,
+                Categories = string.Join(", ", s.Categories.Select(sc => sc.Name)),
+                s.StoreName,
+                Rate = s.Reviews.Count == 0 ? 0 : s.Reviews.Average(r => r.Rate)
+            });
 
             List<SellerViewModel> restaurants = new();
 

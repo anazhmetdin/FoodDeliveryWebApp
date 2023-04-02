@@ -39,7 +39,7 @@ namespace FoodDeliveryWebApp.Controllers
             return View();
         }
 
-
+        // /Payment/Webhok
         [HttpPost]
         public async Task<IActionResult> Webhook()
         {
@@ -58,7 +58,10 @@ namespace FoodDeliveryWebApp.Controllers
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     Console.WriteLine("A successful payment for {0} was made.", paymentIntent.Amount);
-
+                    Order o = _customerRestaurantRepo.GetOrderStripeByPaymentId(paymentIntent.Id);
+                    o.Status = Models.Enums.OrderStatus.Posted;
+                    await Console.Out.WriteLineAsync(paymentIntent.Id);
+                    _customerRestaurantRepo.UpdateOrder(o);
                     // Then define and call a method to handle the successful payment intent.
                     // handlePaymentIntentSucceeded(paymentIntent);
                 }
@@ -100,7 +103,7 @@ namespace FoodDeliveryWebApp.Controllers
                 AmountReceived = paymentIntent.AmountReceived
             };
             _customerRestaurantRepo.UpdateOrder(o);
-            return Json(new { clientSecret = paymentIntent.ClientSecret });
+            return Json(new { clientSecret = paymentIntent.ClientSecret, OrderId = o.Id });
 
         }
 

@@ -13,7 +13,7 @@ namespace FoodDeliveryWebApp.Contracts
         public Order CreateOrder(string sellerId, string customerId);
         public bool UpdateOrder(Order o);
         public Order GetOrder(int orderId);
-        public Order GetOrderByPaymentId(int paymentId);
+        public Order GetOrderStripeByPaymentId(string stripePaymentId);
 
 
 
