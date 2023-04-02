@@ -148,7 +148,8 @@ namespace FoodDeliveryWebApp.Repositories
 
             if (hasPromo)
             {
-                var promosCats = _context.PromoCodes.Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
+                var promosCats = _context.PromoCodes.Where(p => p.StartDate <= DateTime.Now && p.EndDate > DateTime.Now)
+                    .Include(p => p.AppliedTo).SelectMany(p => p.AppliedTo);
                 sellers = sellers.Where(s => s.Categories.Any(c => promosCats.Contains(c)));
             }
 
