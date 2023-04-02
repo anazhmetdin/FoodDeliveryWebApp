@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\moment\min\" />
     <None Include="wwwroot\css\checkout.css" />
     <None Include="wwwroot\js\checkout.js" />

@@ -19,15 +19,18 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ISellerRepo _seller;
+        private readonly ICustomerRestaurantsRepo _customer;
 
         public IndexModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ISellerRepo seller)
+            ISellerRepo seller,
+            ICustomerRestaurantsRepo customer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _seller = seller;
+            _customer = customer;
         }
 
         /// <summary>
@@ -72,11 +75,23 @@ namespace FoodDeliveryWebApp.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            byte[] profilePicture = new byte[1];
-            var s = _seller.GetById(user.Id);
-            if (s != null)
+            byte[] profilePicture;
+            
+            var seller = _seller.GetById(user.Id);
+            
+            if (seller != null)
             {
-                profilePicture = _seller.GetById(user.Id).Logo; // Assuming the image data is stored as byte array in the user object
+                FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                profilePicture = seller.Logo ?? imageBytes;
+            }
+            else
+            {
+                FileStream fs = new("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                byte[] imageBytes = br.ReadBytes((int)fs.Length);
+                profilePicture = _customer.GetCustomer(user.Id).ProfilePicture ?? imageBytes;
             }
 
             Username = userName;
