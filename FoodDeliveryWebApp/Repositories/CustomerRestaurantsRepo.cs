@@ -18,6 +18,11 @@ namespace FoodDeliveryWebApp.Repositories
             _context = context;
         }
 
+        public Customer? GetCustomer(string customerId)
+        {
+            return _context.Customers.Find(customerId);
+        }
+
         public ICollection<ProductViewModel> GetSellerProducts(string sellerId)
         {
             if (string.IsNullOrWhiteSpace(sellerId))
@@ -52,6 +57,10 @@ namespace FoodDeliveryWebApp.Repositories
 
 
             List<SellerViewModel> restaurants = new();
+            
+            FileStream fs = new FileStream("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] imageBytes = br.ReadBytes((int)fs.Length);
 
             foreach (var seller in sellers)
             {
@@ -60,7 +69,7 @@ namespace FoodDeliveryWebApp.Repositories
                     Id = seller.Id,
                     Categories = string.Join(", ", seller.Categories),
                     StoreName = seller.StoreName,
-                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? new byte[1])}",
+                    Logo = $"data:image/png;base64,{Convert.ToBase64String(seller.Logo?? imageBytes)}",
                     Rate = (int)seller.Rate
                 });
             }
@@ -116,6 +125,10 @@ namespace FoodDeliveryWebApp.Repositories
 
         public ICollection<SellerViewModel> GetSellersSearched(string text)
         {
+            FileStream fs = new FileStream("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] imageBytes = br.ReadBytes((int)fs.Length);
+
             return _context.Sellers.Include(s => s.Categories).Include(s => s.Reviews)
                 .Where(s => s.StoreName.Contains(text))
                        .OrderBy(s => s.StoreName.IndexOf(text))
@@ -124,7 +137,7 @@ namespace FoodDeliveryWebApp.Repositories
                            Id = s.Id,
                            Categories = string.Join(", ", s.Categories.Select(c => c.Name)),
                            StoreName = s.StoreName,
-                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo)}",
+                           Logo = $"data:image/png;base64,{Convert.ToBase64String(s.Logo?? imageBytes)}",
                            Rate = s.Reviews.Count == 0 ? 0 : (int)s.Reviews.Average(r => r.Rate)
                        }).ToList();
         }

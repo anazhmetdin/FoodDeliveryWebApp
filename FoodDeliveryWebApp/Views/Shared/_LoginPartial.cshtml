@@ -19,8 +19,8 @@
             var _user = _seller.GetById(user.Id);
             if (_user.Logo == null)
             {
-                FileStream fs = new FileStream("wwwroot/images/user.jpg", FileMode.Open, FileAccess.Read);
-                BinaryReader br = new BinaryReader(fs);
+                FileStream fs = new("wwwroot/images/restaurant.jpg", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
                 byte[] imageBytes = br.ReadBytes((int)fs.Length);
                 imgSrc = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
             }
