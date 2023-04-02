@@ -25,13 +25,18 @@ namespace FoodDeliveryWebApp.Hubs
         }
         public async Task SendOrders()
         {
-            //using (var scope = _serviceProvider.CreateScope())
-            //{
-            //    var _SellerRepo = scope.ServiceProvider.GetRequiredService<ISellerRepo>();
-            //    var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-            //    var _renderer = scope.ServiceProvider.GetRequiredService<IRazorPartialToStringRenderer>();
-            //    var httpContext = Context.GetHttpContext();
 
+            if (Context == null)
+            {
+                return;
+            }
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var _SellerRepo = scope.ServiceProvider.GetRequiredService<ISellerRepo>();
+                var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                var _renderer = scope.ServiceProvider.GetRequiredService<IRazorPartialToStringRenderer>();
+                var httpContext = Context.GetHttpContext();
             //    if (Context.User != null && httpContext != null)
             //    {
             //        var SellerId = _userManager.GetUserId(Context.User);
@@ -51,7 +56,7 @@ namespace FoodDeliveryWebApp.Hubs
             //                InProgressProducts, Model.PostedOrders.Oders.Count());
             //        }
             //    }
-            //}
+            }
         }
     }
 }

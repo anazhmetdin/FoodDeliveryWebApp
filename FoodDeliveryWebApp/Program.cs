@@ -49,9 +49,8 @@ namespace FoodDeliveryWebApp
             builder.Services.AddScoped<ISellerDashboardRepo, SellerDashboardRepo>();
 
             #region Authentication Services
-            //builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodDeliveryWebAppContext>();
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<FoodDeliveryWebAppContext>().AddDefaultTokenProviders().AddDefaultUI();
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
